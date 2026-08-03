@@ -26,16 +26,29 @@ jobs:
       - name: Pobierz dane z 90minut.pl
         run: python update_liga.py
 
+      # Nie przerywa całego przebiegu, gdy token wygaśnie —
+      # tabela ma się odświeżyć nawet wtedy, gdy Facebook odmówi.
+      - name: Pobierz posty z Facebooka
+        continue-on-error: true
+        env:
+          FB_TOKEN: ${{ secrets.FB_TOKEN }}
+        run: |
+          if [ -z "$FB_TOKEN" ]; then
+            echo "Brak sekretu FB_TOKEN — pomijam posty z Facebooka."
+            exit 0
+          fi
+          python update_fb.py
+
       - name: Zapisz zmiany, jeśli coś się zmieniło
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          if [ -z "$(git status --porcelain data/liga.json)" ]; then
-            echo "Bez zmian w tabeli — nic nie commituję."
+          if [ -z "$(git status --porcelain data/)" ]; then
+            echo "Bez zmian — nic nie commituję."
             exit 0
           fi
 
-          git add data/liga.json
-          git commit -m "Aktualizacja tabeli i terminarza (90minut.pl)"
+          git add data/
+          git commit -m "Aktualizacja danych (90minut.pl, Facebook)"
           git push

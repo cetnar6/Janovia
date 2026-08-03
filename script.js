@@ -316,7 +316,77 @@
         }
     }
 
+    /* =========================================
+       8. POSTY Z FACEBOOKA (data/facebook.json)
+       Plik przygotowuje update_fb.py przez Graph API.
+       Gdy pliku brak — zostają kafelki wpisane w HTML.
+       ========================================= */
+
+    function odKiedy(iso) {
+        var minuty = Math.floor((Date.now() - new Date(iso).getTime()) / 60000);
+
+        if (minuty < 60) { return 'przed chwilą'; }
+
+        var godziny = Math.floor(minuty / 60);
+        if (godziny < 24) {
+            return godziny + (godziny === 1 ? ' godzinę temu' :
+                              godziny < 5 ? ' godziny temu' : ' godzin temu');
+        }
+
+        var dni = Math.floor(godziny / 24);
+        if (dni < 31) {
+            return dni === 1 ? 'wczoraj' : dni + ' dni temu';
+        }
+
+        var d = new Date(iso);
+        return d.getDate() + ' ' + MIESIACE_SKROT[d.getMonth()] + ' ' + d.getFullYear();
+    }
+
+    function rysujPosty(dane) {
+        var rail = document.querySelector('[data-rail-id="news"]');
+        if (!rail || !dane.posty || !dane.posty.length) { return; }
+
+        rail.innerHTML = dane.posty.map(function (p, i) {
+            var tlo = p.zdjecie
+                ? ' style="background-image:url(\'' + encodeURI(p.zdjecie) + '\')"'
+                : '';
+
+            var etykieta = p.typ === 'video' ? 'Wideo'
+                         : p.typ === 'album' ? 'Galeria'
+                         : 'Facebook';
+
+            return '<a class="post" href="' + esc(p.link) + '" target="_blank" rel="noopener"' +
+                   ' data-reveal style="--d:' + (i * 80) + 'ms">' +
+                   '<div class="post__media' + (p.zdjecie ? ' post__media--foto' : ' post__media--' + ((i % 6) + 1)) + '"' + tlo + '></div>' +
+                   '<div class="post__body">' +
+                       '<span class="tag tag--sm">' + etykieta + '</span>' +
+                       '<span class="post__time">' + odKiedy(p.data) + '</span>' +
+                       '<h3>' + esc(p.naglowek) + '</h3>' +
+                   '</div>' +
+                   '</a>';
+        }).join('');
+
+        obserwuj(rail.querySelectorAll('[data-reveal]'));
+
+        var link = document.querySelector('#aktualnosci .arrow-link');
+        if (link) {
+            link.href = dane.zrodlo;
+            link.target = '_blank';
+            link.rel = 'noopener';
+        }
+    }
+
     if (window.fetch) {
+        window.fetch('data/facebook.json', { cache: 'no-cache' })
+            .then(function (r) {
+                if (!r.ok) { throw new Error('HTTP ' + r.status); }
+                return r.json();
+            })
+            .then(rysujPosty)
+            .catch(function (err) {
+                console.info('Posty z Facebooka niedostępne, zostają kafelki z HTML:', err.message);
+            });
+
         window.fetch('data/liga.json', { cache: 'no-cache' })
             .then(function (r) {
                 if (!r.ok) { throw new Error('HTTP ' + r.status); }

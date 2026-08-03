@@ -622,6 +622,14 @@ a {
     transition: opacity 0.5s;
 }
 
+/* zdjęcie pobrane z posta na Facebooku */
+.post__media--foto {
+    background-color: var(--surface);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
 .post__media--2 { background: linear-gradient(150deg, var(--gold), #0D2B44); }
 .post__media--3 { background: linear-gradient(150deg, #06283D, var(--blue-light)); }
 .post__media--4 { background: linear-gradient(150deg, #005C96, var(--gold)); }
