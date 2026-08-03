@@ -254,6 +254,35 @@
         }
     }
 
+    /* Forma: pięć kwadracików z ostatnich meczów, od najstarszego do najnowszego.
+       Brakujące mecze (początek sezonu) to puste, obrysowane pola. */
+    function rysujForme(nazwa, mapa) {
+        var lista = (mapa || {})[nazwa] || [];
+        var puste = Math.max(0, 5 - lista.length);
+        var pola = '';
+        var i;
+
+        for (i = 0; i < puste; i++) {
+            pola += '<i class="forma__box forma__box--brak"></i>';
+        }
+
+        for (i = 0; i < lista.length; i++) {
+            var m = lista[i];
+            var klucz = m.wynik === 'Z' ? 'z' : (m.wynik === 'P' ? 'p' : 'r');
+            var slowo = m.wynik === 'Z' ? 'Wygrana' : (m.wynik === 'P' ? 'Porażka' : 'Remis');
+            var opis = slowo + ' ' + m.rezultat + ' z ' + m.rywal +
+                       ' (' + m.gdzie + ', kolejka ' + m.kolejka + ')';
+
+            pola += '<i class="forma__box forma__box--' + klucz + '" title="' + esc(opis) + '"></i>';
+        }
+
+        var etykieta = lista.length
+            ? 'Forma z ostatnich ' + lista.length + ' meczów'
+            : 'Brak rozegranych meczów';
+
+        return '<span class="forma" role="img" aria-label="' + esc(etykieta) + '">' + pola + '</span>';
+    }
+
     function rysujMecze(dane) {
         var rail = document.querySelector('[data-rail-id="fix"]');
         if (!rail || !dane.nadchodzace || !dane.nadchodzace.length) { return; }
@@ -279,8 +308,10 @@
                        herb(m.gosc, 'sm') +
                    '</div>' +
                    '<div class="fixture__names">' +
-                       '<span>' + esc(skrot(m.gospodarz)) + '</span>' +
-                       '<span>' + esc(skrot(m.gosc)) + '</span>' +
+                       '<span><b class="fixture__team">' + esc(skrot(m.gospodarz)) + '</b>' +
+                           rysujForme(m.gospodarz, dane.forma) + '</span>' +
+                       '<span><b class="fixture__team">' + esc(skrot(m.gosc)) + '</b>' +
+                           rysujForme(m.gosc, dane.forma) + '</span>' +
                    '</div>' +
                    '<span class="fixture__time">' + kiedy + ' · ' + gdzie + '</span>' +
                    '</article>';

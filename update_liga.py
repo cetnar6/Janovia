@@ -171,6 +171,45 @@ def na_iso(termin, rok_jesien, rok_wiosna):
         return None
 
 
+def policz_forme(mecze, ile=5):
+    """
+    Dla każdego klubu zwraca ostatnie `ile` rozegranych meczów,
+    od najstarszego do najnowszego: Z (zwycięstwo), R (remis), P (porażka).
+    """
+    forma = {}
+    rozegrane = sorted([m for m in mecze if m["wynik"]], key=lambda m: m["kolejka"])
+
+    for m in rozegrane:
+        czesci = re.split(r"\s*-\s*", m["wynik"])
+        try:
+            gole_gosp, gole_gosc = int(czesci[0]), int(czesci[1])
+        except (ValueError, IndexError):
+            continue
+
+        strony = (
+            (m["gospodarz"], gole_gosp, gole_gosc, m["gosc"], "u siebie"),
+            (m["gosc"], gole_gosc, gole_gosp, m["gospodarz"], "na wyjeździe"),
+        )
+
+        for klub, swoje, obce, rywal, gdzie in strony:
+            if swoje > obce:
+                znak = "Z"
+            elif swoje < obce:
+                znak = "P"
+            else:
+                znak = "R"
+
+            forma.setdefault(klub, []).append({
+                "wynik": znak,
+                "rywal": rywal,
+                "rezultat": "{}-{}".format(swoje, obce),
+                "kolejka": m["kolejka"],
+                "gdzie": gdzie,
+            })
+
+    return {klub: lista[-ile:] for klub, lista in forma.items()}
+
+
 def main():
     dry = "--dry-run" in sys.argv
 
@@ -193,6 +232,7 @@ def main():
         "klub": NASZ_KLUB,
         "zaktualizowano": datetime.now().isoformat(timespec="seconds"),
         "tabela": tabela,
+        "forma": policz_forme(mecze),
         "nadchodzace": nadchodzace[:8],
         "ostatni": rozegrane[-1] if rozegrane else None,
         "wszystkie_mecze": mecze,

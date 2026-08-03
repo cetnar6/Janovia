@@ -735,8 +735,86 @@ a {
     text-align: center;
 }
 
-.fixture__names span {
+.fixture__names > span {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.55rem;
+}
+
+/* nazwa rozpycha kolumnę, dzięki czemu forma obu drużyn
+   stoi na tej samej wysokości nawet przy różnej długości nazw */
+.fixture__team {
+    flex: 1;
+    font-weight: 700;
+}
+
+/* ---------- FORMA: OSTATNIE 5 MECZÓW ---------- */
+
+.forma {
+    display: inline-flex;
+    gap: 3px;
+}
+
+.forma__box {
+    position: relative;
+    display: block;
+    width: 15px;
+    height: 15px;
+    border-radius: 3px;
+    background-color: var(--surface-2);
+}
+
+.forma__box::after {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 800;
+    font-style: normal;
+    line-height: 1;
+    color: #FFFFFF;
+}
+
+/* wygrana — zielony kwadrat z fajką */
+.forma__box--z {
+    background-color: #2E9E5B;
+}
+
+.forma__box--z::after {
+    content: "✓";
+}
+
+/* remis — szary kwadrat z poziomą kreską */
+.forma__box--r {
+    background-color: #4A5560;
+}
+
+.forma__box--r::after {
+    content: "";
+    width: 7px;
+    height: 2px;
+    border-radius: 1px;
+    background-color: rgba(255, 255, 255, 0.85);
+}
+
+/* porażka — czerwony kwadrat z iksem */
+.forma__box--p {
+    background-color: #CE3F3D;
+}
+
+.forma__box--p::after {
+    content: "✕";
+    font-size: 9px;
+}
+
+/* mecz jeszcze nierozegrany */
+.forma__box--brak {
+    background-color: transparent;
+    border: 1px dashed rgba(255, 255, 255, 0.16);
 }
 
 .fixture__time {
