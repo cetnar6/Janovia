@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Janovia — oficjalna strona klubu</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- pasek postępu przewijania -->
+    <div class="progress" id="progress"></div>
+
+    <!-- ===== NAGŁÓWEK ===== -->
+    <header class="header" id="header">
+        <div class="header__inner">
+
+            <div class="header__side">
+                <input type="checkbox" id="nav-toggle" class="nav-toggle">
+                <label for="nav-toggle" class="burger" aria-label="Menu"><span></span></label>
+
+                <nav class="nav">
+                    <a href="#aktualnosci">Aktualności</a>
+                    <a href="#mecze">Mecze</a>
+                    <a href="#kadra">Drużyna</a>
+                    <a href="#klub">Klub</a>
+                </nav>
+            </div>
+
+            <a class="crest-link" href="#top">
+                <img class="crest" src="png/JanoviaJanowiec.png" alt="Herb klubu Janovia Janowiec">
+            </a>
+
+            <div class="header__side header__side--end">
+                <a href="#tabela">Tabela</a>
+                <a href="#kontakt">Kontakt</a>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- ===== HERO ===== -->
+    <section class="hero" id="top">
+        <div class="hero__bg" data-parallax="0.35"></div>
+        <div class="hero__grain"></div>
+
+        <div class="hero__content">
+            <div class="hero__meta">
+                <span class="tag">Piłka nożna</span>
+                <span class="hero__time">6 godzin temu</span>
+            </div>
+            <h1 class="hero__title">
+                <span class="line">Trzy punkty po świetnej</span>
+                <span class="line">drugiej połowie.</span>
+                <span class="line line--accent">Janovia — Gwardia 3:1</span>
+            </h1>
+            <a href="#aktualnosci" class="arrow-link">Zobacz więcej</a>
+        </div>
+
+        <div class="hero__scroll">
+            <span></span>
+            Przewiń
+        </div>
+    </section>
+
+    <!-- ===== PASEK SPONSORÓW (przewijający się) ===== -->
+    <div class="marquee">
+        <div class="marquee__track">
+            <span>Partner główny</span><i></i>
+            <span>Sponsor techniczny</span><i></i>
+            <span>Partner medialny</span><i></i>
+            <span>Partner akademii</span><i></i>
+            <span>Partner główny</span><i></i>
+            <span>Sponsor techniczny</span><i></i>
+            <span>Partner medialny</span><i></i>
+            <span>Partner akademii</span><i></i>
+        </div>
+    </div>
+
+    <!-- ===== AKTUALNOŚCI ===== -->
+    <section class="section" id="aktualnosci">
+        <div class="wrap">
+            <header class="head" data-reveal>
+                <h2>Aktualności</h2>
+                <div class="head__tools">
+                    <a href="#" class="arrow-link arrow-link--sm">Zobacz wszystkie</a>
+                    <div class="railnav">
+                        <button class="railnav__btn" data-rail="news" data-dir="-1" aria-label="Poprzednie">&larr;</button>
+                        <button class="railnav__btn" data-rail="news" data-dir="1" aria-label="Następne">&rarr;</button>
+                    </div>
+                </div>
+            </header>
+        </div>
+
+        <div class="rail" data-rail-id="news">
+            <article class="post" data-reveal style="--d:0ms">
+                <div class="post__media post__media--1"></div>
+                <div class="post__body">
+                    <span class="tag tag--sm">Zapowiedź</span>
+                    <span class="post__time">6 godzin temu</span>
+                    <h3>Zapowiedź wyjazdowego starcia w Lublinie</h3>
+                </div>
+            </article>
+
+            <article class="post" data-reveal style="--d:80ms">
+                <div class="post__media post__media--2"></div>
+                <div class="post__body">
+                    <span class="tag tag--sm">Transfer</span>
+                    <span class="post__time">1 dzień temu</span>
+                    <h3>Kapitan przedłużył kontrakt o dwa sezony</h3>
+                </div>
+            </article>
+
+            <article class="post" data-reveal style="--d:160ms">
+                <div class="post__media post__media--3"></div>
+                <div class="post__body">
+                    <span class="tag tag--sm">Klub</span>
+                    <span class="post__time">3 dni temu</span>
+                    <h3>Sztab szkoleniowy powiększony o analityka</h3>
+                </div>
+            </article>
+
+            <article class="post" data-reveal style="--d:240ms">
+                <div class="post__media post__media--4"></div>
+                <div class="post__body">
+                    <span class="tag tag--sm">Akademia</span>
+                    <span class="post__time">5 dni temu</span>
+                    <h3>Turniej młodzieżowy o Puchar Prezesa</h3>
+                </div>
+            </article>
+
+            <article class="post" data-reveal style="--d:320ms">
+                <div class="post__media post__media--5"></div>
+                <div class="post__body">
+                    <span class="tag tag--sm">Klub</span>
+                    <span class="post__time">8 dni temu</span>
+                    <h3>Nowe stroje meczowe zaprezentowane</h3>
+                </div>
+            </article>
+
+            <article class="post" data-reveal style="--d:400ms">
+                <div class="post__media post__media--6"></div>
+                <div class="post__body">
+                    <span class="tag tag--sm">Piłka nożna</span>
+                    <span class="post__time">11 dni temu</span>
+                    <h3>Podsumowanie okresu przygotowawczego</h3>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <!-- ===== ODLICZANIE ===== -->
+    <section class="countdown">
+        <div class="countdown__bg" data-parallax="0.2"></div>
+        <div class="wrap">
+            <div class="countdown__box" data-reveal>
+                <div class="countdown__teams">
+                    <img class="crest crest--md" src="png/JanoviaJanowiec.png" alt="Janovia">
+                    <span class="vs">vs</span>
+                    <span class="shield" data-letter="O"></span>
+                </div>
+
+                <div class="clock" id="clock" data-target="2026-08-15T18:00:00">
+                    <div class="clock__unit"><strong data-unit="d">00</strong><span>dni</span></div>
+                    <div class="clock__unit"><strong data-unit="h">00</strong><span>godz</span></div>
+                    <div class="clock__unit"><strong data-unit="m">00</strong><span>min</span></div>
+                    <div class="clock__unit"><strong data-unit="s">00</strong><span>sek</span></div>
+                </div>
+
+                <p class="countdown__meta">Orzeł — Janovia · 13. kolejka · sobota, 15 sierpnia, 18:00</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== NADCHODZĄCE MECZE ===== -->
+    <section class="section" id="mecze">
+        <div class="wrap">
+            <header class="head" data-reveal>
+                <h2>Nadchodzące <em>mecze</em></h2>
+                <div class="head__tools">
+                    <div class="railnav">
+                        <button class="railnav__btn" data-rail="fix" data-dir="-1" aria-label="Poprzednie">&larr;</button>
+                        <button class="railnav__btn" data-rail="fix" data-dir="1" aria-label="Następne">&rarr;</button>
+                    </div>
+                </div>
+            </header>
+        </div>
+
+        <div class="rail" data-rail-id="fix">
+            <article class="fixture" data-reveal style="--d:0ms">
+                <strong class="fixture__date">15.08</strong>
+                <span class="fixture__league">Klasa okręgowa · kolejka 13</span>
+                <div class="fixture__teams">
+                    <span class="shield" data-letter="O"></span>
+                    <span class="fixture__vs">vs</span>
+                    <img class="crest crest--sm" src="png/JanoviaJanowiec.png" alt="Janovia">
+                </div>
+                <div class="fixture__names"><span>Orzeł</span><span>Janovia</span></div>
+                <span class="fixture__time">18:00 · wyjazd</span>
+            </article>
+
+            <article class="fixture" data-reveal style="--d:80ms">
+                <strong class="fixture__date">22.08</strong>
+                <span class="fixture__league">Klasa okręgowa · kolejka 14</span>
+                <div class="fixture__teams">
+                    <img class="crest crest--sm" src="png/JanoviaJanowiec.png" alt="Janovia">
+                    <span class="fixture__vs">vs</span>
+                    <span class="shield" data-letter="S"></span>
+                </div>
+                <div class="fixture__names"><span>Janovia</span><span>Stal</span></div>
+                <span class="fixture__time">17:00 · u siebie</span>
+            </article>
+
+            <article class="fixture" data-reveal style="--d:160ms">
+                <strong class="fixture__date">29.08</strong>
+                <span class="fixture__league">Klasa okręgowa · kolejka 15</span>
+                <div class="fixture__teams">
+                    <span class="shield" data-letter="S"></span>
+                    <span class="fixture__vs">vs</span>
+                    <img class="crest crest--sm" src="png/JanoviaJanowiec.png" alt="Janovia">
+                </div>
+                <div class="fixture__names"><span>Sparta</span><span>Janovia</span></div>
+                <span class="fixture__time">16:00 · wyjazd</span>
+            </article>
+
+            <article class="fixture" data-reveal style="--d:240ms">
+                <strong class="fixture__date">05.09</strong>
+                <span class="fixture__league">Klasa okręgowa · kolejka 16</span>
+                <div class="fixture__teams">
+                    <img class="crest crest--sm" src="png/JanoviaJanowiec.png" alt="Janovia">
+                    <span class="fixture__vs">vs</span>
+                    <span class="shield" data-letter="P"></span>
+                </div>
+                <div class="fixture__names"><span>Janovia</span><span>Polonia</span></div>
+                <span class="fixture__time">17:00 · u siebie</span>
+            </article>
+        </div>
+    </section>
+
+    <!-- ===== TABELA ===== -->
+    <section class="section section--line" id="tabela">
+        <div class="wrap">
+            <header class="head" data-reveal>
+                <h2>Tabela</h2>
+                <a href="#" class="arrow-link arrow-link--sm">Pełna tabela</a>
+            </header>
+
+            <table class="table" data-reveal>
+                <thead>
+                    <tr><th>#</th><th>Drużyna</th><th>M</th><th>Bramki</th><th>Pkt</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>1</td><td>Orzeł</td><td>12</td><td>24:9</td><td>27</td></tr>
+                    <tr class="is-us"><td>2</td><td>Janovia</td><td>12</td><td>22:11</td><td>25</td></tr>
+                    <tr><td>3</td><td>Gwardia</td><td>12</td><td>18:12</td><td>21</td></tr>
+                    <tr><td>4</td><td>Stal</td><td>12</td><td>17:15</td><td>19</td></tr>
+                    <tr><td>5</td><td>Sparta</td><td>12</td><td>14:14</td><td>16</td></tr>
+                    <tr><td>6</td><td>Polonia</td><td>12</td><td>12:18</td><td>13</td></tr>
+                </tbody>
+            </table>
+
+            <p class="zrodlo" id="tabela-zrodlo" data-reveal>Dane ligowe z 90minut.pl</p>
+        </div>
+    </section>
+
+    <!-- ===== DRUŻYNA ===== -->
+    <section class="section" id="kadra">
+        <div class="wrap">
+            <header class="head" data-reveal>
+                <h2>Poznaj <em>drużynę</em></h2>
+                <div class="head__tools">
+                    <a href="#" class="arrow-link arrow-link--sm">Poznaj wszystkich</a>
+                    <div class="railnav">
+                        <button class="railnav__btn" data-rail="team" data-dir="-1" aria-label="Poprzednie">&larr;</button>
+                        <button class="railnav__btn" data-rail="team" data-dir="1" aria-label="Następne">&rarr;</button>
+                    </div>
+                </div>
+            </header>
+        </div>
+
+        <div class="rail" data-rail-id="team">
+            <article class="player" data-reveal style="--d:0ms">
+                <div class="player__photo player__photo--gk"></div>
+                <div class="player__label">
+                    <span class="player__no">1</span>
+                    <span class="player__name"><small>Adam</small><strong>Nowicki</strong></span>
+                </div>
+            </article>
+
+            <article class="player" data-reveal style="--d:80ms">
+                <div class="player__photo"></div>
+                <div class="player__label">
+                    <span class="player__no">4</span>
+                    <span class="player__name"><small>Michał</small><strong>Zawadzki</strong></span>
+                </div>
+            </article>
+
+            <article class="player player--featured" data-reveal style="--d:160ms">
+                <div class="player__photo"></div>
+                <div class="player__label">
+                    <span class="player__no">8</span>
+                    <span class="player__name"><small>Kamil</small><strong>Sobczak</strong></span>
+                </div>
+            </article>
+
+            <article class="player" data-reveal style="--d:240ms">
+                <div class="player__photo"></div>
+                <div class="player__label">
+                    <span class="player__no">11</span>
+                    <span class="player__name"><small>Piotr</small><strong>Górski</strong></span>
+                </div>
+            </article>
+
+            <article class="player" data-reveal style="--d:320ms">
+                <div class="player__photo"></div>
+                <div class="player__label">
+                    <span class="player__no">14</span>
+                    <span class="player__name"><small>Tomasz</small><strong>Wieczorek</strong></span>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <!-- ===== KLUB / LICZBY ===== -->
+    <section class="stats" id="klub">
+        <div class="wrap stats__grid">
+            <div class="stat" data-reveal style="--d:0ms">
+                <strong data-count="1998" data-plain>0</strong>
+                <span>Rok założenia</span>
+            </div>
+            <div class="stat" data-reveal style="--d:100ms">
+                <strong data-count="2500">0</strong>
+                <span>Miejsc na stadionie</span>
+            </div>
+            <div class="stat" data-reveal style="--d:200ms">
+                <strong data-count="180">0</strong>
+                <span>Zawodników w akademii</span>
+            </div>
+            <div class="stat" data-reveal style="--d:300ms">
+                <strong data-count="12">0</strong>
+                <span>Drużyn młodzieżowych</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== STOPKA ===== -->
+    <footer class="footer" id="kontakt">
+        <div class="wrap footer__inner">
+            <div class="footer__brand" data-reveal>
+                <img class="crest crest--md" src="png/JanoviaJanowiec.png" alt="Herb klubu Janovia Janowiec">
+                <p>Klub Sportowy Janovia Janowiec<br>ul. Sportowa 1, 24-123 Janowiec</p>
+            </div>
+
+            <div class="footer__col" data-reveal style="--d:80ms">
+                <h4>Klub</h4>
+                <a href="#">Historia</a>
+                <a href="#">Władze klubu</a>
+                <a href="#">Stadion</a>
+            </div>
+
+            <div class="footer__col" data-reveal style="--d:160ms">
+                <h4>Drużyna</h4>
+                <a href="#kadra">Kadra</a>
+                <a href="#">Sztab szkoleniowy</a>
+                <a href="#mecze">Terminarz</a>
+            </div>
+
+            <div class="footer__col" data-reveal style="--d:240ms">
+                <h4>Kibic</h4>
+                <a href="#">Regulamin stadionu</a>
+                <a href="#">Akademia</a>
+                <a href="#">Wolontariat</a>
+            </div>
+        </div>
+
+        <div class="footer__bottom">
+            <div class="wrap">
+                <p>&copy; 2026 KS Janovia Janowiec</p>
+                <p>Wszelkie prawa zastrzeżone</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

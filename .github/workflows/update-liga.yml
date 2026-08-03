@@ -1,0 +1,41 @@
+name: Aktualizacja tabeli i terminarza
+
+on:
+  schedule:
+    # 04:00 UTC = 06:00 czasu polskiego latem, 05:00 zimą.
+    # GitHub liczy cron wyłącznie w UTC — nie zna czasu letniego.
+    - cron: '0 4 * * *'
+  workflow_dispatch:        # pozwala uruchomić ręcznie z zakładki Actions
+
+permissions:
+  contents: write           # workflow zapisuje odświeżony data/liga.json
+
+jobs:
+  aktualizuj:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Pobierz repozytorium
+        uses: actions/checkout@v4
+
+      - name: Ustaw Pythona
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Pobierz dane z 90minut.pl
+        run: python update_liga.py
+
+      - name: Zapisz zmiany, jeśli coś się zmieniło
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          if [ -z "$(git status --porcelain data/liga.json)" ]; then
+            echo "Bez zmian w tabeli — nic nie commituję."
+            exit 0
+          fi
+
+          git add data/liga.json
+          git commit -m "Aktualizacja tabeli i terminarza (90minut.pl)"
+          git push
