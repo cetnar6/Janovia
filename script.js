@@ -186,6 +186,23 @@
     var MIESIACE_SKROT = ['sty', 'lut', 'mar', 'kwi', 'maj', 'cze',
                           'lip', 'sie', 'wrz', 'paź', 'lis', 'gru'];
 
+    /* Nazwa drużyny u 90minut -> plik herbu w folderze png/.
+       Klub spoza listy (np. po zmianie ligi) dostanie zastępczą tarczę z literą. */
+    var HERBY = {
+        'Apollo Dulcza Mała':       'ApolloDM.png',
+        'Atut II Podborze':         'AtutPodborze.png',
+        'Hetman Dąbrówka Wisłocka': 'HetmanDW.png',
+        'Jamnica Dulcza Wielka':    'Jamnica_DW.png',
+        'Janovia Janowiec':         'JanoviaJanowiec.png',
+        'KS SMP Tuszyma':           'KSTuszyma.png',
+        'KS Zgórsko':               'KS_Zgorsko.png',
+        'LKS Wierzchowiny':         'LKSWierzchowiny.png',
+        'Madras Goleszów':          'MadrasGoleszow.png',
+        'Piast II Wadowice Górne':  'PiastWG.png',
+        'Sokół Pień':               'SokolPien.png',
+        'Sprint Żarówka':           'Sprint_Zarowka.png'
+    };
+
     function skrot(nazwa) {
         return nazwa.replace(/\s*\b(I{1,3}|II)\b\s*/g, ' ').trim();
     }
@@ -194,11 +211,23 @@
         return nazwa.trim().charAt(0).toUpperCase();
     }
 
-    function herb(nazwa) {
-        if (nazwa === NASZ_KLUB) {
-            return '<img class="crest crest--sm" src="png/JanoviaJanowiec.png" alt="Janovia">';
+    function esc(s) {
+        return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    /* rozmiar: 'xs' (tabela), 'sm' (karty meczów), 'md' (odliczanie) */
+    function herb(nazwa, rozmiar) {
+        var plik = HERBY[nazwa];
+
+        if (!plik) {
+            return '<span class="shield shield--' + (rozmiar || 'sm') +
+                   '" data-letter="' + esc(litera(nazwa)) + '"></span>';
         }
-        return '<span class="shield" data-letter="' + litera(nazwa) + '"></span>';
+
+        return '<span class="crest-plate crest-plate--' + (rozmiar || 'sm') + '">' +
+               '<img src="png/' + plik + '" alt="' + esc(nazwa) + '" loading="lazy">' +
+               '</span>';
     }
 
     function rysujTabele(dane) {
@@ -209,7 +238,8 @@
             var klasa = r.klub === NASZ_KLUB ? ' class="is-us"' : '';
             return '<tr' + klasa + '>' +
                    '<td>' + r.poz + '</td>' +
-                   '<td>' + r.klub + '</td>' +
+                   '<td class="table__crest">' + herb(r.klub, 'xs') + '</td>' +
+                   '<td>' + esc(r.klub) + '</td>' +
                    '<td>' + r.m + '</td>' +
                    '<td>' + r.bramki + '</td>' +
                    '<td>' + r.pkt + '</td>' +
@@ -244,13 +274,13 @@
                    '<strong class="fixture__date">' + dzien + '</strong>' +
                    '<span class="fixture__league">Klasa B · kolejka ' + m.kolejka + '</span>' +
                    '<div class="fixture__teams">' +
-                       herb(m.gospodarz) +
+                       herb(m.gospodarz, 'sm') +
                        '<span class="fixture__vs">vs</span>' +
-                       herb(m.gosc) +
+                       herb(m.gosc, 'sm') +
                    '</div>' +
                    '<div class="fixture__names">' +
-                       '<span>' + skrot(m.gospodarz) + '</span>' +
-                       '<span>' + skrot(m.gosc) + '</span>' +
+                       '<span>' + esc(skrot(m.gospodarz)) + '</span>' +
+                       '<span>' + esc(skrot(m.gosc)) + '</span>' +
                    '</div>' +
                    '<span class="fixture__time">' + kiedy + ' · ' + gdzie + '</span>' +
                    '</article>';
@@ -268,9 +298,9 @@
         var teams = document.querySelector('.countdown__teams');
         if (teams) {
             teams.innerHTML =
-                herb(nastepny.gospodarz).replace('crest--sm', 'crest--md') +
+                herb(nastepny.gospodarz, 'md') +
                 '<span class="vs">vs</span>' +
-                herb(nastepny.gosc).replace('crest--sm', 'crest--md');
+                herb(nastepny.gosc, 'md');
         }
 
         var meta = document.querySelector('.countdown__meta');
