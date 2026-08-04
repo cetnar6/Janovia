@@ -283,6 +283,39 @@
         return '<span class="forma" role="img" aria-label="' + esc(etykieta) + '">' + pola + '</span>';
     }
 
+    /* Nazwy drużyn zajmują od jednej do trzech linii, przez co kwadraciki
+       formy wypadałyby na różnych wysokościach. Mierzymy najwyższą nazwę
+       w całym rzędzie kart i wyrównujemy do niej pozostałe. */
+    function wyrownajNazwy(rail) {
+        var nazwy = rail.querySelectorAll('.fixture__team');
+        var i;
+
+        if (!nazwy.length) { return; }
+
+        for (i = 0; i < nazwy.length; i++) {
+            nazwy[i].style.minHeight = '';
+        }
+
+        var najwyzsza = 0;
+        for (i = 0; i < nazwy.length; i++) {
+            najwyzsza = Math.max(najwyzsza, nazwy[i].getBoundingClientRect().height);
+        }
+
+        for (i = 0; i < nazwy.length; i++) {
+            nazwy[i].style.minHeight = Math.ceil(najwyzsza) + 'px';
+        }
+    }
+
+    var przeliczanie;
+
+    window.addEventListener('resize', function () {
+        window.clearTimeout(przeliczanie);
+        przeliczanie = window.setTimeout(function () {
+            var rail = document.querySelector('[data-rail-id="fix"]');
+            if (rail) { wyrownajNazwy(rail); }
+        }, 150);
+    });
+
     function rysujMecze(dane) {
         var rail = document.querySelector('[data-rail-id="fix"]');
         if (!rail || !dane.nadchodzace || !dane.nadchodzace.length) { return; }
@@ -318,6 +351,7 @@
         }).join('');
 
         obserwuj(rail.querySelectorAll('[data-reveal]'));
+        wyrownajNazwy(rail);
     }
 
     function rysujOdliczanie(dane) {
