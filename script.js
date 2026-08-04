@@ -554,25 +554,95 @@
                 (k.rozegrana ? '' : ' · jeszcze nierozegrana');
         }
 
-        lista.innerHTML = k.mecze.map(function (m) {
-            var nasz = m.gospodarz === NASZ_KLUB || m.gosc === NASZ_KLUB;
+        lista.innerHTML = k.mecze.map(wierszMeczu).join('');
+    }
 
-            var srodek = m.wynik
-                ? '<span class="wynik__rezultat">' + esc(m.wynik.replace('-', ' : ')) + '</span>'
-                : '<span class="wynik__rezultat wynik__rezultat--brak">–</span>';
+    /* ---------- pełny terminarz (podstrona terminarz.html) ---------- */
 
-            return '<li class="wynik' + (nasz ? ' is-us' : '') + '">' +
-                       '<span class="wynik__druzyna wynik__druzyna--gosp">' +
-                           '<span>' + esc(skrot(m.gospodarz)) + '</span>' +
-                           herb(m.gospodarz, 'xs') +
-                       '</span>' +
-                       srodek +
-                       '<span class="wynik__druzyna">' +
-                           herb(m.gosc, 'xs') +
-                           '<span>' + esc(skrot(m.gosc)) + '</span>' +
-                       '</span>' +
-                   '</li>';
-        }).join('');
+    function wierszMeczu(m) {
+        var nasz = m.gospodarz === NASZ_KLUB || m.gosc === NASZ_KLUB;
+
+        var srodek = m.wynik
+            ? '<span class="wynik__rezultat">' + esc(m.wynik.replace('-', ' : ')) + '</span>'
+            : '<span class="wynik__rezultat wynik__rezultat--brak">–</span>';
+
+        return '<li class="wynik' + (nasz ? ' is-us' : '') + '">' +
+                   '<span class="wynik__druzyna wynik__druzyna--gosp">' +
+                       '<span>' + esc(skrot(m.gospodarz)) + '</span>' +
+                       herb(m.gospodarz, 'xs') +
+                   '</span>' +
+                   srodek +
+                   '<span class="wynik__druzyna">' +
+                       herb(m.gosc, 'xs') +
+                       '<span>' + esc(skrot(m.gosc)) + '</span>' +
+                   '</span>' +
+               '</li>';
+    }
+
+    function rysujTerminarz(dane) {
+        var box = document.getElementById('terminarz');
+        var mecze = dane && dane.wszystkie_mecze;
+
+        if (!box) { return; }
+
+        if (!mecze || !mecze.length) {
+            box.innerHTML = '<p class="wyniki__pusto">Terminarz jest chwilowo niedostępny.</p>';
+            return;
+        }
+
+        var opis = document.getElementById('terminarz-opis');
+        if (opis && dane.liga) {
+            opis.textContent = dane.liga;
+        }
+
+        // grupujemy mecze po numerze kolejki, zachowując porządek rosnący
+        var numery = [];
+        var wgKolejki = {};
+
+        mecze.forEach(function (m) {
+            if (!wgKolejki[m.kolejka]) {
+                wgKolejki[m.kolejka] = { opis: m.kolejka_opis, mecze: [] };
+                numery.push(m.kolejka);
+            }
+            wgKolejki[m.kolejka].mecze.push(m);
+        });
+
+        numery.sort(function (a, b) { return a - b; });
+
+        // pierwsza połowa numerów to runda jesienna, reszta wiosenna
+        var polowa = Math.ceil(numery.length / 2);
+
+        function blokKolejki(nr, i) {
+            var k = wgKolejki[nr];
+            var rozegrana = k.mecze.some(function (m) { return m.wynik; });
+
+            return '<article class="kolejka" data-reveal style="--d:' + Math.min(i * 40, 320) + 'ms">' +
+                       '<header class="kolejka__head">' +
+                           '<h3>Kolejka ' + nr + '</h3>' +
+                           '<span>' + esc(k.opis || 'termin nieustalony') +
+                               (rozegrana ? '' : ' · nierozegrana') +
+                           '</span>' +
+                       '</header>' +
+                       '<ul class="wyniki">' + k.mecze.map(wierszMeczu).join('') + '</ul>' +
+                   '</article>';
+        }
+
+        function runda(tytul, lista, przesuniecie) {
+            if (!lista.length) { return ''; }
+
+            return '<section class="runda">' +
+                       '<h2 class="runda__tytul">' + tytul + '</h2>' +
+                       lista.map(function (nr, i) {
+                           return blokKolejki(nr, i + przesuniecie);
+                       }).join('') +
+                   '</section>';
+        }
+
+        box.innerHTML =
+            runda('Runda <em>jesienna</em>', numery.slice(0, polowa), 0) +
+            runda('Runda <em>wiosenna</em>', numery.slice(polowa), 0);
+
+        obserwuj(box.querySelectorAll('[data-reveal]'));
     }
 
     /* ---------- kadra z panelu administratora ---------- */
@@ -630,6 +700,7 @@
             if (!dane) { return; }
             rysujTabele(dane);
             rysujKolejke(dane);
+            rysujTerminarz(dane);
             rysujMecze(dane);
             rysujOdliczanie(dane);
         });

@@ -101,7 +101,12 @@ def parsuj_terminarz(html, rok_jesien, rok_wiosna):
     mecze = []
     kolejka = None
 
-    naglowek = re.compile(r"<b><u>\s*Kolejka\s*(\d+)\s*-\s*([^<]*)</u></b>", re.S)
+    # Data bywa pominięta — kolejki rundy wiosennej 90minut podaje jako samo
+    # „Kolejka 12”, dopóki związek nie ustali terminów. Bez opcjonalnej daty
+    # nagłówek się nie dopasowywał i mecze lądowały w poprzedniej kolejce.
+    naglowek = re.compile(
+        r"<b><u>\s*Kolejka\s*(\d+)\s*(?:-\s*([^<]*?))?\s*</u></b>", re.S
+    )
     wiersz = re.compile(
         r'<td nowrap valign="top" width="180">(.*?)</td>\s*'
         r'<td nowrap valign="top" align="center" width="50">(.*?)</td>\s*'
@@ -114,7 +119,7 @@ def parsuj_terminarz(html, rok_jesien, rok_wiosna):
 
     for i, (start, m) in enumerate(znaczniki):
         kolejka = int(m.group(1))
-        etykieta = czysc(m.group(2))
+        etykieta = czysc(m.group(2) or "")   # pusta, gdy termin nieustalony
         koniec = znaczniki[i + 1][0] if i + 1 < len(znaczniki) else len(html)
 
         for w in wiersz.finditer(html, start, koniec):

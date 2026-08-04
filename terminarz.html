@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminarz — Janovia Janowiec</title>
+
+    <link rel="icon" type="image/png" sizes="32x32" href="png/favicon-32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="png/favicon-180.png">
+    <meta name="theme-color" content="#08090C">
+    <link rel="stylesheet" href="style.css?v=9">
+</head>
+<body>
+
+    <div class="progress" id="progress"></div>
+
+    <!-- ===== NAGŁÓWEK ===== -->
+    <header class="header is-stuck" id="header">
+        <div class="header__inner">
+
+            <div class="header__side">
+                <input type="checkbox" id="nav-toggle" class="nav-toggle">
+                <label for="nav-toggle" class="burger" aria-label="Menu"><span></span></label>
+
+                <nav class="nav">
+                    <a href="index.html#aktualnosci">Aktualności</a>
+                    <a href="index.html#mecze">Mecze</a>
+                    <a href="index.html#kadra">Drużyna</a>
+                    <a href="index.html#klub">Klub</a>
+                </nav>
+            </div>
+
+            <a class="crest-link" href="index.html">
+                <img class="crest" src="png/JanoviaJanowiec.png" alt="Herb klubu Janovia Janowiec">
+            </a>
+
+            <div class="header__side header__side--end">
+                <a href="index.html#tabela">Tabela</a>
+                <a href="index.html#kontakt">Kontakt</a>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- ===== TYTUŁ ===== -->
+    <section class="podstrona">
+        <div class="wrap">
+            <a class="powrot" href="index.html#ostatnia-kolejka">&larr; Wróć na stronę główną</a>
+            <h1>Terminarz <em>rozgrywek</em></h1>
+            <p class="podstrona__opis" id="terminarz-opis">Wszystkie kolejki sezonu.</p>
+        </div>
+    </section>
+
+    <!-- ===== KOLEJKI ===== -->
+    <section class="section">
+        <div class="wrap" id="terminarz">
+            <p class="wyniki__pusto">Wczytuję terminarz…</p>
+        </div>
+    </section>
+
+    <!-- ===== STOPKA ===== -->
+    <footer class="footer" id="kontakt">
+        <div class="wrap footer__inner">
+            <div class="footer__brand" data-reveal>
+                <img class="crest crest--md" src="png/JanoviaJanowiec.png" alt="Herb klubu Janovia Janowiec">
+                <p>Klub Sportowy Janovia Janowiec<br>ul. Sportowa 1, 24-123 Janowiec</p>
+            </div>
+
+            <div class="footer__col" data-reveal style="--d:80ms">
+                <h4>Klub</h4>
+                <a href="index.html">Strona główna</a>
+                <a href="index.html#tabela">Tabela</a>
+                <a href="index.html#mecze">Nadchodzące mecze</a>
+            </div>
+
+            <div class="footer__col" data-reveal style="--d:160ms">
+                <h4>Drużyna</h4>
+                <a href="index.html#kadra">Kadra</a>
+                <a href="index.html#klub">O klubie</a>
+            </div>
+
+            <div class="footer__col" data-reveal style="--d:240ms">
+                <h4>Kibic</h4>
+                <a href="#">Regulamin stadionu</a>
+                <a href="#">Akademia</a>
+            </div>
+        </div>
+
+        <div class="footer__bottom">
+            <div class="wrap">
+                <p>&copy; 2026 KS Janovia Janowiec</p>
+                <p>Wszelkie prawa zastrzeżone</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js?v=9"></script>
+</body>
+</html>

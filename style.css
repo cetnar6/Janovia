@@ -1279,6 +1279,107 @@ a {
     }
 }
 
+/* przycisk pod wynikami ostatniej kolejki */
+.pod-wynikami {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.przycisk {
+    display: inline-block;
+    padding: 0.95rem 2.25rem;
+    border: 1px solid var(--line);
+    background-color: var(--surface);
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: background-color 0.3s, border-color 0.3s, transform 0.3s var(--ease);
+}
+
+.przycisk:hover {
+    background-color: var(--blue);
+    border-color: var(--blue);
+    transform: translateY(-2px);
+}
+
+/* ---------- PODSTRONA (terminarz) ---------- */
+
+.podstrona {
+    padding: calc(96px + clamp(2.5rem, 8vh, 5rem)) 0 clamp(1.5rem, 4vh, 3rem);
+    background:
+        radial-gradient(70% 120% at 20% 0%, rgba(0, 125, 204, 0.28), transparent 65%),
+        var(--bg-2);
+    border-bottom: 1px solid var(--line);
+}
+
+.powrot {
+    display: inline-block;
+    margin-bottom: 1.25rem;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    transition: color 0.3s;
+}
+
+.powrot:hover { color: var(--gold); }
+
+.podstrona h1 {
+    font-size: clamp(2rem, 6vw, 3.6rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+}
+
+.podstrona h1 em { font-style: normal; color: var(--gold); }
+
+.podstrona__opis {
+    margin-top: 0.9rem;
+    font-size: 0.9rem;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+}
+
+.runda + .runda { margin-top: clamp(3rem, 8vh, 5rem); }
+
+.runda__tytul {
+    margin-bottom: 1.75rem;
+    font-size: clamp(1.4rem, 3.5vw, 2.1rem);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+}
+
+.runda__tytul em { font-style: normal; color: var(--gold); }
+
+.kolejka { margin-bottom: 2.5rem; }
+
+.kolejka__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+}
+
+.kolejka__head h3 {
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--blue-light);
+}
+
+.kolejka__head span {
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+}
+
 /* ---------- LICZBY ---------- */
 
 .stats {
