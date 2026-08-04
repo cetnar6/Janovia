@@ -409,6 +409,88 @@
         return d.getDate() + ' ' + MIESIACE_SKROT[d.getMonth()] + ' ' + d.getFullYear();
     }
 
+    /* ---------- okno z pełną treścią posta ---------- */
+
+    var POSTY = [];
+
+    var MIESIACE = ['stycznia', 'lutego', 'marca', 'kwietnia', 'maja', 'czerwca',
+                    'lipca', 'sierpnia', 'września', 'października', 'listopada', 'grudnia'];
+
+    var modal = document.getElementById('modal');
+    var ostatnioKlikniety = null;
+
+    function pelnaData(iso) {
+        var d = new Date(iso);
+        return d.getDate() + ' ' + MIESIACE[d.getMonth()] + ' ' + d.getFullYear() +
+               ', ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+    }
+
+    function otworzPost(indeks) {
+        var p = POSTY[indeks];
+        if (!modal || !p) { return; }
+
+        var okno = modal.querySelector('.modal__okno');
+        var foto = document.getElementById('modal-foto');
+
+        okno.classList.toggle('bez-foto', !p.zdjecie);
+        foto.style.backgroundImage = p.zdjecie ? 'url("' + encodeURI(p.zdjecie) + '")' : '';
+
+        document.getElementById('modal-tag').textContent =
+            p.typ === 'video' ? 'Wideo' : (p.typ === 'album' ? 'Galeria' : 'Facebook');
+        document.getElementById('modal-data').textContent = pelnaData(p.data);
+        document.getElementById('modal-tytul').textContent = p.naglowek;
+        document.getElementById('modal-tekst').textContent = p.tekst || '(post bez opisu)';
+
+        var link = document.getElementById('modal-link');
+        link.href = p.link || '#';
+        link.hidden = !p.link;
+
+        modal.hidden = false;
+        document.body.style.overflow = 'hidden';
+        modal.querySelector('.modal__zamknij').focus();
+    }
+
+    function zamknijPost() {
+        if (!modal || modal.hidden) { return; }
+
+        modal.hidden = true;
+        document.body.style.overflow = '';
+
+        if (ostatnioKlikniety) {
+            ostatnioKlikniety.focus();
+            ostatnioKlikniety = null;
+        }
+    }
+
+    if (modal) {
+        modal.addEventListener('click', function (e) {
+            if (e.target.hasAttribute('data-zamknij')) { zamknijPost(); }
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') { zamknijPost(); }
+        });
+
+        // delegacja: kafelki powstają dopiero po pobraniu danych
+        document.addEventListener('click', function (e) {
+            var kafelek = e.target.closest ? e.target.closest('.post[data-post]') : null;
+            if (!kafelek) { return; }
+            ostatnioKlikniety = kafelek;
+            otworzPost(parseInt(kafelek.getAttribute('data-post'), 10));
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key !== 'Enter' && e.key !== ' ') { return; }
+
+            var kafelek = e.target.closest ? e.target.closest('.post[data-post]') : null;
+            if (!kafelek) { return; }
+
+            e.preventDefault();
+            ostatnioKlikniety = kafelek;
+            otworzPost(parseInt(kafelek.getAttribute('data-post'), 10));
+        });
+    }
+
     function rysujPosty(dane) {
         var rail = document.querySelector('[data-rail-id="news"]');
         if (!rail || !dane.posty || !dane.posty.length) { return; }
@@ -422,7 +504,8 @@
                          : p.typ === 'album' ? 'Galeria'
                          : 'Facebook';
 
-            return '<a class="post" href="' + esc(p.link) + '" target="_blank" rel="noopener"' +
+            return '<article class="post" role="button" tabindex="0"' +
+                   ' data-post="' + i + '" aria-haspopup="dialog"' +
                    ' data-reveal style="--d:' + (i * 80) + 'ms">' +
                    '<div class="post__media' + (p.zdjecie ? ' post__media--foto' : ' post__media--' + ((i % 6) + 1)) + '"' + tlo + '></div>' +
                    '<div class="post__body">' +
@@ -430,9 +513,10 @@
                        '<span class="post__time">' + odKiedy(p.data) + '</span>' +
                        '<h3>' + esc(p.naglowek) + '</h3>' +
                    '</div>' +
-                   '</a>';
+                   '</article>';
         }).join('');
 
+        POSTY = dane.posty;
         obserwuj(rail.querySelectorAll('[data-reveal]'));
 
         var link = document.querySelector('#aktualnosci .arrow-link');

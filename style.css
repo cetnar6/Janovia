@@ -883,6 +883,148 @@ a {
     text-transform: uppercase;
 }
 
+/* ---------- OKNO Z PEŁNĄ TREŚCIĄ POSTA ---------- */
+
+.modal[hidden] {
+    display: none;
+}
+
+.modal {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(1rem, 4vw, 3rem);
+}
+
+.modal__tlo {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(4, 5, 7, 0.82);
+    backdrop-filter: blur(6px);
+    animation: modalTlo 0.35s var(--ease);
+}
+
+.modal__okno {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    width: min(980px, 100%);
+    max-height: min(86vh, 760px);
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+    box-shadow: 0 30px 90px rgba(0, 0, 0, 0.6);
+    overflow: hidden;
+    animation: modalOkno 0.4s var(--ease);
+}
+
+@keyframes modalTlo {
+    from { opacity: 0; }
+}
+
+@keyframes modalOkno {
+    from { opacity: 0; transform: translateY(24px) scale(0.98); }
+}
+
+.modal__zamknij {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    z-index: 2;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    background-color: rgba(8, 9, 12, 0.75);
+    color: #FFFFFF;
+    font-size: 1.6rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s var(--ease);
+}
+
+.modal__zamknij:hover {
+    background-color: var(--blue);
+    transform: rotate(90deg);
+}
+
+/* contain, nie cover — grafiki z postów to najczęściej plakaty meczowe
+   z datą i godziną przy krawędziach, więc nic nie może zostać obcięte */
+.modal__foto {
+    background-color: var(--bg-2);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 260px;
+}
+
+/* post bez zdjęcia — okno zwęża się do samej treści */
+.modal__okno.bez-foto {
+    grid-template-columns: minmax(0, 1fr);
+    width: min(620px, 100%);
+}
+
+.modal__okno.bez-foto .modal__foto {
+    display: none;
+}
+
+.modal__tresc {
+    display: flex;
+    flex-direction: column;
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    overflow-y: auto;
+}
+
+.modal__meta {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    margin-bottom: 1rem;
+}
+
+.modal__data {
+    font-size: 0.8rem;
+    color: var(--muted);
+}
+
+.modal__tytul {
+    font-size: clamp(1.15rem, 2.5vw, 1.5rem);
+    font-weight: 800;
+    line-height: 1.25;
+    margin-bottom: 1.1rem;
+}
+
+.modal__tekst {
+    flex: 1;
+    margin-bottom: 1.75rem;
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: rgba(255, 255, 255, 0.82);
+    white-space: pre-wrap;   /* zachowuje akapity i łamania wierszy z Facebooka */
+    overflow-wrap: anywhere;
+}
+
+/* kafelek posta obsługiwany klawiaturą */
+.post:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 4px;
+}
+
+@media (max-width: 780px) {
+    .modal__okno {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: auto minmax(0, 1fr);
+    }
+
+    .modal__foto {
+        min-height: 200px;
+        max-height: 34vh;
+    }
+}
+
 /* ---------- ODLICZANIE ---------- */
 
 .countdown {

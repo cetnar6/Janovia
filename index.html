@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Janovia — oficjalna strona klubu</title>
     <!-- ?v= wymusza pobranie nowej wersji po zmianach; podbij numer przy wdrożeniu -->
-    <link rel="stylesheet" href="style.css?v=3">
+    <link rel="stylesheet" href="style.css?v=4">
 </head>
 <body>
 
@@ -410,6 +410,27 @@
         </div>
     </footer>
 
-    <script src="script.js?v=3"></script>
+    <!-- ===== OKNO Z PEŁNĄ TREŚCIĄ POSTA ===== -->
+    <div class="modal" id="modal" hidden>
+        <div class="modal__tlo" data-zamknij></div>
+
+        <div class="modal__okno" role="dialog" aria-modal="true" aria-labelledby="modal-tytul">
+            <button class="modal__zamknij" type="button" data-zamknij aria-label="Zamknij okno">&times;</button>
+
+            <div class="modal__foto" id="modal-foto"></div>
+
+            <div class="modal__tresc">
+                <div class="modal__meta">
+                    <span class="tag tag--sm" id="modal-tag">Facebook</span>
+                    <span class="modal__data" id="modal-data"></span>
+                </div>
+                <h3 class="modal__tytul" id="modal-tytul"></h3>
+                <p class="modal__tekst" id="modal-tekst"></p>
+                <a class="arrow-link arrow-link--sm" id="modal-link" href="#" target="_blank" rel="noopener">Zobacz na Facebooku</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js?v=4"></script>
 </body>
 </html>
