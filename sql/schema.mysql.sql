@@ -1,0 +1,55 @@
+-- Schemat bazy dla hostingu (MySQL / MariaDB).
+-- Odpowiednik lokalny: sql/schema.sqlite.sql
+--
+-- Import w phpMyAdmin albo:
+--     mysql -u uzytkownik -p nazwa_bazy < sql/schema.mysql.sql
+
+SET NAMES utf8mb4;
+
+-- ---------- ZAWODNICY ----------
+
+CREATE TABLE IF NOT EXISTS zawodnicy (
+    id        INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    imie      VARCHAR(50)  NOT NULL,
+    nazwisko  VARCHAR(60)  NOT NULL,
+    pozycja   ENUM('bramkarz','obrońca','pomocnik','napastnik') NOT NULL,
+    numer     TINYINT UNSIGNED NULL,
+    -- sama nazwa pliku z katalogu uploads/zawodnicy, nie zawartość obrazu
+    zdjecie   VARCHAR(120) NULL,
+    aktywny   TINYINT(1)   NOT NULL DEFAULT 1,
+    utworzono TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX zawodnicy_sort (aktywny, numer)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_polish_ci;
+
+-- MySQL nie zna indeksów częściowych (WHERE aktywny = 1), więc unikalność
+-- numeru wśród aktywnych pilnuje kolumna wyliczana: dla zawodnika nieaktywnego
+-- przyjmuje NULL, a NULL-e nie kolidują ze sobą w indeksie UNIQUE.
+ALTER TABLE zawodnicy
+    ADD COLUMN numer_aktywny TINYINT UNSIGNED
+        GENERATED ALWAYS AS (IF(aktywny = 1, numer, NULL)) VIRTUAL,
+    ADD UNIQUE KEY zawodnicy_numer_aktywny (numer_aktywny);
+
+-- ---------- POSTY (aktualności spoza Facebooka) ----------
+
+CREATE TABLE IF NOT EXISTS posty (
+    id           INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    tytul        VARCHAR(160) NOT NULL,
+    tresc        TEXT         NOT NULL,
+    etykieta     VARCHAR(30)  NOT NULL DEFAULT 'Klub',
+    zdjecie      VARCHAR(120) NULL,
+    opublikowano DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    widoczny     TINYINT(1)   NOT NULL DEFAULT 1,
+    utworzono    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX posty_sort (widoczny, opublikowano)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_polish_ci;
+
+-- ---------- ADMINISTRATORZY ----------
+
+CREATE TABLE IF NOT EXISTS administratorzy (
+    id                 INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    login              VARCHAR(40)  NOT NULL UNIQUE,
+    -- wynik password_hash(), nigdy hasło jawnie
+    hash_hasla         VARCHAR(255) NOT NULL,
+    utworzono          TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ostatnie_logowanie DATETIME     NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_polish_ci;

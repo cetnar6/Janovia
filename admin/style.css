@@ -1,0 +1,319 @@
+/* =========================================
+   PANEL ADMINISTRATORA — styl spójny ze stroną klubu
+   ========================================= */
+
+:root {
+    --blue: #007DCC;
+    --blue-light: #2FA6F0;
+    --gold: #FFB900;
+    --bg: #08090C;
+    --bg-2: #0E1015;
+    --surface: #14171E;
+    --line: rgba(255, 255, 255, 0.10);
+    --text: #FFFFFF;
+    --muted: #8D97A5;
+    --czerwony: #CE3F3D;
+    --zielony: #2E9E5B;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+    line-height: 1.55;
+    color: var(--text);
+    background-color: var(--bg);
+}
+
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; display: block; }
+
+/* ---------- pasek górny ---------- */
+
+.pasek {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    padding: 0.9rem clamp(1rem, 4vw, 2.5rem);
+    background-color: var(--bg-2);
+    border-bottom: 1px solid var(--line);
+}
+
+.pasek__logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+.pasek__logo img { height: 34px; width: auto; }
+
+.pasek__nav {
+    display: flex;
+    gap: 1.5rem;
+    margin-right: auto;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.pasek__nav a { padding: 0.3rem 0; border-bottom: 2px solid transparent; }
+.pasek__nav a:hover { border-bottom-color: var(--gold); }
+
+.pasek__wyloguj {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+}
+
+.pasek__wyloguj button {
+    padding: 0.35rem 0.9rem;
+    border: 1px solid var(--line);
+    background: none;
+    color: var(--text);
+    font: inherit;
+    font-size: 0.78rem;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.pasek__wyloguj button:hover { border-color: var(--czerwony); color: var(--czerwony); }
+
+/* ---------- układ ---------- */
+
+.tresc {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: clamp(1.5rem, 4vw, 3rem) clamp(1rem, 4vw, 2.5rem) 4rem;
+}
+
+h1 {
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+}
+
+h2 { font-size: 1.15rem; margin-bottom: 0.6rem; }
+
+.naglowek-sekcji {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.75rem;
+}
+
+.drobne { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.25rem; }
+.pusto {
+    padding: 3rem 1rem;
+    text-align: center;
+    color: var(--muted);
+    border: 1px dashed var(--line);
+}
+
+/* ---------- komunikaty ---------- */
+
+.komunikat {
+    padding: 0.85rem 1.1rem;
+    margin-bottom: 1.25rem;
+    border-left: 4px solid var(--zielony);
+    background-color: rgba(46, 158, 91, 0.12);
+    font-size: 0.9rem;
+}
+
+.komunikat--blad {
+    border-left-color: var(--czerwony);
+    background-color: rgba(206, 63, 61, 0.14);
+}
+
+/* ---------- przyciski ---------- */
+
+.btn {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    background-color: var(--blue);
+    color: #FFFFFF;
+    font: inherit;
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.25s, transform 0.25s;
+}
+
+.btn:hover { background-color: var(--blue-light); transform: translateY(-1px); }
+.btn--maly { padding: 0.45rem 0.9rem; font-size: 0.7rem; }
+.btn--pusty { background: none; border: 1px solid var(--line); }
+.btn--pusty:hover { background: none; border-color: var(--gold); color: var(--gold); }
+.btn--kasuj { background-color: transparent; border: 1px solid var(--czerwony); color: var(--czerwony); }
+.btn--kasuj:hover { background-color: var(--czerwony); color: #FFFFFF; }
+
+/* ---------- kafle pulpitu ---------- */
+
+.kafle {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.25rem;
+    margin: 1.75rem 0 2.5rem;
+}
+
+.kafel {
+    padding: 1.75rem;
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+    transition: border-color 0.25s, transform 0.25s;
+}
+
+.kafel:hover { border-color: var(--blue); transform: translateY(-3px); }
+.kafel strong { display: block; font-size: 2.6rem; font-weight: 800; color: var(--gold); line-height: 1; }
+.kafel span { font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+
+/* ---------- karta / formularz ---------- */
+
+.karta {
+    padding: clamp(1.25rem, 3vw, 2rem);
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+}
+
+.formularz { display: flex; flex-direction: column; gap: 1.5rem; }
+
+.pola {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.25rem;
+}
+
+label { display: block; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+
+input[type="text"],
+input[type="password"],
+input[type="number"],
+input[type="datetime-local"],
+select,
+textarea {
+    width: 100%;
+    margin-top: 0.45rem;
+    padding: 0.7rem 0.85rem;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background-color: var(--bg-2);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.95rem;
+    text-transform: none;
+    letter-spacing: normal;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--blue);
+}
+
+textarea { resize: vertical; line-height: 1.6; }
+input[type="file"] { margin-top: 0.5rem; font-size: 0.85rem; color: var(--muted); }
+
+small {
+    display: block;
+    margin-top: 0.4rem;
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: normal;
+    text-transform: none;
+    color: var(--muted);
+}
+
+.przelacznik {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    font-size: 0.85rem;
+    font-weight: 400;
+    letter-spacing: normal;
+    text-transform: none;
+    color: var(--muted);
+}
+
+.przelacznik input { margin-top: 0.25rem; }
+
+.zdjecie-pole { display: flex; flex-direction: column; gap: 0.9rem; align-items: flex-start; }
+.podglad { width: 140px; border: 1px solid var(--line); border-radius: 4px; }
+.podglad--szeroki { width: 260px; }
+
+/* ---------- tabela ---------- */
+
+.tabela { width: 100%; border-collapse: collapse; }
+
+.tabela th {
+    padding: 0.85rem 0.75rem;
+    border-bottom: 1px solid var(--line);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-align: left;
+    color: var(--muted);
+}
+
+.tabela td { padding: 0.75rem; border-bottom: 1px solid var(--line); font-size: 0.9rem; vertical-align: middle; }
+.tabela tr:hover td { background-color: rgba(255, 255, 255, 0.03); }
+.tabela .nieaktywny td { opacity: 0.45; }
+.tabela .nr { font-weight: 800; color: var(--gold); }
+
+.miniatura {
+    width: 46px;
+    height: 46px;
+    object-fit: cover;
+    border-radius: 4px;
+    background-color: var(--bg-2);
+}
+
+.miniatura--szeroka { width: 76px; height: 46px; }
+
+.miniatura--brak {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed var(--line);
+    color: var(--muted);
+    font-weight: 800;
+}
+
+.akcje { display: flex; gap: 0.5rem; align-items: center; }
+.akcje form { display: inline; }
+
+/* ---------- logowanie ---------- */
+
+.logowanie {
+    width: min(380px, 100%);
+    margin: clamp(3rem, 12vh, 7rem) auto;
+    padding: clamp(1.75rem, 5vw, 2.5rem);
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+    text-align: center;
+}
+
+.logowanie__herb { height: 84px; width: auto; margin: 0 auto 1.25rem; }
+.logowanie h1 { font-size: 1.15rem; margin-bottom: 1.75rem; }
+.logowanie form { display: flex; flex-direction: column; gap: 1.1rem; text-align: left; }
+.logowanie .btn { margin-top: 0.5rem; }
+
+@media (max-width: 720px) {
+    .tabela thead { display: none; }
+    .tabela tr { display: grid; grid-template-columns: auto 1fr; gap: 0.25rem 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid var(--line); }
+    .tabela td { border: none; padding: 0.2rem 0; }
+    .akcje { grid-column: 1 / -1; margin-top: 0.5rem; }
+}

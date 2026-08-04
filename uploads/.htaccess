@@ -1,0 +1,4 @@
+# Katalog na wgrywane obrazy — nic tu nie może się wykonać jako skrypt.
+<FilesMatch "\.(php|phtml|phar|cgi|pl|py|sh)$">
+    Require all denied
+</FilesMatch>

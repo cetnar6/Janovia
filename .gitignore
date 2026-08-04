@@ -2,3 +2,14 @@
 logs/
 .claude/settings.local.json
 *.pkg
+
+# panel administratora
+
+# dane dostępowe do bazy
+admin/inc/config.php
+
+# baza SQLite — plik binarny z danymi lokalnymi
+dane/
+
+# uploads/ celowo NIE jest ignorowane: zdjęcia zawodników i aktualności
+# są treścią strony i muszą trafić na GitHub Pages razem z resztą plików
