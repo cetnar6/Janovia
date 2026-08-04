@@ -171,6 +171,31 @@ def na_iso(termin, rok_jesien, rok_wiosna):
         return None
 
 
+def ostatnia_kolejka(mecze):
+    """
+    Komplet spotkań ostatniej kolejki, w której padł jakikolwiek wynik.
+    Zanim sezon ruszy, zwraca najbliższą kolejkę z samymi terminami.
+    """
+    if not mecze:
+        return None
+
+    rozegrane = [m for m in mecze if m["wynik"]]
+
+    if rozegrane:
+        numer = max(m["kolejka"] for m in rozegrane)
+    else:
+        numer = min(m["kolejka"] for m in mecze)
+
+    wybrane = [m for m in mecze if m["kolejka"] == numer]
+
+    return {
+        "numer": numer,
+        "opis": wybrane[0]["kolejka_opis"] if wybrane else "",
+        "rozegrana": any(m["wynik"] for m in wybrane),
+        "mecze": wybrane,
+    }
+
+
 def policz_forme(mecze, ile=5):
     """
     Dla każdego klubu zwraca ostatnie `ile` rozegranych meczów,
@@ -233,6 +258,7 @@ def main():
         "zaktualizowano": datetime.now().isoformat(timespec="seconds"),
         "tabela": tabela,
         "forma": policz_forme(mecze),
+        "ostatnia_kolejka": ostatnia_kolejka(mecze),
         "nadchodzace": nadchodzace[:8],
         "ostatni": rozegrane[-1] if rozegrane else None,
         "wszystkie_mecze": mecze,

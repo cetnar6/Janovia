@@ -1187,6 +1187,98 @@ a {
     color: var(--muted);
 }
 
+/* ---------- OSTATNIA KOLEJKA ---------- */
+
+.wyniki {
+    list-style: none;
+    border-top: 1px solid var(--line);
+}
+
+.wyniki__pusto {
+    padding: 2.5rem 1rem;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.wynik {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: clamp(0.75rem, 3vw, 2rem);
+    padding: 0.9rem 1rem;
+    border-bottom: 1px solid var(--line);
+    transition: background-color 0.3s;
+}
+
+.wynik:hover {
+    background-color: var(--surface);
+}
+
+/* mecz Janovii wyróżniony tak samo jak jej wiersz w tabeli */
+.wynik.is-us {
+    background-color: rgba(0, 125, 204, 0.14);
+    box-shadow: inset 3px 0 0 var(--gold);
+}
+
+.wynik__druzyna {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+/* gospodarz czyta się od środka na zewnątrz, jak na tablicy wyników */
+.wynik__druzyna--gosp {
+    justify-content: flex-end;
+    text-align: right;
+}
+
+.wynik__rezultat {
+    min-width: 74px;
+    text-align: center;
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    font-variant-numeric: tabular-nums;
+}
+
+.wynik.is-us .wynik__rezultat {
+    color: var(--gold);
+}
+
+.wynik__rezultat--brak {
+    color: var(--muted);
+    font-weight: 400;
+}
+
+@media (max-width: 620px) {
+    .wynik {
+        gap: 0.5rem;
+        padding: 0.8rem 0.5rem;
+    }
+
+    .wynik__druzyna {
+        flex-direction: column;
+        gap: 0.4rem;
+        font-size: 0.75rem;
+        text-align: center;
+    }
+
+    /* w pionie herb ma być u góry po obu stronach — u gospodarza
+       kolejność w kodzie jest odwrotna, więc odwracamy ją tutaj */
+    .wynik__druzyna--gosp {
+        flex-direction: column-reverse;
+        text-align: center;
+    }
+
+    .wynik__rezultat {
+        min-width: 58px;
+    }
+}
+
 /* ---------- LICZBY ---------- */
 
 .stats {

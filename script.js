@@ -540,6 +540,41 @@
         }
     }
 
+    /* ---------- komplet wyników ostatniej kolejki ---------- */
+
+    function rysujKolejke(dane) {
+        var lista = document.getElementById('wyniki');
+        var opis = document.getElementById('kolejka-opis');
+        var k = dane.ostatnia_kolejka;
+
+        if (!lista || !k || !k.mecze || !k.mecze.length) { return; }
+
+        if (opis) {
+            opis.textContent = 'Kolejka ' + k.numer + ' · ' + k.opis +
+                (k.rozegrana ? '' : ' · jeszcze nierozegrana');
+        }
+
+        lista.innerHTML = k.mecze.map(function (m) {
+            var nasz = m.gospodarz === NASZ_KLUB || m.gosc === NASZ_KLUB;
+
+            var srodek = m.wynik
+                ? '<span class="wynik__rezultat">' + esc(m.wynik.replace('-', ' : ')) + '</span>'
+                : '<span class="wynik__rezultat wynik__rezultat--brak">–</span>';
+
+            return '<li class="wynik' + (nasz ? ' is-us' : '') + '">' +
+                       '<span class="wynik__druzyna wynik__druzyna--gosp">' +
+                           '<span>' + esc(skrot(m.gospodarz)) + '</span>' +
+                           herb(m.gospodarz, 'xs') +
+                       '</span>' +
+                       srodek +
+                       '<span class="wynik__druzyna">' +
+                           herb(m.gosc, 'xs') +
+                           '<span>' + esc(skrot(m.gosc)) + '</span>' +
+                       '</span>' +
+                   '</li>';
+        }).join('');
+    }
+
     /* ---------- kadra z panelu administratora ---------- */
 
     function rysujZawodnikow(dane) {
@@ -594,6 +629,7 @@
         pobierzJSON('data/liga.json').then(function (dane) {
             if (!dane) { return; }
             rysujTabele(dane);
+            rysujKolejke(dane);
             rysujMecze(dane);
             rysujOdliczanie(dane);
         });

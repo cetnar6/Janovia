@@ -2,7 +2,7 @@
   "zrodlo": "http://www.90minut.pl/liga/1/liga15094.html",
   "liga": "Klasa B 2026/2027, grupa: Rzeszów VI - Mielec",
   "klub": "Janovia Janowiec",
-  "zaktualizowano": "2026-08-04T11:49:57",
+  "zaktualizowano": "2026-08-04T19:26:06",
   "tabela": [
     {
       "poz": 1,
@@ -126,6 +126,73 @@
     }
   ],
   "forma": {},
+  "ostatnia_kolejka": {
+    "numer": 1,
+    "opis": "22-23 sierpnia",
+    "rozegrana": false,
+    "mecze": [
+      {
+        "kolejka": 1,
+        "kolejka_opis": "22-23 sierpnia",
+        "gospodarz": "Apollo Dulcza Mała",
+        "gosc": "Atut II Podborze",
+        "wynik": null,
+        "termin": null,
+        "data_iso": "2026-08-22T00:00:00",
+        "data_przyblizona": true
+      },
+      {
+        "kolejka": 1,
+        "kolejka_opis": "22-23 sierpnia",
+        "gospodarz": "Hetman Dąbrówka Wisłocka",
+        "gosc": "Jamnica Dulcza Wielka",
+        "wynik": null,
+        "termin": null,
+        "data_iso": "2026-08-22T00:00:00",
+        "data_przyblizona": true
+      },
+      {
+        "kolejka": 1,
+        "kolejka_opis": "22-23 sierpnia",
+        "gospodarz": "Janovia Janowiec",
+        "gosc": "KS SMP Tuszyma",
+        "wynik": null,
+        "termin": null,
+        "data_iso": "2026-08-22T00:00:00",
+        "data_przyblizona": true
+      },
+      {
+        "kolejka": 1,
+        "kolejka_opis": "22-23 sierpnia",
+        "gospodarz": "KS Zgórsko",
+        "gosc": "LKS Wierzchowiny",
+        "wynik": null,
+        "termin": null,
+        "data_iso": "2026-08-22T00:00:00",
+        "data_przyblizona": true
+      },
+      {
+        "kolejka": 1,
+        "kolejka_opis": "22-23 sierpnia",
+        "gospodarz": "Madras Goleszów",
+        "gosc": "Piast II Wadowice Górne",
+        "wynik": null,
+        "termin": null,
+        "data_iso": "2026-08-22T00:00:00",
+        "data_przyblizona": true
+      },
+      {
+        "kolejka": 1,
+        "kolejka_opis": "22-23 sierpnia",
+        "gospodarz": "Sokół Pień",
+        "gosc": "Sprint Żarówka",
+        "wynik": null,
+        "termin": null,
+        "data_iso": "2026-08-22T00:00:00",
+        "data_przyblizona": true
+      }
+    ]
+  },
   "nadchodzace": [
     {
       "kolejka": 1,
