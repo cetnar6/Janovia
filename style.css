@@ -362,9 +362,9 @@ a {
     position: absolute;
     inset: -12% 0 -12% 0;
     background-color: #08090C;              /* zanim zdjęcie się wczyta */
-    background-image: url("png/stadion.jpg");
+    background-image: url("png/stadion1.jpg");
     background-size: cover;
-    background-position: center 42%;
+    background-position: center 45%;
     background-repeat: no-repeat;
     will-change: transform;
 }
