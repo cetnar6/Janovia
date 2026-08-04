@@ -335,16 +335,18 @@
             return '<article class="fixture" data-reveal style="--d:' + (i * 80) + 'ms">' +
                    '<strong class="fixture__date">' + dzien + '</strong>' +
                    '<span class="fixture__league">Klasa B · kolejka ' + m.kolejka + '</span>' +
-                   '<div class="fixture__teams">' +
-                       herb(m.gospodarz, 'sm') +
+                   '<div class="fixture__match">' +
+                       '<div class="fixture__side">' +
+                           herb(m.gospodarz, 'sm') +
+                           '<b class="fixture__team">' + esc(skrot(m.gospodarz)) + '</b>' +
+                           rysujForme(m.gospodarz, dane.forma) +
+                       '</div>' +
                        '<span class="fixture__vs">vs</span>' +
-                       herb(m.gosc, 'sm') +
-                   '</div>' +
-                   '<div class="fixture__names">' +
-                       '<span><b class="fixture__team">' + esc(skrot(m.gospodarz)) + '</b>' +
-                           rysujForme(m.gospodarz, dane.forma) + '</span>' +
-                       '<span><b class="fixture__team">' + esc(skrot(m.gosc)) + '</b>' +
-                           rysujForme(m.gosc, dane.forma) + '</span>' +
+                       '<div class="fixture__side">' +
+                           herb(m.gosc, 'sm') +
+                           '<b class="fixture__team">' + esc(skrot(m.gosc)) + '</b>' +
+                           rysujForme(m.gosc, dane.forma) +
+                       '</div>' +
                    '</div>' +
                    '<span class="fixture__time">' + kiedy + ' · ' + gdzie + '</span>' +
                    '</article>';
