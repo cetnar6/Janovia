@@ -491,16 +491,29 @@
         });
     }
 
-    function rysujPosty(dane) {
+    /* Wpisy z panelu i posty z Facebooka trafiają do jednej listy,
+       posortowanej datą od najnowszego. */
+    function rysujPosty(zFacebooka, zPanelu) {
         var rail = document.querySelector('[data-rail-id="news"]');
-        if (!rail || !dane.posty || !dane.posty.length) { return; }
+        if (!rail) { return; }
 
-        rail.innerHTML = dane.posty.map(function (p, i) {
+        var wszystkie = []
+            .concat((zPanelu && zPanelu.posty) || [])
+            .concat((zFacebooka && zFacebooka.posty) || []);
+
+        if (!wszystkie.length) { return; }
+
+        wszystkie.sort(function (a, b) {
+            return new Date(b.data) - new Date(a.data);
+        });
+
+        rail.innerHTML = wszystkie.map(function (p, i) {
             var tlo = p.zdjecie
                 ? ' style="background-image:url(\'' + encodeURI(p.zdjecie) + '\')"'
                 : '';
 
-            var etykieta = p.typ === 'video' ? 'Wideo'
+            var etykieta = p.zrodlo === 'klub' ? p.typ
+                         : p.typ === 'video' ? 'Wideo'
                          : p.typ === 'album' ? 'Galeria'
                          : 'Facebook';
 
@@ -509,49 +522,81 @@
                    ' data-reveal style="--d:' + (i * 80) + 'ms">' +
                    '<div class="post__media' + (p.zdjecie ? ' post__media--foto' : ' post__media--' + ((i % 6) + 1)) + '"' + tlo + '></div>' +
                    '<div class="post__body">' +
-                       '<span class="tag tag--sm">' + etykieta + '</span>' +
+                       '<span class="tag tag--sm">' + esc(etykieta) + '</span>' +
                        '<span class="post__time">' + odKiedy(p.data) + '</span>' +
                        '<h3>' + esc(p.naglowek) + '</h3>' +
                    '</div>' +
                    '</article>';
         }).join('');
 
-        POSTY = dane.posty;
+        POSTY = wszystkie;
         obserwuj(rail.querySelectorAll('[data-reveal]'));
 
         var link = document.querySelector('#aktualnosci .arrow-link');
-        if (link) {
-            link.href = dane.zrodlo;
+        if (link && zFacebooka && zFacebooka.zrodlo) {
+            link.href = zFacebooka.zrodlo;
             link.target = '_blank';
             link.rel = 'noopener';
         }
     }
 
-    if (window.fetch) {
-        window.fetch('data/facebook.json', { cache: 'no-cache' })
-            .then(function (r) {
-                if (!r.ok) { throw new Error('HTTP ' + r.status); }
-                return r.json();
-            })
-            .then(rysujPosty)
-            .catch(function (err) {
-                console.info('Posty z Facebooka niedostępne, zostają kafelki z HTML:', err.message);
-            });
+    /* ---------- kadra z panelu administratora ---------- */
 
-        window.fetch('data/liga.json', { cache: 'no-cache' })
+    function rysujZawodnikow(dane) {
+        var rail = document.querySelector('[data-rail-id="team"]');
+        if (!rail || !dane || !dane.zawodnicy || !dane.zawodnicy.length) { return; }
+
+        rail.innerHTML = dane.zawodnicy.map(function (z, i) {
+            var tlo = z.zdjecie
+                ? ' style="background-image:url(\'' + encodeURI(z.zdjecie) + '\')"'
+                : '';
+
+            return '<article class="player" data-reveal style="--d:' + (i * 80) + 'ms">' +
+                   '<div class="player__photo' + (z.zdjecie ? ' player__photo--foto' : '') + '"' + tlo + '></div>' +
+                   '<div class="player__label">' +
+                       '<span class="player__no">' + (z.numer !== null ? z.numer : '–') + '</span>' +
+                       '<span class="player__name">' +
+                           '<small>' + esc(z.imie) + '</small>' +
+                           '<strong>' + esc(z.nazwisko) + '</strong>' +
+                           '<em class="player__poz">' + esc(z.pozycja) + '</em>' +
+                       '</span>' +
+                   '</div>' +
+                   '</article>';
+        }).join('');
+
+        obserwuj(rail.querySelectorAll('[data-reveal]'));
+    }
+
+    /* Brak pliku nie jest błędem — sekcja zostaje przy treści wpisanej w HTML,
+       więc strona działa nawet zanim ktokolwiek uruchomi panel czy skrypty. */
+    function pobierzJSON(sciezka) {
+        return window.fetch(sciezka, { cache: 'no-cache' })
             .then(function (r) {
                 if (!r.ok) { throw new Error('HTTP ' + r.status); }
                 return r.json();
             })
-            .then(function (dane) {
-                rysujTabele(dane);
-                rysujMecze(dane);
-                rysujOdliczanie(dane);
-            })
             .catch(function (err) {
-                // brak pliku albo strona otwarta przez file:// — zostaje treść z HTML
-                console.info('Dane ligowe niedostępne, używam treści statycznej:', err.message);
+                console.info('Pomijam ' + sciezka + ' (' + err.message + ')');
+                return null;
             });
+    }
+
+    if (window.fetch) {
+        Promise.all([
+            pobierzJSON('data/facebook.json'),
+            pobierzJSON('data/posty.json')
+        ]).then(function (wyniki) {
+            rysujPosty(wyniki[0], wyniki[1]);
+        });
+
+        pobierzJSON('data/zawodnicy.json').then(rysujZawodnikow);
+
+        pobierzJSON('data/liga.json').then(function (dane) {
+            if (!dane) { return; }
+            rysujTabele(dane);
+            rysujMecze(dane);
+            rysujOdliczanie(dane);
+        });
     }
 
 })();

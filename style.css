@@ -875,6 +875,24 @@ a {
     color: var(--muted);
 }
 
+/* zdjęcie wgrane w panelu zastępuje gradientową zaślepkę */
+.player__photo--foto {
+    background-size: cover;
+    background-position: center top;
+    background-repeat: no-repeat;
+}
+
+.player__poz {
+    display: block;
+    margin-top: 0.15rem;
+    font-style: normal;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
 .player__name strong {
     display: block;
     font-size: 1.25rem;
