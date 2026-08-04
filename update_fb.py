@@ -206,7 +206,10 @@ def main():
         })
 
     dane = {
-        "zrodlo": "https://www.facebook.com/LksJanoviaJanowiec",
+        # link buduje się z faktycznie odpytanej strony, żeby „Zobacz wszystkie”
+        # nie prowadziło gdzie indziej niż źródło postów
+        "zrodlo": "https://www.facebook.com/" + str(strona),
+        "strona": nazwa_strony,
         "zaktualizowano": datetime.now(timezone.utc).astimezone().isoformat(timespec="seconds"),
         "posty": posty,
     }
