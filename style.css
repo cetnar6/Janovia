@@ -483,13 +483,13 @@ a {
     border-top: 1px solid var(--line);
     border-bottom: 1px solid var(--line);
     background-color: var(--bg-2);
-    padding: 1.1rem 0;
+    padding: 2rem 0;
 }
 
 .marquee__track {
     display: flex;
     align-items: center;
-    gap: 2.5rem;
+    gap: 3rem;
     width: max-content;
     animation: slide 32s linear infinite;
 }
@@ -498,8 +498,43 @@ a {
     animation-play-state: paused;
 }
 
+.marquee__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    white-space: nowrap;
+}
+
+.marquee__item .marquee__logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 110px;
+    width: 190px;
+    transition: transform 0.3s;
+}
+
+.marquee__item:hover .marquee__logo {
+    transform: translateY(-3px);
+}
+
+.marquee__item img {
+    height: 100%;
+    width: 100%;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.marquee__item img.marquee__glow {
+    filter:
+        drop-shadow(0 0 2px rgba(255, 255, 255, 0.55))
+        drop-shadow(0 0 5px rgba(255, 255, 255, 0.35))
+        drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
+}
+
 .marquee__track span {
-    font-size: 0.9rem;
+    font-size: 0.75rem;
     font-weight: 800;
     letter-spacing: 0.22em;
     text-transform: uppercase;
@@ -508,7 +543,7 @@ a {
     transition: color 0.3s;
 }
 
-.marquee__track span:hover {
+.marquee__item:hover span {
     color: var(--gold);
 }
 
