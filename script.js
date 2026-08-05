@@ -230,21 +230,23 @@
                '</span>';
     }
 
+    function wierszTabeli(r) {
+        var klasa = r.klub === NASZ_KLUB ? ' class="is-us"' : '';
+        return '<tr' + klasa + '>' +
+               '<td>' + r.poz + '</td>' +
+               '<td class="table__crest">' + herb(r.klub, 'xs') + '</td>' +
+               '<td>' + esc(r.klub) + '</td>' +
+               '<td>' + r.m + '</td>' +
+               '<td>' + r.bramki + '</td>' +
+               '<td>' + r.pkt + '</td>' +
+               '</tr>';
+    }
+
     function rysujTabele(dane) {
         var tbody = document.querySelector('.table tbody');
         if (!tbody || !dane.tabela || !dane.tabela.length) { return; }
 
-        tbody.innerHTML = dane.tabela.map(function (r) {
-            var klasa = r.klub === NASZ_KLUB ? ' class="is-us"' : '';
-            return '<tr' + klasa + '>' +
-                   '<td>' + r.poz + '</td>' +
-                   '<td class="table__crest">' + herb(r.klub, 'xs') + '</td>' +
-                   '<td>' + esc(r.klub) + '</td>' +
-                   '<td>' + r.m + '</td>' +
-                   '<td>' + r.bramki + '</td>' +
-                   '<td>' + r.pkt + '</td>' +
-                   '</tr>';
-        }).join('');
+        tbody.innerHTML = dane.tabela.map(wierszTabeli).join('');
 
         var stopka = document.getElementById('tabela-zrodlo');
         if (stopka) {
@@ -672,6 +674,43 @@
         obserwuj(box.querySelectorAll('[data-reveal]'));
     }
 
+    /* ---------- archiwalne sezony (podstrona archiwum.html) ---------- */
+
+    function blokSezonu(s, i) {
+        var nasza = s.nasza_pozycja;
+        var wynik = nasza
+            ? nasza.poz + '. miejsce · ' + nasza.pkt + ' pkt'
+            : 'brak danych o klubie';
+
+        return '<details class="sezon" data-reveal style="--d:' + Math.min(i * 60, 320) + 'ms"' +
+                   (i === 0 ? ' open' : '') + '>' +
+                   '<summary class="sezon__head">' +
+                       '<span class="sezon__nazwa">' + esc(s.sezon) +
+                           (s.bierzacy ? ' <em>trwa</em>' : '') + '</span>' +
+                       '<span class="sezon__liga">' + esc(s.liga) + '</span>' +
+                       '<span class="sezon__wynik">' + esc(wynik) + '</span>' +
+                   '</summary>' +
+                   '<table class="table">' +
+                       '<thead><tr><th>#</th><th><span class="visually-hidden">Herb</span></th>' +
+                           '<th>Drużyna</th><th>M</th><th>Bramki</th><th>Pkt</th></tr></thead>' +
+                       '<tbody>' + s.tabela.map(wierszTabeli).join('') + '</tbody>' +
+                   '</table>' +
+               '</details>';
+    }
+
+    function rysujArchiwum(dane) {
+        var box = document.getElementById('archiwum');
+        if (!box) { return; }
+
+        if (!dane || !dane.sezony || !dane.sezony.length) {
+            box.innerHTML = '<p class="wyniki__pusto">Archiwum jest chwilowo niedostępne.</p>';
+            return;
+        }
+
+        box.innerHTML = dane.sezony.map(blokSezonu).join('');
+        obserwuj(box.querySelectorAll('[data-reveal]'));
+    }
+
     /* ---------- kadra z panelu administratora ---------- */
 
     function rysujZawodnikow(dane) {
@@ -731,6 +770,8 @@
             rysujMecze(dane);
             rysujOdliczanie(dane);
         });
+
+        pobierzJSON('data/archiwum.json').then(rysujArchiwum);
     }
 
 })();

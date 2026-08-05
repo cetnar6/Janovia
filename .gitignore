@@ -2,6 +2,7 @@
 logs/
 .claude/settings.local.json
 *.pkg
+__pycache__/
 
 # panel administratora
 

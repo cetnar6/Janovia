@@ -26,6 +26,11 @@ jobs:
       - name: Pobierz dane z 90minut.pl
         run: python update_liga.py
 
+      # Sezony zakończone są zapisane raz i nie pobierane ponownie —
+      # tylko bieżący sezon jest odświeżany przy każdym uruchomieniu.
+      - name: Pobierz archiwalne sezony z 90minut.pl
+        run: python update_archiwum.py
+
       # Nie przerywa całego przebiegu, gdy token wygaśnie —
       # tabela ma się odświeżyć nawet wtedy, gdy Facebook odmówi.
       - name: Pobierz posty z Facebooka

@@ -1,0 +1,1130 @@
+{
+  "klub": "Janovia Janowiec",
+  "zaktualizowano": "2026-08-05T16:33:54",
+  "sezony": [
+    {
+      "sezon": "2026/27",
+      "liga": "Klasa B 2026/2027, grupa: Rzeszów VI - Mielec",
+      "zrodlo": "http://www.90minut.pl/liga/1/liga15094.html",
+      "bierzacy": true,
+      "nasza_pozycja": {
+        "poz": 3,
+        "klub": "Janovia Janowiec",
+        "m": 0,
+        "pkt": 0,
+        "z": 0,
+        "r": 0,
+        "p": 0,
+        "bramki": "0-0"
+      },
+      "tabela": [
+        {
+          "poz": 1,
+          "klub": "Apollo Dulcza Mała",
+          "m": 0,
+          "pkt": 0,
+          "z": 0,
+          "r": 0,
+          "p": 0,
+          "bramki": "0-0"
+        },
+        {
+          "poz": 2,
+          "klub": "Hetman Dąbrówka Wisłocka",
+          "m": 0,
+          "pkt": 0,
+          "z": 0,
+          "r": 0,
+          "p": 0,
+          "bramki": "0-0"
+        },
+        {
+          "poz": 3,
+          "klub": "Janovia Janowiec",
+          "m": 0,
+          "pkt": 0,
+          "z": 0,
+          "r": 0,
+          "p": 0,
+          "bramki": "0-0"
+        },
+        {
+          "poz": 4,
+          "klub": "KS Zgórsko",
+          "m": 0,
+          "pkt": 0,
+          "z": 0,
+          "r": 0,
+          "p": 0,
+          "bramki": "0-0"
+        },
+        {
+          "poz": 5,
+          "klub": "Madras Goleszów",
+          "m": 0,
+          "pkt": 0,
+          "z": 0,
+          "r": 0,
+          "p": 0,
+          "bramki": "0-0"
+        },
+        {
+          "poz": 6,
+          "klub": "Sokół Pień",
+          "m": 0,
+          "pkt": 0,
+          "z": 0,
+          "r": 0,
+          "p": 0,
+          "bramki": "0-0"
+        },
+        {
+          "poz": 7,
+          "klub": "Sprint Żarówka",
+          "m": 0,
+          "pkt": 0,
+          "z": 0,
+          "r": 0,
+          "p": 0,
+          "bramki": "0-0"
+        },
+        {
+          "poz": 8,
+          "klub": "Piast II Wadowice Górne",
+          "m": 0,
+          "pkt": 0,
+          "z": 0,
+          "r": 0,
+          "p": 0,
+          "bramki": "0-0"
+        },
+        {
+          "poz": 9,
+          "klub": "LKS Wierzchowiny",
+          "m": 0,
+          "pkt": 0,
+          "z": 0,
+          "r": 0,
+          "p": 0,
+          "bramki": "0-0"
+        },
+        {
+          "poz": 10,
+          "klub": "KS SMP Tuszyma",
+          "m": 0,
+          "pkt": 0,
+          "z": 0,
+          "r": 0,
+          "p": 0,
+          "bramki": "0-0"
+        },
+        {
+          "poz": 11,
+          "klub": "Jamnica Dulcza Wielka",
+          "m": 0,
+          "pkt": 0,
+          "z": 0,
+          "r": 0,
+          "p": 0,
+          "bramki": "0-0"
+        },
+        {
+          "poz": 12,
+          "klub": "Atut II Podborze",
+          "m": 0,
+          "pkt": 0,
+          "z": 0,
+          "r": 0,
+          "p": 0,
+          "bramki": "0-0"
+        }
+      ]
+    },
+    {
+      "sezon": "2025/26",
+      "liga": "Klasa B 2025/2026, grupa: Rzeszów VI - Mielec",
+      "zrodlo": "http://www.90minut.pl/liga/1/liga14333.html",
+      "bierzacy": false,
+      "nasza_pozycja": {
+        "poz": 3,
+        "klub": "Janovia Janowiec",
+        "m": 24,
+        "pkt": 49,
+        "z": 15,
+        "r": 4,
+        "p": 5,
+        "bramki": "85-38"
+      },
+      "tabela": [
+        {
+          "poz": 1,
+          "klub": "Potok Dobrynin",
+          "m": 24,
+          "pkt": 55,
+          "z": 17,
+          "r": 4,
+          "p": 3,
+          "bramki": "78-24"
+        },
+        {
+          "poz": 2,
+          "klub": "Radomyślanka II Radomyśl Wielki",
+          "m": 24,
+          "pkt": 54,
+          "z": 17,
+          "r": 3,
+          "p": 4,
+          "bramki": "67-18"
+        },
+        {
+          "poz": 3,
+          "klub": "Janovia Janowiec",
+          "m": 24,
+          "pkt": 49,
+          "z": 15,
+          "r": 4,
+          "p": 5,
+          "bramki": "85-38"
+        },
+        {
+          "poz": 4,
+          "klub": "Sprint Żarówka",
+          "m": 24,
+          "pkt": 47,
+          "z": 15,
+          "r": 2,
+          "p": 7,
+          "bramki": "76-38"
+        },
+        {
+          "poz": 5,
+          "klub": "KS SMP Tuszyma",
+          "m": 24,
+          "pkt": 42,
+          "z": 13,
+          "r": 3,
+          "p": 8,
+          "bramki": "61-43"
+        },
+        {
+          "poz": 6,
+          "klub": "Atut II Podborze",
+          "m": 24,
+          "pkt": 41,
+          "z": 13,
+          "r": 2,
+          "p": 9,
+          "bramki": "56-39"
+        },
+        {
+          "poz": 7,
+          "klub": "Jamnica Dulcza Wielka",
+          "m": 24,
+          "pkt": 40,
+          "z": 13,
+          "r": 1,
+          "p": 10,
+          "bramki": "55-43"
+        },
+        {
+          "poz": 8,
+          "klub": "Apollo Dulcza Mała",
+          "m": 24,
+          "pkt": 37,
+          "z": 12,
+          "r": 1,
+          "p": 11,
+          "bramki": "46-52"
+        },
+        {
+          "poz": 9,
+          "klub": "Orły Ruda",
+          "m": 24,
+          "pkt": 25,
+          "z": 8,
+          "r": 1,
+          "p": 15,
+          "bramki": "52-62"
+        },
+        {
+          "poz": 10,
+          "klub": "Piast II Wadowice Górne",
+          "m": 24,
+          "pkt": 22,
+          "z": 6,
+          "r": 4,
+          "p": 14,
+          "bramki": "39-65"
+        },
+        {
+          "poz": 11,
+          "klub": "LKS Wierzchowiny",
+          "m": 24,
+          "pkt": 21,
+          "z": 6,
+          "r": 3,
+          "p": 15,
+          "bramki": "38-70"
+        },
+        {
+          "poz": 12,
+          "klub": "KS Zgórsko",
+          "m": 24,
+          "pkt": 10,
+          "z": 2,
+          "r": 4,
+          "p": 18,
+          "bramki": "27-102"
+        },
+        {
+          "poz": 13,
+          "klub": "Madras Goleszów",
+          "m": 24,
+          "pkt": 8,
+          "z": 2,
+          "r": 2,
+          "p": 20,
+          "bramki": "24-110"
+        }
+      ]
+    },
+    {
+      "sezon": "2024/25",
+      "liga": "Klasa A 2024/2025, grupa: Rzeszów III - Mielec",
+      "zrodlo": "http://www.90minut.pl/liga/1/liga13564.html",
+      "bierzacy": false,
+      "nasza_pozycja": {
+        "poz": 12,
+        "klub": "Janovia Janowiec",
+        "m": 26,
+        "pkt": 22,
+        "z": 6,
+        "r": 4,
+        "p": 16,
+        "bramki": "45-87"
+      },
+      "tabela": [
+        {
+          "poz": 1,
+          "klub": "Smoczanka Mielec",
+          "m": 26,
+          "pkt": 66,
+          "z": 21,
+          "r": 3,
+          "p": 2,
+          "bramki": "98-22"
+        },
+        {
+          "poz": 2,
+          "klub": "Piast Wadowice Górne",
+          "m": 26,
+          "pkt": 56,
+          "z": 17,
+          "r": 5,
+          "p": 4,
+          "bramki": "82-33"
+        },
+        {
+          "poz": 3,
+          "klub": "Czarni Trześń",
+          "m": 26,
+          "pkt": 54,
+          "z": 17,
+          "r": 3,
+          "p": 6,
+          "bramki": "74-37"
+        },
+        {
+          "poz": 4,
+          "klub": "Zacisze Trześń",
+          "m": 26,
+          "pkt": 48,
+          "z": 14,
+          "r": 6,
+          "p": 6,
+          "bramki": "65-33"
+        },
+        {
+          "poz": 5,
+          "klub": "Florian Ostrowy Tuszowskie",
+          "m": 26,
+          "pkt": 45,
+          "z": 12,
+          "r": 9,
+          "p": 5,
+          "bramki": "55-35"
+        },
+        {
+          "poz": 6,
+          "klub": "Strażak Grochowe",
+          "m": 26,
+          "pkt": 42,
+          "z": 12,
+          "r": 6,
+          "p": 8,
+          "bramki": "48-44"
+        },
+        {
+          "poz": 7,
+          "klub": "Start Wola Mielecka",
+          "m": 26,
+          "pkt": 38,
+          "z": 11,
+          "r": 5,
+          "p": 10,
+          "bramki": "57-46"
+        },
+        {
+          "poz": 8,
+          "klub": "Tempo Cmolas",
+          "m": 26,
+          "pkt": 35,
+          "z": 10,
+          "r": 5,
+          "p": 11,
+          "bramki": "48-54"
+        },
+        {
+          "poz": 9,
+          "klub": "Pitmark Jaślany",
+          "m": 26,
+          "pkt": 28,
+          "z": 8,
+          "r": 4,
+          "p": 14,
+          "bramki": "54-73"
+        },
+        {
+          "poz": 10,
+          "klub": "Wilga Widełka",
+          "m": 26,
+          "pkt": 24,
+          "z": 7,
+          "r": 3,
+          "p": 16,
+          "bramki": "32-59"
+        },
+        {
+          "poz": 11,
+          "klub": "Sokół Pień",
+          "m": 26,
+          "pkt": 24,
+          "z": 7,
+          "r": 3,
+          "p": 16,
+          "bramki": "57-77"
+        },
+        {
+          "poz": 12,
+          "klub": "Janovia Janowiec",
+          "m": 26,
+          "pkt": 22,
+          "z": 6,
+          "r": 4,
+          "p": 16,
+          "bramki": "45-87"
+        },
+        {
+          "poz": 13,
+          "klub": "Jamnica Dulcza Wielka",
+          "m": 26,
+          "pkt": 17,
+          "z": 4,
+          "r": 5,
+          "p": 17,
+          "bramki": "34-99"
+        },
+        {
+          "poz": 14,
+          "klub": "Ostrovia Ostrowy Baranowskie",
+          "m": 26,
+          "pkt": 13,
+          "z": 2,
+          "r": 7,
+          "p": 17,
+          "bramki": "34-84"
+        }
+      ]
+    },
+    {
+      "sezon": "2023/24",
+      "liga": "Klasa B 2023/2024, grupa: Rzeszów VI - Mielec",
+      "zrodlo": "http://www.90minut.pl/liga/1/liga13222.html",
+      "bierzacy": false,
+      "nasza_pozycja": {
+        "poz": 2,
+        "klub": "Janovia Janowiec",
+        "m": 22,
+        "pkt": 49,
+        "z": 15,
+        "r": 4,
+        "p": 3,
+        "bramki": "76-39"
+      },
+      "tabela": [
+        {
+          "poz": 1,
+          "klub": "Piast Wadowice Górne",
+          "m": 22,
+          "pkt": 52,
+          "z": 17,
+          "r": 1,
+          "p": 4,
+          "bramki": "98-32"
+        },
+        {
+          "poz": 2,
+          "klub": "Janovia Janowiec",
+          "m": 22,
+          "pkt": 49,
+          "z": 15,
+          "r": 4,
+          "p": 3,
+          "bramki": "76-39"
+        },
+        {
+          "poz": 3,
+          "klub": "Madras Goleszów",
+          "m": 22,
+          "pkt": 42,
+          "z": 13,
+          "r": 3,
+          "p": 6,
+          "bramki": "56-45"
+        },
+        {
+          "poz": 4,
+          "klub": "Hetman Dąbrówka Wisłocka",
+          "m": 22,
+          "pkt": 41,
+          "z": 12,
+          "r": 5,
+          "p": 5,
+          "bramki": "57-38"
+        },
+        {
+          "poz": 5,
+          "klub": "KS SMP Tuszyma",
+          "m": 22,
+          "pkt": 39,
+          "z": 13,
+          "r": 0,
+          "p": 9,
+          "bramki": "61-39"
+        },
+        {
+          "poz": 6,
+          "klub": "Orły Ruda",
+          "m": 22,
+          "pkt": 38,
+          "z": 12,
+          "r": 2,
+          "p": 8,
+          "bramki": "81-42"
+        },
+        {
+          "poz": 7,
+          "klub": "Radomyślanka II Radomyśl Wielki",
+          "m": 22,
+          "pkt": 36,
+          "z": 11,
+          "r": 3,
+          "p": 8,
+          "bramki": "49-39"
+        },
+        {
+          "poz": 8,
+          "klub": "LKS Wierzchowiny",
+          "m": 22,
+          "pkt": 29,
+          "z": 8,
+          "r": 5,
+          "p": 9,
+          "bramki": "41-50"
+        },
+        {
+          "poz": 9,
+          "klub": "Apollo Dulcza Mała",
+          "m": 22,
+          "pkt": 17,
+          "z": 5,
+          "r": 2,
+          "p": 15,
+          "bramki": "40-72"
+        },
+        {
+          "poz": 10,
+          "klub": "Potok Dobrynin",
+          "m": 22,
+          "pkt": 16,
+          "z": 5,
+          "r": 1,
+          "p": 16,
+          "bramki": "37-82"
+        },
+        {
+          "poz": 11,
+          "klub": "Iskra Łączki Brzeskie",
+          "m": 22,
+          "pkt": 16,
+          "z": 5,
+          "r": 1,
+          "p": 16,
+          "bramki": "37-80"
+        },
+        {
+          "poz": 12,
+          "klub": "KS Zgórsko",
+          "m": 22,
+          "pkt": 7,
+          "z": 2,
+          "r": 1,
+          "p": 19,
+          "bramki": "25-100"
+        }
+      ]
+    },
+    {
+      "sezon": "2022/23",
+      "liga": "Klasa A 2022/2023, grupa: Rzeszów III - Mielec",
+      "zrodlo": "http://www.90minut.pl/liga/1/liga12516.html",
+      "bierzacy": false,
+      "nasza_pozycja": {
+        "poz": 15,
+        "klub": "Janovia Janowiec",
+        "m": 30,
+        "pkt": 19,
+        "z": 5,
+        "r": 4,
+        "p": 21,
+        "bramki": "43-118"
+      },
+      "tabela": [
+        {
+          "poz": 1,
+          "klub": "Dromader Chrząstów",
+          "m": 30,
+          "pkt": 77,
+          "z": 25,
+          "r": 2,
+          "p": 3,
+          "bramki": "106-31"
+        },
+        {
+          "poz": 2,
+          "klub": "Kolbuszowianka Kolbuszowa",
+          "m": 30,
+          "pkt": 72,
+          "z": 23,
+          "r": 3,
+          "p": 4,
+          "bramki": "141-31"
+        },
+        {
+          "poz": 3,
+          "klub": "Atut Podborze",
+          "m": 30,
+          "pkt": 65,
+          "z": 21,
+          "r": 2,
+          "p": 7,
+          "bramki": "99-35"
+        },
+        {
+          "poz": 4,
+          "klub": "Tempo Cmolas",
+          "m": 30,
+          "pkt": 55,
+          "z": 16,
+          "r": 7,
+          "p": 7,
+          "bramki": "59-41"
+        },
+        {
+          "poz": 5,
+          "klub": "Korona Majdan Królewski",
+          "m": 30,
+          "pkt": 47,
+          "z": 14,
+          "r": 5,
+          "p": 11,
+          "bramki": "75-48"
+        },
+        {
+          "poz": 6,
+          "klub": "Zacisze Trześń",
+          "m": 30,
+          "pkt": 47,
+          "z": 13,
+          "r": 8,
+          "p": 9,
+          "bramki": "68-42"
+        },
+        {
+          "poz": 7,
+          "klub": "Zryw Dzikowiec",
+          "m": 30,
+          "pkt": 45,
+          "z": 13,
+          "r": 6,
+          "p": 11,
+          "bramki": "67-61"
+        },
+        {
+          "poz": 8,
+          "klub": "Raniżovia Raniżów",
+          "m": 30,
+          "pkt": 44,
+          "z": 12,
+          "r": 8,
+          "p": 10,
+          "bramki": "49-49"
+        },
+        {
+          "poz": 9,
+          "klub": "Start Wola Mielecka",
+          "m": 30,
+          "pkt": 44,
+          "z": 13,
+          "r": 5,
+          "p": 12,
+          "bramki": "68-67"
+        },
+        {
+          "poz": 10,
+          "klub": "LKS Babicha",
+          "m": 30,
+          "pkt": 42,
+          "z": 13,
+          "r": 3,
+          "p": 14,
+          "bramki": "62-68"
+        },
+        {
+          "poz": 11,
+          "klub": "Strażak Grochowe",
+          "m": 30,
+          "pkt": 35,
+          "z": 9,
+          "r": 8,
+          "p": 13,
+          "bramki": "42-57"
+        },
+        {
+          "poz": 12,
+          "klub": "Hetman Dąbrówka Wisłocka",
+          "m": 30,
+          "pkt": 33,
+          "z": 9,
+          "r": 6,
+          "p": 15,
+          "bramki": "66-84"
+        },
+        {
+          "poz": 13,
+          "klub": "Kolorado Wola Chorzelowska",
+          "m": 30,
+          "pkt": 26,
+          "z": 8,
+          "r": 2,
+          "p": 20,
+          "bramki": "44-105"
+        },
+        {
+          "poz": 14,
+          "klub": "Wisła Gliny Małe",
+          "m": 30,
+          "pkt": 22,
+          "z": 6,
+          "r": 4,
+          "p": 20,
+          "bramki": "47-102"
+        },
+        {
+          "poz": 15,
+          "klub": "Janovia Janowiec",
+          "m": 30,
+          "pkt": 19,
+          "z": 5,
+          "r": 4,
+          "p": 21,
+          "bramki": "43-118"
+        },
+        {
+          "poz": 16,
+          "klub": "Orzeł Kosowy",
+          "m": 30,
+          "pkt": 10,
+          "z": 3,
+          "r": 1,
+          "p": 26,
+          "bramki": "33-130"
+        }
+      ]
+    },
+    {
+      "sezon": "2021/22",
+      "liga": "Klasa B 2021/2022, grupa: Rzeszów VI - Mielec",
+      "zrodlo": "http://www.90minut.pl/liga/1/liga12038.html",
+      "bierzacy": false,
+      "nasza_pozycja": {
+        "poz": 1,
+        "klub": "Janovia Janowiec",
+        "m": 18,
+        "pkt": 47,
+        "z": 15,
+        "r": 2,
+        "p": 1,
+        "bramki": "84-21"
+      },
+      "tabela": [
+        {
+          "poz": 1,
+          "klub": "Janovia Janowiec",
+          "m": 18,
+          "pkt": 47,
+          "z": 15,
+          "r": 2,
+          "p": 1,
+          "bramki": "84-21"
+        },
+        {
+          "poz": 2,
+          "klub": "Sokół Pień",
+          "m": 18,
+          "pkt": 37,
+          "z": 11,
+          "r": 4,
+          "p": 3,
+          "bramki": "71-35"
+        },
+        {
+          "poz": 3,
+          "klub": "LKS Wierzchowiny",
+          "m": 18,
+          "pkt": 37,
+          "z": 11,
+          "r": 4,
+          "p": 3,
+          "bramki": "57-29"
+        },
+        {
+          "poz": 4,
+          "klub": "KS SMP Tuszyma",
+          "m": 18,
+          "pkt": 27,
+          "z": 7,
+          "r": 6,
+          "p": 5,
+          "bramki": "34-23"
+        },
+        {
+          "poz": 5,
+          "klub": "Sprint Żarówka",
+          "m": 18,
+          "pkt": 27,
+          "z": 8,
+          "r": 3,
+          "p": 7,
+          "bramki": "48-42"
+        },
+        {
+          "poz": 6,
+          "klub": "Iskra Łączki Brzeskie",
+          "m": 18,
+          "pkt": 25,
+          "z": 8,
+          "r": 1,
+          "p": 9,
+          "bramki": "58-65"
+        },
+        {
+          "poz": 7,
+          "klub": "KS Zgórsko",
+          "m": 18,
+          "pkt": 21,
+          "z": 7,
+          "r": 0,
+          "p": 11,
+          "bramki": "35-49"
+        },
+        {
+          "poz": 8,
+          "klub": "Madras Goleszów",
+          "m": 18,
+          "pkt": 18,
+          "z": 5,
+          "r": 3,
+          "p": 10,
+          "bramki": "41-55"
+        },
+        {
+          "poz": 9,
+          "klub": "Wiśnia Trzciana",
+          "m": 18,
+          "pkt": 18,
+          "z": 6,
+          "r": 0,
+          "p": 12,
+          "bramki": "31-69"
+        },
+        {
+          "poz": 10,
+          "klub": "Apollo Dulcza Mała",
+          "m": 18,
+          "pkt": 1,
+          "z": 0,
+          "r": 1,
+          "p": 17,
+          "bramki": "18-89"
+        }
+      ]
+    },
+    {
+      "sezon": "2020/21",
+      "liga": "Klasa B 2020/2021, grupa: Rzeszów V - Mielec",
+      "zrodlo": "http://www.90minut.pl/liga/1/liga11570.html",
+      "bierzacy": false,
+      "nasza_pozycja": {
+        "poz": 4,
+        "klub": "Janovia Janowiec",
+        "m": 22,
+        "pkt": 43,
+        "z": 14,
+        "r": 1,
+        "p": 7,
+        "bramki": "71-47"
+      },
+      "tabela": [
+        {
+          "poz": 1,
+          "klub": "Hetman Dąbrówka Wisłocka",
+          "m": 22,
+          "pkt": 55,
+          "z": 18,
+          "r": 1,
+          "p": 3,
+          "bramki": "72-21"
+        },
+        {
+          "poz": 2,
+          "klub": "Jamnica Dulcza Wielka",
+          "m": 22,
+          "pkt": 55,
+          "z": 18,
+          "r": 1,
+          "p": 3,
+          "bramki": "119-40"
+        },
+        {
+          "poz": 3,
+          "klub": "Sprint Żarówka",
+          "m": 22,
+          "pkt": 54,
+          "z": 18,
+          "r": 0,
+          "p": 4,
+          "bramki": "73-24"
+        },
+        {
+          "poz": 4,
+          "klub": "Janovia Janowiec",
+          "m": 22,
+          "pkt": 43,
+          "z": 14,
+          "r": 1,
+          "p": 7,
+          "bramki": "71-47"
+        },
+        {
+          "poz": 5,
+          "klub": "Iskra Łączki Brzeskie",
+          "m": 22,
+          "pkt": 40,
+          "z": 13,
+          "r": 1,
+          "p": 8,
+          "bramki": "71-51"
+        },
+        {
+          "poz": 6,
+          "klub": "Błysk Górki",
+          "m": 22,
+          "pkt": 27,
+          "z": 9,
+          "r": 0,
+          "p": 13,
+          "bramki": "55-68"
+        },
+        {
+          "poz": 7,
+          "klub": "KS Zgórsko",
+          "m": 22,
+          "pkt": 26,
+          "z": 8,
+          "r": 2,
+          "p": 12,
+          "bramki": "50-65"
+        },
+        {
+          "poz": 8,
+          "klub": "Rzędzian Rzędzianowice",
+          "m": 22,
+          "pkt": 26,
+          "z": 8,
+          "r": 2,
+          "p": 12,
+          "bramki": "40-59"
+        },
+        {
+          "poz": 9,
+          "klub": "Wisła Gliny Małe",
+          "m": 22,
+          "pkt": 22,
+          "z": 7,
+          "r": 1,
+          "p": 14,
+          "bramki": "38-62"
+        },
+        {
+          "poz": 10,
+          "klub": "Apollo Dulcza Mała",
+          "m": 22,
+          "pkt": 22,
+          "z": 7,
+          "r": 1,
+          "p": 14,
+          "bramki": "34-76"
+        },
+        {
+          "poz": 11,
+          "klub": "Wiśnia Trzciana",
+          "m": 22,
+          "pkt": 13,
+          "z": 4,
+          "r": 1,
+          "p": 17,
+          "bramki": "19-78"
+        },
+        {
+          "poz": 12,
+          "klub": "Plon Kawęczyn",
+          "m": 22,
+          "pkt": 7,
+          "z": 2,
+          "r": 1,
+          "p": 19,
+          "bramki": "22-73"
+        }
+      ]
+    },
+    {
+      "sezon": "2019/20",
+      "liga": "Klasa B 2019/2020, grupa: Rzeszów VI - Mielec",
+      "zrodlo": "http://www.90minut.pl/liga/1/liga10756.html",
+      "bierzacy": false,
+      "nasza_pozycja": {
+        "poz": 8,
+        "klub": "Janovia Janowiec",
+        "m": 8,
+        "pkt": 6,
+        "z": 1,
+        "r": 3,
+        "p": 4,
+        "bramki": "14-16"
+      },
+      "tabela": [
+        {
+          "poz": 1,
+          "klub": "LKS Wierzchowiny",
+          "m": 8,
+          "pkt": 19,
+          "z": 6,
+          "r": 1,
+          "p": 1,
+          "bramki": "25-7"
+        },
+        {
+          "poz": 2,
+          "klub": "Sokół Pień",
+          "m": 8,
+          "pkt": 19,
+          "z": 6,
+          "r": 1,
+          "p": 1,
+          "bramki": "28-7"
+        },
+        {
+          "poz": 3,
+          "klub": "Sprint Żarówka",
+          "m": 8,
+          "pkt": 16,
+          "z": 5,
+          "r": 1,
+          "p": 2,
+          "bramki": "35-5"
+        },
+        {
+          "poz": 4,
+          "klub": "Plon Kawęczyn",
+          "m": 8,
+          "pkt": 13,
+          "z": 4,
+          "r": 1,
+          "p": 3,
+          "bramki": "19-19"
+        },
+        {
+          "poz": 5,
+          "klub": "KS Zgórsko",
+          "m": 8,
+          "pkt": 12,
+          "z": 4,
+          "r": 0,
+          "p": 4,
+          "bramki": "30-21"
+        },
+        {
+          "poz": 6,
+          "klub": "Iskra Łączki Brzeskie",
+          "m": 8,
+          "pkt": 11,
+          "z": 3,
+          "r": 2,
+          "p": 3,
+          "bramki": "12-19"
+        },
+        {
+          "poz": 7,
+          "klub": "Rzędzian Rzędzianowice",
+          "m": 8,
+          "pkt": 7,
+          "z": 2,
+          "r": 1,
+          "p": 5,
+          "bramki": "13-30"
+        },
+        {
+          "poz": 8,
+          "klub": "Janovia Janowiec",
+          "m": 8,
+          "pkt": 6,
+          "z": 1,
+          "r": 3,
+          "p": 4,
+          "bramki": "14-16"
+        },
+        {
+          "poz": 9,
+          "klub": "Skorpion Wylów",
+          "m": 8,
+          "pkt": 0,
+          "z": 0,
+          "r": 0,
+          "p": 8,
+          "bramki": "4-56"
+        }
+      ]
+    }
+  ]
+}

@@ -228,19 +228,35 @@ a {
     right: 0;
     z-index: 150;
     background-color: transparent;
-    transition: background-color 0.4s var(--ease), backdrop-filter 0.4s,
-                transform 0.45s var(--ease), border-color 0.4s;
+    /* "top" chowa nagłówek zamiast "transform" celowo — transform, filter
+       i backdrop-filter na .header tworzyłyby nowy kontekst odniesienia dla
+       position:fixed menu mobilnego zagnieżdżonego w środku (.nav), przez co
+       wysuwało się w złym miejscu zamiast na cały ekran. Dlatego rozmycie
+       tła siedzi w osobnej warstwie .header__bg, a nie na .header wprost. */
+    transition: top 0.45s var(--ease), border-color 0.4s;
     border-bottom: 1px solid transparent;
 }
 
-.header.is-stuck {
+.header__bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
     background-color: rgba(8, 9, 12, 0.85);
     backdrop-filter: blur(14px);
+    opacity: 0;
+    transition: opacity 0.4s var(--ease);
+}
+
+.header.is-stuck {
     border-bottom-color: var(--line);
 }
 
+.header.is-stuck .header__bg {
+    opacity: 1;
+}
+
 .header.is-hidden {
-    transform: translateY(-100%);
+    top: -100px;
 }
 
 .header__inner {
@@ -1413,6 +1429,91 @@ a {
     font-size: 0.78rem;
     letter-spacing: 0.06em;
     color: var(--muted);
+}
+
+/* ---------- SEZONY ARCHIWALNE ---------- */
+
+.sezon {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+    background-color: var(--surface);
+}
+
+.sezon__head {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem 1.5rem;
+    flex-wrap: wrap;
+    padding: 1.25rem 1.5rem;
+    list-style: none;
+    cursor: pointer;
+}
+
+.sezon__head::-webkit-details-marker {
+    display: none;
+}
+
+.sezon__head::before {
+    content: '+';
+    order: -1;
+    width: 1.4rem;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--gold);
+    transition: transform 0.3s var(--ease);
+}
+
+.sezon[open] .sezon__head::before {
+    transform: rotate(45deg);
+}
+
+.sezon__nazwa {
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+}
+
+.sezon__nazwa em {
+    font-style: normal;
+    padding: 0.15em 0.6em;
+    margin-left: 0.5em;
+    border-radius: 999px;
+    background-color: rgba(255, 185, 0, 0.16);
+    color: var(--gold);
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    vertical-align: middle;
+}
+
+.sezon__liga {
+    font-size: 0.85rem;
+    color: var(--muted);
+    flex: 1 1 auto;
+}
+
+.sezon__wynik {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--blue-light);
+    white-space: nowrap;
+}
+
+.sezon .table {
+    border-top: 1px solid var(--line);
+}
+
+.sezon .table th:first-child,
+.sezon .table td:first-child {
+    padding-left: 1.5rem;
+}
+
+.sezon .table th:last-child,
+.sezon .table td:last-child {
+    padding-right: 1.5rem;
 }
 
 /* ---------- LICZBY ---------- */
