@@ -713,29 +713,71 @@
 
     /* ---------- kadra z panelu administratora ---------- */
 
+    function kartaZawodnika(z, i) {
+        var tlo = z.zdjecie
+            ? ' style="background-image:url(\'' + encodeURI(z.zdjecie) + '\')"'
+            : '';
+
+        return '<article class="player" data-reveal style="--d:' + (Math.min(i, 8) * 80) + 'ms">' +
+               '<div class="player__photo' + (z.zdjecie ? ' player__photo--foto' : '') + '"' + tlo + '></div>' +
+               '<div class="player__label">' +
+                   '<span class="player__no">' + (z.numer !== null ? z.numer : '–') + '</span>' +
+                   '<span class="player__name">' +
+                       '<small>' + esc(z.imie) + '</small>' +
+                       '<strong>' + esc(z.nazwisko) + '</strong>' +
+                       '<em class="player__poz">' + esc(z.pozycja) + '</em>' +
+                   '</span>' +
+               '</div>' +
+               '</article>';
+    }
+
     function rysujZawodnikow(dane) {
         var rail = document.querySelector('[data-rail-id="team"]');
         if (!rail || !dane || !dane.zawodnicy || !dane.zawodnicy.length) { return; }
 
-        rail.innerHTML = dane.zawodnicy.map(function (z, i) {
-            var tlo = z.zdjecie
-                ? ' style="background-image:url(\'' + encodeURI(z.zdjecie) + '\')"'
-                : '';
+        rail.innerHTML = dane.zawodnicy.map(kartaZawodnika).join('');
+        obserwuj(rail.querySelectorAll('[data-reveal]'));
+    }
 
-            return '<article class="player" data-reveal style="--d:' + (i * 80) + 'ms">' +
-                   '<div class="player__photo' + (z.zdjecie ? ' player__photo--foto' : '') + '"' + tlo + '></div>' +
-                   '<div class="player__label">' +
-                       '<span class="player__no">' + (z.numer !== null ? z.numer : '–') + '</span>' +
-                       '<span class="player__name">' +
-                           '<small>' + esc(z.imie) + '</small>' +
-                           '<strong>' + esc(z.nazwisko) + '</strong>' +
-                           '<em class="player__poz">' + esc(z.pozycja) + '</em>' +
-                       '</span>' +
-                   '</div>' +
-                   '</article>';
+    /* ---------- pełna kadra wg pozycji (podstrona kadra.html) ---------- */
+
+    var POZYCJE_KOLEJNOSC = ['bramkarz', 'obrońca', 'pomocnik', 'napastnik'];
+    var POZYCJE_ETYKIETA = {
+        bramkarz: 'Bramkarze',
+        obrońca: 'Obrońcy',
+        pomocnik: 'Pomocnicy',
+        napastnik: 'Napastnicy',
+    };
+
+    function rysujKadre(dane) {
+        var box = document.getElementById('kadra-pelna');
+        if (!box) { return; }
+
+        if (!dane || !dane.zawodnicy || !dane.zawodnicy.length) {
+            box.innerHTML = '<p class="wyniki__pusto">Kadra jest chwilowo niedostępna.</p>';
+            return;
+        }
+
+        var wgPozycji = {};
+        dane.zawodnicy.forEach(function (z) {
+            (wgPozycji[z.pozycja] = wgPozycji[z.pozycja] || []).push(z);
+        });
+
+        // znane pozycje w ustalonej kolejności, potem cokolwiek nietypowego na końcu
+        var kolejnosc = POZYCJE_KOLEJNOSC.concat(
+            Object.keys(wgPozycji).filter(function (p) { return POZYCJE_KOLEJNOSC.indexOf(p) === -1; })
+        );
+
+        box.innerHTML = kolejnosc.filter(function (p) { return wgPozycji[p]; }).map(function (p) {
+            var gracze = wgPozycji[p];
+            return '<section class="kadra-grupa" data-reveal>' +
+                       '<h2 class="kadra-grupa__tytul">' + esc(POZYCJE_ETYKIETA[p] || p) +
+                           ' <span>' + gracze.length + '</span></h2>' +
+                       '<div class="kadra-siatka">' + gracze.map(kartaZawodnika).join('') + '</div>' +
+                   '</section>';
         }).join('');
 
-        obserwuj(rail.querySelectorAll('[data-reveal]'));
+        obserwuj(box.querySelectorAll('[data-reveal]'));
     }
 
     /* Brak pliku nie jest błędem — sekcja zostaje przy treści wpisanej w HTML,
@@ -760,7 +802,10 @@
             rysujPosty(wyniki[0], wyniki[1]);
         });
 
-        pobierzJSON('data/zawodnicy.json').then(rysujZawodnikow);
+        pobierzJSON('data/zawodnicy.json').then(function (dane) {
+            rysujZawodnikow(dane);
+            rysujKadre(dane);
+        });
 
         pobierzJSON('data/liga.json').then(function (dane) {
             if (!dane) { return; }
