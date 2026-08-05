@@ -1,11 +1,53 @@
 {
-    "zaktualizowano": "2026-08-04T14:05:43+00:00",
+    "zaktualizowano": "2026-08-05T14:11:46+00:00",
     "zawodnicy": [
         {
-            "imie": "asdasdas",
-            "nazwisko": "dasdasdsa",
+            "imie": "Jacek",
+            "nazwisko": "Skwron",
             "pozycja": "pomocnik",
-            "numer": 2,
+            "numer": 5,
+            "zdjecie": null
+        },
+        {
+            "imie": "Paweł",
+            "nazwisko": "Olejarz",
+            "pozycja": "napastnik",
+            "numer": 8,
+            "zdjecie": null
+        },
+        {
+            "imie": "Marek",
+            "nazwisko": "Pęczek",
+            "pozycja": "napastnik",
+            "numer": 9,
+            "zdjecie": null
+        },
+        {
+            "imie": "Seweryn",
+            "nazwisko": "Mrozowski",
+            "pozycja": "napastnik",
+            "numer": 10,
+            "zdjecie": null
+        },
+        {
+            "imie": "Bartek",
+            "nazwisko": "Pulak",
+            "pozycja": "pomocnik",
+            "numer": 11,
+            "zdjecie": null
+        },
+        {
+            "imie": "Eryk",
+            "nazwisko": "Bajor",
+            "pozycja": "obrońca",
+            "numer": 18,
+            "zdjecie": null
+        },
+        {
+            "imie": "Makysmilian",
+            "nazwisko": "Błachaniec",
+            "pozycja": "napastnik",
+            "numer": 98,
             "zdjecie": null
         }
     ]

@@ -491,6 +491,37 @@
         });
     }
 
+    function etykietaPosta(p) {
+        return p.zrodlo === 'klub' ? p.typ
+             : p.typ === 'video' ? 'Wideo'
+             : p.typ === 'album' ? 'Galeria'
+             : 'Facebook';
+    }
+
+    /* Sekcja powitalna pokazuje nagłówek najnowszego newsa zamiast
+       treści wpisanej na sztywno w HTML. */
+    function rysujHero(p) {
+        var tytul = document.querySelector('.hero__title');
+        if (!tytul || !p) { return; }
+
+        var tag = document.querySelector('.hero__meta .tag');
+        var czas = document.querySelector('.hero__time');
+
+        if (tag) { tag.textContent = etykietaPosta(p); }
+        if (czas) { czas.textContent = odKiedy(p.data); }
+
+        /* Pierwsza część nagłówka biała, końcówka na złoto —
+           tak jak w oryginalnym, wpisanym na sztywno tytule. */
+        var slowa = p.naglowek.split(' ').filter(Boolean);
+        var podzial = Math.max(1, Math.floor(slowa.length * 0.6));
+        var biale = esc(slowa.slice(0, podzial).join(' '));
+        var zlote = esc(slowa.slice(podzial).join(' '));
+
+        tytul.innerHTML = '<span class="line">' + biale +
+            (zlote ? ' <span class="line--accent">' + zlote + '</span>' : '') +
+            '</span>';
+    }
+
     /* Wpisy z panelu i posty z Facebooka trafiają do jednej listy,
        posortowanej datą od najnowszego. */
     function rysujPosty(zFacebooka, zPanelu) {
@@ -512,17 +543,12 @@
                 ? ' style="background-image:url(\'' + encodeURI(p.zdjecie) + '\')"'
                 : '';
 
-            var etykieta = p.zrodlo === 'klub' ? p.typ
-                         : p.typ === 'video' ? 'Wideo'
-                         : p.typ === 'album' ? 'Galeria'
-                         : 'Facebook';
-
             return '<article class="post" role="button" tabindex="0"' +
                    ' data-post="' + i + '" aria-haspopup="dialog"' +
                    ' data-reveal style="--d:' + (i * 80) + 'ms">' +
                    '<div class="post__media' + (p.zdjecie ? ' post__media--foto' : ' post__media--' + ((i % 6) + 1)) + '"' + tlo + '></div>' +
                    '<div class="post__body">' +
-                       '<span class="tag tag--sm">' + esc(etykieta) + '</span>' +
+                       '<span class="tag tag--sm">' + esc(etykietaPosta(p)) + '</span>' +
                        '<span class="post__time">' + odKiedy(p.data) + '</span>' +
                        '<h3>' + esc(p.naglowek) + '</h3>' +
                    '</div>' +
@@ -531,6 +557,7 @@
 
         POSTY = wszystkie;
         obserwuj(rail.querySelectorAll('[data-reveal]'));
+        rysujHero(wszystkie[0]);
 
         var link = document.querySelector('#aktualnosci .arrow-link');
         if (link && zFacebooka && zFacebooka.zrodlo) {

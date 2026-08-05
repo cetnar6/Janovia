@@ -1425,9 +1425,14 @@ a {
 }
 
 .stats__grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2.5rem clamp(2.5rem, 8vw, 6rem);
+}
+
+.stat {
+    text-align: center;
 }
 
 .stat strong {
@@ -1566,10 +1571,6 @@ a {
         display: none;
     }
 
-    .stats__grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
     .footer__inner {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -1584,7 +1585,10 @@ a {
         flex: 0 0 78vw;
     }
 
-    .stats__grid,
+    .stats__grid {
+        gap: 2rem 3rem;
+    }
+
     .footer__inner {
         grid-template-columns: 1fr;
     }
