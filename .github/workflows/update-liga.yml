@@ -37,6 +37,7 @@ jobs:
         continue-on-error: true
         env:
           FB_TOKEN: ${{ secrets.FB_TOKEN }}
+          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
         run: |
           if [ -z "$FB_TOKEN" ]; then
             echo "Brak sekretu FB_TOKEN — pomijam posty z Facebooka."

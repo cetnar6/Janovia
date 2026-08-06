@@ -7,6 +7,7 @@
 
     var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var NASZ_KLUB = 'Janovia Janowiec';
+    var STADION_JANOVIA = 'Janowiec 70, 39-312 Janowiec';
 
     /* =========================================
        1. PASEK POSTĘPU, NAGŁÓWEK, PARALAKSA
@@ -318,6 +319,19 @@
         }, 150);
     });
 
+    var IKONA_PINEZKI =
+        '<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">' +
+        '<path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 6.19 12.13 6.46 12.42a.75.75 0 0 0 1.08 0C12.81 21.13 19 14.25 19 9c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/>' +
+        '</svg>';
+
+    /* Adres na mapie: dla meczów u siebie zawsze nasz stadion, dla wyjazdowych
+       nie znamy dokładnego adresu przeciwnika — Maps i tak trafnie znajdzie
+       boisko po nazwie klubu wpisanej jako wyszukiwanie. */
+    function linkMapy(gospodarz) {
+        var cel = gospodarz === NASZ_KLUB ? STADION_JANOVIA : gospodarz + ' stadion piłkarski';
+        return 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(cel);
+    }
+
     function rysujMecze(dane) {
         var rail = document.querySelector('[data-rail-id="fix"]');
         if (!rail || !dane.nadchodzace || !dane.nadchodzace.length) { return; }
@@ -350,7 +364,14 @@
                            rysujForme(m.gosc, dane.forma) +
                        '</div>' +
                    '</div>' +
-                   '<span class="fixture__time">' + kiedy + ' · ' + gdzie + '</span>' +
+                   '<span class="fixture__time">' +
+                       kiedy + ' · ' + gdzie +
+                       '<a class="fixture__mapa" href="' + linkMapy(m.gospodarz) + '" ' +
+                           'target="_blank" rel="noopener" title="Pokaż lokalizację na mapie" ' +
+                           'aria-label="Pokaż lokalizację meczu na mapie" onclick="event.stopPropagation()">' +
+                           IKONA_PINEZKI +
+                       '</a>' +
+                   '</span>' +
                    '</article>';
         }).join('');
 
