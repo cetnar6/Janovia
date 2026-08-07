@@ -747,6 +747,14 @@ a {
     color: var(--gold);
 }
 
+/* siatka na podstronie aktualnosci.html — te same karty co w karuzeli
+   na stronie głównej, tylko wszystkie naraz, w rzędach jak na Instagramie */
+.siatka-aktualnosci {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem 1.75rem;
+}
+
 /* karta meczu */
 .fixture {
     display: flex;
@@ -1044,6 +1052,23 @@ a {
     box-shadow: 0 30px 90px rgba(0, 0, 0, 0.6);
     overflow: hidden;
     animation: modalOkno 0.4s var(--ease);
+    transition: grid-template-columns 0.4s var(--ease), width 0.4s var(--ease), max-height 0.4s var(--ease);
+}
+
+/* kliknięcie w zdjęcie — okno rozszerza się na całą szerokość, panel
+   z tekstem chowa się, zostaje sama powiększona fotografia */
+.modal__okno--zoom {
+    grid-template-columns: minmax(0, 1fr);
+    width: min(1400px, 96vw);
+    /* height, nie tylko max-height — inaczej pionowe zdjęcia (najczęstsze
+       tu kadry z Facebooka) nie rosną wcale, bo to wysokość je ogranicza,
+       a szersze okno samo w sobie nic im nie daje */
+    height: 92vh;
+    max-height: 92vh;
+}
+
+.modal__okno--zoom .modal__tresc {
+    display: none;
 }
 
 @keyframes modalTlo {
@@ -1090,6 +1115,15 @@ a {
     background-position: center;
     background-repeat: no-repeat;
     min-height: 260px;
+    cursor: zoom-in;
+}
+
+.modal__okno--zoom .modal__foto {
+    cursor: zoom-out;
+}
+
+.modal__foto--wideo {
+    cursor: default;
 }
 
 .modal__foto--wideo iframe {
@@ -1163,6 +1197,11 @@ a {
 .modal__tresc {
     display: flex;
     flex-direction: column;
+    /* max-height wprost na tym elemencie, nie tylko na .modal__okno —
+       samo min-height:0 nie wystarcza, bo .modal__okno ma max-height (nie
+       height), więc nie daje dzieciom określonej wysokości do przycięcia */
+    min-height: 0;
+    max-height: min(86vh, 760px);
     padding: clamp(1.5rem, 4vw, 2.5rem);
     overflow-y: auto;
 }

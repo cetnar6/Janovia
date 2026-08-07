@@ -524,6 +524,7 @@
         GALERIA = (p.galeria && p.galeria.length) ? p.galeria : (p.zdjecie ? [p.zdjecie] : []);
         GALERIA_I = 0;
 
+        okno.classList.remove('modal__okno--zoom');
         okno.classList.toggle('bez-foto', !GALERIA.length && !maWideo);
         foto.classList.toggle('modal__foto--wideo', !!maWideo);
 
@@ -585,6 +586,14 @@
             przewinGalerie(1);
         });
 
+        // klik w zdjęcie powiększa okno na cały ekran; drugi klik pomniejsza.
+        // Wideo ma własną obsługę kliknięć (play), więc go pomijamy.
+        document.getElementById('modal-foto').addEventListener('click', function (e) {
+            if (e.currentTarget.classList.contains('modal__foto--wideo')) { return; }
+            if (!GALERIA.length) { return; }
+            modal.querySelector('.modal__okno').classList.toggle('modal__okno--zoom');
+        });
+
         document.addEventListener('keydown', function (e) {
             if (modal.hidden) { return; }
             if (e.key === 'Escape') { zamknijPost(); }
@@ -643,11 +652,29 @@
             '</span>';
     }
 
+    function kartaAktualnosci(p, i) {
+        var tlo = p.zdjecie
+            ? ' style="background-image:url(\'' + encodeURI(p.zdjecie) + '\')"'
+            : '';
+
+        return '<article class="post" role="button" tabindex="0"' +
+               ' data-post="' + i + '" aria-haspopup="dialog"' +
+               ' data-reveal style="--d:' + (Math.min(i, 10) * 60) + 'ms">' +
+               '<div class="post__media' + (p.zdjecie ? ' post__media--foto' : ' post__media--' + ((i % 6) + 1)) + '"' + tlo + '></div>' +
+               '<div class="post__body">' +
+                   '<span class="tag tag--sm">' + esc(etykietaPosta(p)) + '</span>' +
+                   '<span class="post__time">' + odKiedy(p.data) + '</span>' +
+                   '<h3>' + esc(p.naglowek) + '</h3>' +
+               '</div>' +
+               '</article>';
+    }
+
     /* Wpisy z panelu i posty z Facebooka trafiają do jednej listy,
        posortowanej datą od najnowszego. */
     function rysujPosty(zFacebooka, zPanelu) {
         var rail = document.querySelector('[data-rail-id="news"]');
-        if (!rail) { return; }
+        var siatka = document.getElementById('aktualnosci-siatka');
+        if (!rail && !siatka) { return; }
 
         var wszystkie = []
             .concat((zPanelu && zPanelu.posty) || [])
@@ -659,32 +686,19 @@
             return new Date(b.data) - new Date(a.data);
         });
 
-        rail.innerHTML = wszystkie.map(function (p, i) {
-            var tlo = p.zdjecie
-                ? ' style="background-image:url(\'' + encodeURI(p.zdjecie) + '\')"'
-                : '';
-
-            return '<article class="post" role="button" tabindex="0"' +
-                   ' data-post="' + i + '" aria-haspopup="dialog"' +
-                   ' data-reveal style="--d:' + (i * 80) + 'ms">' +
-                   '<div class="post__media' + (p.zdjecie ? ' post__media--foto' : ' post__media--' + ((i % 6) + 1)) + '"' + tlo + '></div>' +
-                   '<div class="post__body">' +
-                       '<span class="tag tag--sm">' + esc(etykietaPosta(p)) + '</span>' +
-                       '<span class="post__time">' + odKiedy(p.data) + '</span>' +
-                       '<h3>' + esc(p.naglowek) + '</h3>' +
-                   '</div>' +
-                   '</article>';
-        }).join('');
-
         POSTY = wszystkie;
-        obserwuj(rail.querySelectorAll('[data-reveal]'));
-        rysujHero(wszystkie[0]);
 
-        var link = document.querySelector('#aktualnosci .arrow-link');
-        if (link && zFacebooka && zFacebooka.zrodlo) {
-            link.href = zFacebooka.zrodlo;
-            link.target = '_blank';
-            link.rel = 'noopener';
+        if (rail) {
+            rail.innerHTML = wszystkie.map(kartaAktualnosci).join('');
+            obserwuj(rail.querySelectorAll('[data-reveal]'));
+            rysujHero(wszystkie[0]);
+        }
+
+        // pełna siatka na podstronie aktualnosci.html — te same karty,
+        // ten sam POSTY i data-post, więc kliknięcie otwiera ten sam modal
+        if (siatka) {
+            siatka.innerHTML = wszystkie.map(kartaAktualnosci).join('');
+            obserwuj(siatka.querySelectorAll('[data-reveal]'));
         }
     }
 

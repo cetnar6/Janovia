@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Archiwalne sezony — Janovia Janowiec</title>
+    <title>Aktualności — Janovia Janowiec</title>
 
     <link rel="icon" type="image/png" sizes="32x32" href="png/favicon-32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="png/favicon-180.png">
@@ -47,18 +47,47 @@
     <!-- ===== TYTUŁ ===== -->
     <section class="podstrona">
         <div class="wrap">
-            <a class="powrot" href="index.html#tabela">&larr; Wróć na stronę główną</a>
-            <h1>Archiwalne <em>sezony</em></h1>
-            <p class="podstrona__opis">Tabele końcowe z poprzednich rozgrywek klubu, dane z 90minut.pl.</p>
+            <a class="powrot" href="index.html#aktualnosci">&larr; Wróć na stronę główną</a>
+            <h1>Wszystkie <em>aktualności</em></h1>
+            <p class="podstrona__opis">Komplet wpisów klubu i postów z Facebooka w jednym miejscu.</p>
         </div>
     </section>
 
-    <!-- ===== SEZONY ===== -->
+    <!-- ===== SIATKA AKTUALNOŚCI ===== -->
     <section class="section">
-        <div class="wrap" id="archiwum">
-            <p class="wyniki__pusto">Wczytuję archiwum…</p>
+        <div class="wrap siatka-aktualnosci" id="aktualnosci-siatka">
+            <p class="wyniki__pusto">Wczytuję aktualności…</p>
         </div>
     </section>
+
+    <!-- ===== OKNO Z PEŁNĄ TREŚCIĄ POSTA ===== -->
+    <div class="modal" id="modal" hidden>
+        <div class="modal__tlo" data-zamknij></div>
+
+        <div class="modal__okno" role="dialog" aria-modal="true" aria-labelledby="modal-tytul">
+            <button class="modal__zamknij" type="button" data-zamknij aria-label="Zamknij okno">&times;</button>
+
+            <div class="modal__media">
+                <div class="modal__foto" id="modal-foto"></div>
+
+                <div class="modal__galeria" id="modal-galeria" hidden>
+                    <button class="modal__strzalka modal__strzalka--l" type="button" id="modal-poprzednie" aria-label="Poprzednie zdjęcie">&larr;</button>
+                    <span class="modal__licznik" id="modal-licznik"></span>
+                    <button class="modal__strzalka modal__strzalka--r" type="button" id="modal-nastepne" aria-label="Następne zdjęcie">&rarr;</button>
+                </div>
+            </div>
+
+            <div class="modal__tresc">
+                <div class="modal__meta">
+                    <span class="tag tag--sm" id="modal-tag">Facebook</span>
+                    <span class="modal__data" id="modal-data"></span>
+                </div>
+                <h3 class="modal__tytul" id="modal-tytul"></h3>
+                <p class="modal__tekst" id="modal-tekst"></p>
+                <a class="arrow-link arrow-link--sm" id="modal-link" href="#" target="_blank" rel="noopener">Zobacz na Facebooku</a>
+            </div>
+        </div>
+    </div>
 
     <!-- ===== STOPKA ===== -->
     <footer class="footer" id="kontakt">

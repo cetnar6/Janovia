@@ -21,7 +21,7 @@ import urllib.request
 from datetime import datetime, timezone
 
 API = "https://graph.facebook.com/v21.0"
-ILE_POSTOW = 10
+ILE_POSTOW = 100
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(BASE, "data", "facebook.json")
@@ -217,6 +217,10 @@ def main():
         zalaczniki = p.get("attachments", {}).get("data", [])
         pierwszy = zalaczniki[0] if zalaczniki else {}
         typ = pierwszy.get("media_type")
+
+        if "--debug-zalaczniki" in sys.argv and typ == "album":
+            print("--- surowy załącznik posta {} ---".format(p["id"]), file=sys.stderr)
+            print(json.dumps(pierwszy, ensure_ascii=False, indent=2), file=sys.stderr)
 
         zrodla = zrodla_zdjec(pierwszy, p.get("full_picture"))
 
