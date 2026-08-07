@@ -24,4 +24,12 @@ return [
 
     // maksymalny rozmiar wgrywanego zdjęcia w bajtach (5 MB)
     'max_rozmiar_zdjecia' => 5 * 1024 * 1024,
+
+    // --- Facebook (przycisk "Sprawdź Facebooka teraz" w panelu) ---
+    // ten sam token, co w sekrecie FB_TOKEN na GitHubie — panel uruchamia
+    // lokalnie update_fb.py, więc potrzebuje własnej kopii
+    'fb_token' => '',
+
+    // opcjonalne — wskazuje jedną, konkretną stronę, gdy token zarządza kilkoma
+    'fb_page_id' => '',
 ];

@@ -937,6 +937,7 @@ a {
 .player {
     position: relative;
     cursor: pointer;
+    overflow: hidden;
 }
 
 .player__photo {
@@ -944,7 +945,10 @@ a {
     background:
         radial-gradient(75% 65% at 50% 22%, rgba(0, 125, 204, 0.6), transparent 72%),
         repeating-linear-gradient(135deg, #1A1F2A 0 22px, #232A38 22px 44px);
-    transition: background 0.5s, transform 0.6s var(--ease);
+    /* transform-origin idzie za kursorem — ustawia go JS przy każdym ruchu myszy.
+       Musi być w transition, inaczej punkt powiększenia skacze zamiast płynnie jechać. */
+    transform-origin: var(--ox, 50%) var(--oy, 50%);
+    transition: background 0.5s, transform 0.5s var(--ease), transform-origin 0.3s linear;
 }
 
 .player--featured .player__photo,
@@ -952,6 +956,10 @@ a {
     background:
         radial-gradient(70% 60% at 50% 25%, rgba(255, 185, 0, 0.55), transparent 70%),
         repeating-linear-gradient(135deg, #0D2033 0 22px, #123049 22px 44px);
+}
+
+.player:hover .player__photo {
+    transform: scale(1.22);
 }
 
 .player__label {
@@ -1068,14 +1076,78 @@ a {
     transform: rotate(90deg);
 }
 
+.modal__media {
+    position: relative;
+    min-height: 260px;
+}
+
 /* contain, nie cover — grafiki z postów to najczęściej plakaty meczowe
    z datą i godziną przy krawędziach, więc nic nie może zostać obcięte */
 .modal__foto {
+    height: 100%;
     background-color: var(--bg-2);
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
     min-height: 260px;
+}
+
+.modal__foto--wideo iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 260px;
+    border: 0;
+}
+
+/* strzałki galerii — nakładka na zdjęcie, widoczna tylko gdy post ma
+   więcej niż jedno zdjęcie (JS ustawia hidden) */
+.modal__galeria {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 0.75rem;
+    pointer-events: none;
+}
+
+.modal__strzalka {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    background-color: rgba(8, 9, 12, 0.6);
+    color: #FFFFFF;
+    font-size: 1.1rem;
+    cursor: pointer;
+    pointer-events: auto;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.modal__strzalka:hover {
+    background-color: var(--gold);
+    color: var(--bg);
+    transform: scale(1.08);
+}
+
+.modal__licznik {
+    position: absolute;
+    bottom: 0.85rem;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    background-color: rgba(8, 9, 12, 0.6);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: #FFFFFF;
+    pointer-events: none;
 }
 
 /* post bez zdjęcia — okno zwęża się do samej treści */
@@ -1084,7 +1156,7 @@ a {
     width: min(620px, 100%);
 }
 
-.modal__okno.bez-foto .modal__foto {
+.modal__okno.bez-foto .modal__media {
     display: none;
 }
 
@@ -1136,7 +1208,7 @@ a {
         grid-template-rows: auto minmax(0, 1fr);
     }
 
-    .modal__foto {
+    .modal__media {
         min-height: 200px;
         max-height: 34vh;
     }
@@ -1695,6 +1767,13 @@ a {
     transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
     transition-delay: var(--d, 0ms);
 }
+
+/* warianty kierunku — muszą siedzieć PO bazowej regule [data-reveal],
+   żeby wygrać przy równej specyficzności selektorów atrybutowych */
+[data-reveal="left"]  { transform: translateX(-46px); }
+[data-reveal="right"] { transform: translateX(46px); }
+[data-reveal="scale"] { transform: scale(0.9); }
+[data-reveal="zoom"]  { transform: scale(1.08); }
 
 [data-reveal].is-in {
     opacity: 1;

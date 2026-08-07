@@ -13,6 +13,9 @@ $postow     = (int) $db->query('SELECT COUNT(*) FROM posty WHERE widoczny = 1')-
 $plik_json = katalog_strony() . '/data/zawodnicy.json';
 $eksport = is_file($plik_json) ? date('d.m.Y, H:i', filemtime($plik_json)) : null;
 
+$plik_fb = katalog_strony() . '/data/facebook.json';
+$fb_sprawdzono = is_file($plik_fb) ? date('d.m.Y, H:i', filemtime($plik_fb)) : null;
+
 naglowek('Pulpit');
 ?>
 
@@ -43,6 +46,22 @@ naglowek('Pulpit');
     <form method="post" action="eksport.php">
         <?= pole_csrf() ?>
         <button class="btn" type="submit">Opublikuj na stronie</button>
+    </form>
+</section>
+
+<section class="karta">
+    <h2>Nowe posty z Facebooka</h2>
+    <p>
+        Sprawdza teraz, na żądanie, czy na stronie klubu na Facebooku pojawiło się
+        coś nowego — bez czekania na codzienny automat.
+    </p>
+    <p class="drobne">
+        Ostatnie sprawdzenie: <?= $fb_sprawdzono ? e($fb_sprawdzono) : 'jeszcze nie było' ?>
+    </p>
+
+    <form method="post" action="facebook.php">
+        <?= pole_csrf() ?>
+        <button class="btn" type="submit">Sprawdź Facebooka teraz</button>
     </form>
 </section>
 

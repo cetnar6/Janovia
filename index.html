@@ -11,7 +11,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="png/favicon-180.png">
     <meta name="theme-color" content="#08090C">
     <!-- ?v= wymusza pobranie nowej wersji po zmianach; podbij numer przy wdrożeniu -->
-    <link rel="stylesheet" href="style.css?v=20">
+    <link rel="stylesheet" href="style.css?v=23">
 </head>
 <body>
 
@@ -50,7 +50,7 @@
 
     <!-- ===== HERO ===== -->
     <section class="hero" id="top">
-        <div class="hero__bg" data-parallax="0.35"></div>
+        <div class="hero__bg"></div>
         <div class="hero__grain"></div>
 
         <div class="hero__content">
@@ -169,7 +169,7 @@
     <section class="countdown">
         <div class="countdown__bg" data-parallax="0.2"></div>
         <div class="wrap">
-            <div class="countdown__box" data-reveal>
+            <div class="countdown__box" data-reveal="zoom">
                 <div class="countdown__teams">
                     <img class="crest crest--md" src="png/JanoviaJanowiec.png" alt="Janovia">
                     <span class="vs">vs</span>
@@ -385,15 +385,15 @@
     <!-- ===== KLUB / LICZBY ===== -->
     <section class="stats" id="klub">
         <div class="wrap stats__grid">
-            <div class="stat" data-reveal style="--d:0ms">
+            <div class="stat" data-reveal="scale" style="--d:0ms">
                 <strong data-count="1998" data-plain>0</strong>
                 <span>Rok założenia</span>
             </div>
-            <div class="stat" data-reveal style="--d:200ms">
+            <div class="stat" data-reveal="scale" style="--d:150ms">
                 <strong data-count="90">0</strong>
                 <span>Zawodników w akademii</span>
             </div>
-            <div class="stat" data-reveal style="--d:300ms">
+            <div class="stat" data-reveal="scale" style="--d:300ms">
                 <strong data-count="4">0</strong>
                 <span>Drużyn młodzieżowych</span>
             </div>
@@ -443,7 +443,15 @@
         <div class="modal__okno" role="dialog" aria-modal="true" aria-labelledby="modal-tytul">
             <button class="modal__zamknij" type="button" data-zamknij aria-label="Zamknij okno">&times;</button>
 
-            <div class="modal__foto" id="modal-foto"></div>
+            <div class="modal__media">
+                <div class="modal__foto" id="modal-foto"></div>
+
+                <div class="modal__galeria" id="modal-galeria" hidden>
+                    <button class="modal__strzalka modal__strzalka--l" type="button" id="modal-poprzednie" aria-label="Poprzednie zdjęcie">&larr;</button>
+                    <span class="modal__licznik" id="modal-licznik"></span>
+                    <button class="modal__strzalka modal__strzalka--r" type="button" id="modal-nastepne" aria-label="Następne zdjęcie">&rarr;</button>
+                </div>
+            </div>
 
             <div class="modal__tresc">
                 <div class="modal__meta">
@@ -457,6 +465,6 @@
         </div>
     </div>
 
-    <script src="script.js?v=17"></script>
+    <script src="script.js?v=20"></script>
 </body>
 </html>

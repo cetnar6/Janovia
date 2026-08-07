@@ -16,6 +16,8 @@
     var progress = document.getElementById('progress');
     var header = document.getElementById('header');
     var parallax = document.querySelectorAll('[data-parallax]');
+    var heroContent = document.querySelector('.hero__content');
+    var heroBg = document.querySelector('.hero__bg');
     var lastY = window.scrollY;
     var ticking = false;
 
@@ -37,6 +39,19 @@
                     var speed = parseFloat(el.getAttribute('data-parallax'));
                     el.style.transform = 'translate3d(0,' + (-rect.top * speed) + 'px,0)';
                 }
+            }
+
+            // hero: tytuł odjeżdża i znika, tło robi lekki najazd — efekt
+            // kinowej głębi przy pierwszym przewinięciu strony
+            if (heroContent) {
+                var zanik = Math.min(1, y / (window.innerHeight * 0.6));
+                heroContent.style.opacity = String(1 - zanik);
+                heroContent.style.transform = 'translateY(' + (zanik * 50) + 'px)';
+            }
+
+            if (heroBg) {
+                var najazd = 1 + Math.min(0.12, y / window.innerHeight * 0.12);
+                heroBg.style.transform = 'translate3d(0,' + (-y * 0.35) + 'px,0) scale(' + najazd + ')';
             }
         }
 
@@ -77,6 +92,26 @@
     }
 
     obserwuj(document.querySelectorAll('[data-reveal]'));
+
+    /* =========================================
+       2b. ZDJĘCIE ZAWODNIKA — ZOOM ZA KURSOREM
+       Kadr powiększa się w tym miejscu karty, nad którym akurat jest kursor,
+       zamiast zawsze od środka.
+       ========================================= */
+
+    if (!reduced) {
+        document.addEventListener('mousemove', function (e) {
+            var karta = e.target.closest ? e.target.closest('.player') : null;
+            if (!karta) { return; }
+
+            var foto = karta.querySelector('.player__photo');
+            if (!foto) { return; }
+
+            var r = karta.getBoundingClientRect();
+            foto.style.setProperty('--ox', ((e.clientX - r.left) / r.width * 100) + '%');
+            foto.style.setProperty('--oy', ((e.clientY - r.top) / r.height * 100) + '%');
+        });
+    }
 
     /* =========================================
        3. LICZNIKI
@@ -455,8 +490,25 @@
         var okno = modal.querySelector('.modal__okno');
         var foto = document.getElementById('modal-foto');
 
-        okno.classList.toggle('bez-foto', !p.zdjecie);
-        foto.style.backgroundImage = p.zdjecie ? 'url("' + encodeURI(p.zdjecie) + '")' : '';
+        // wideo z Facebooka odtwarzamy na miejscu przez oficjalny odtwarzacz FB,
+        // zamiast tylko linkować do posta — działa dla każdego publicznego wideo,
+        // bo potrzebuje tylko adresu posta (permalink), bez tokenu ani API
+        var maWideo = p.typ === 'video' && p.link;
+
+        okno.classList.toggle('bez-foto', !p.zdjecie && !maWideo);
+        foto.classList.toggle('modal__foto--wideo', !!maWideo);
+
+        if (maWideo) {
+            foto.style.backgroundImage = '';
+            foto.innerHTML =
+                '<iframe src="https://www.facebook.com/plugins/video.php?href=' +
+                encodeURIComponent(p.link) + '&show_text=false&autoplay=false" ' +
+                'title="' + esc(p.naglowek) + '" allow="encrypted-media; fullscreen" ' +
+                'allowfullscreen frameborder="0"></iframe>';
+        } else {
+            foto.innerHTML = '';
+            foto.style.backgroundImage = p.zdjecie ? 'url("' + encodeURI(p.zdjecie) + '")' : '';
+        }
 
         document.getElementById('modal-tag').textContent =
             p.typ === 'video' ? 'Wideo' : (p.typ === 'album' ? 'Galeria' : 'Facebook');
@@ -478,6 +530,10 @@
 
         modal.hidden = true;
         document.body.style.overflow = '';
+
+        // usuwa iframe, żeby wideo przestało grać w tle po zamknięciu
+        var foto = document.getElementById('modal-foto');
+        if (foto) { foto.innerHTML = ''; }
 
         if (ostatnioKlikniety) {
             ostatnioKlikniety.focus();
@@ -739,7 +795,9 @@
             ? ' style="background-image:url(\'' + encodeURI(z.zdjecie) + '\')"'
             : '';
 
-        return '<article class="player" data-reveal style="--d:' + (Math.min(i, 8) * 80) + 'ms">' +
+        var kierunek = i % 2 === 0 ? 'left' : 'right';
+
+        return '<article class="player" data-reveal="' + kierunek + '" style="--d:' + (Math.min(i, 8) * 80) + 'ms">' +
                '<div class="player__photo' + (z.zdjecie ? ' player__photo--foto' : '') + '"' + tlo + '></div>' +
                '<div class="player__label">' +
                    '<span class="player__no">' + (z.numer !== null ? z.numer : '–') + '</span>' +
