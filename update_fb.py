@@ -33,7 +33,9 @@ POLA = ",".join([
     "created_time",
     "permalink_url",
     "full_picture",
-    "attachments{media_type}",
+    # subattachments to zdjęcia w środku albumu — bez tego dostajemy tylko
+    # media_type="album" i jedno full_picture, a nie całą galerię
+    "attachments{media_type,media,subattachments{media}}",
 ])
 
 
@@ -100,6 +102,30 @@ def znajdz_strone(token):
     me = graph("/me", token, fields="id,name")
     print("Strona: {} (id {})".format(me.get("name"), me.get("id")))
     return me["id"], token, me.get("name")
+
+
+def zrodla_zdjec(zalacznik, full_picture):
+    """
+    Adresy wszystkich zdjęć posta. Album trzyma je w subattachments,
+    pojedyncze zdjęcie tylko w media samego załącznika; gdy Facebook
+    nie zwróci żadnego z tych pól, wracamy do full_picture (miniatura).
+    """
+    podzalaczniki = (zalacznik.get("subattachments") or {}).get("data", [])
+
+    if podzalaczniki:
+        zrodla = []
+        for s in podzalaczniki:
+            src = ((s.get("media") or {}).get("image") or {}).get("src")
+            if src:
+                zrodla.append(src)
+        if zrodla:
+            return zrodla
+
+    src = ((zalacznik.get("media") or {}).get("image") or {}).get("src")
+    if src:
+        return [src]
+
+    return [full_picture] if full_picture else []
 
 
 def pobierz_zdjecie(url, nazwa):
@@ -188,12 +214,21 @@ def main():
         tekst = p.get("message", "")
         nazwa_pliku = p["id"].replace("_", "-")
 
-        zdjecie = None if dry else pobierz_zdjecie(p.get("full_picture"), nazwa_pliku)
-        if zdjecie:
-            uzyte.add(zdjecie)
-
         zalaczniki = p.get("attachments", {}).get("data", [])
-        typ = zalaczniki[0].get("media_type") if zalaczniki else None
+        pierwszy = zalaczniki[0] if zalaczniki else {}
+        typ = pierwszy.get("media_type")
+
+        zrodla = zrodla_zdjec(pierwszy, p.get("full_picture"))
+
+        galeria = []
+        for i, zrodlo in enumerate(zrodla):
+            # dopisek numeru tylko gdy zdjęć jest więcej niż jedno —
+            # pojedyncze zdjęcie zostaje pod tą samą nazwą co dotychczas
+            nazwa = nazwa_pliku if len(zrodla) == 1 else nazwa_pliku + "-" + str(i)
+            plik = None if dry else pobierz_zdjecie(zrodlo, nazwa)
+            if plik:
+                galeria.append(plik)
+                uzyte.add(plik)
 
         posty.append({
             "id": p["id"],
@@ -201,7 +236,8 @@ def main():
             "tekst": tekst,
             "data": p.get("created_time"),
             "link": p.get("permalink_url"),
-            "zdjecie": zdjecie,
+            "zdjecie": galeria[0] if galeria else None,
+            "galeria": galeria,
             "typ": typ,
         })
 

@@ -476,6 +476,32 @@
 
     var modal = document.getElementById('modal');
     var ostatnioKlikniety = null;
+    var GALERIA = [];
+    var GALERIA_I = 0;
+
+    /* Rysuje aktualne zdjęcie galerii i pokazuje/chowa strzałki — wywoływana
+       przy otwarciu posta i po każdym kliknięciu w strzałkę. */
+    function pokazZdjecieGalerii() {
+        var foto = document.getElementById('modal-foto');
+        var pasek = document.getElementById('modal-galeria');
+        var licznik = document.getElementById('modal-licznik');
+
+        if (!foto) { return; }
+
+        foto.style.backgroundImage = GALERIA.length
+            ? 'url("' + encodeURI(GALERIA[GALERIA_I]) + '")'
+            : '';
+
+        var wiele = GALERIA.length > 1;
+        if (pasek) { pasek.hidden = !wiele; }
+        if (licznik) { licznik.textContent = (GALERIA_I + 1) + ' / ' + GALERIA.length; }
+    }
+
+    function przewinGalerie(kierunek) {
+        if (GALERIA.length < 2) { return; }
+        GALERIA_I = (GALERIA_I + kierunek + GALERIA.length) % GALERIA.length;
+        pokazZdjecieGalerii();
+    }
 
     function pelnaData(iso) {
         var d = new Date(iso);
@@ -495,10 +521,15 @@
         // bo potrzebuje tylko adresu posta (permalink), bez tokenu ani API
         var maWideo = p.typ === 'video' && p.link;
 
-        okno.classList.toggle('bez-foto', !p.zdjecie && !maWideo);
+        GALERIA = (p.galeria && p.galeria.length) ? p.galeria : (p.zdjecie ? [p.zdjecie] : []);
+        GALERIA_I = 0;
+
+        okno.classList.toggle('bez-foto', !GALERIA.length && !maWideo);
         foto.classList.toggle('modal__foto--wideo', !!maWideo);
 
         if (maWideo) {
+            var pasek = document.getElementById('modal-galeria');
+            if (pasek) { pasek.hidden = true; }
             foto.style.backgroundImage = '';
             foto.innerHTML =
                 '<iframe src="https://www.facebook.com/plugins/video.php?href=' +
@@ -507,7 +538,7 @@
                 'allowfullscreen frameborder="0"></iframe>';
         } else {
             foto.innerHTML = '';
-            foto.style.backgroundImage = p.zdjecie ? 'url("' + encodeURI(p.zdjecie) + '")' : '';
+            pokazZdjecieGalerii();
         }
 
         document.getElementById('modal-tag').textContent =
@@ -546,8 +577,19 @@
             if (e.target.hasAttribute('data-zamknij')) { zamknijPost(); }
         });
 
+        document.getElementById('modal-poprzednie').addEventListener('click', function () {
+            przewinGalerie(-1);
+        });
+
+        document.getElementById('modal-nastepne').addEventListener('click', function () {
+            przewinGalerie(1);
+        });
+
         document.addEventListener('keydown', function (e) {
+            if (modal.hidden) { return; }
             if (e.key === 'Escape') { zamknijPost(); }
+            if (e.key === 'ArrowLeft') { przewinGalerie(-1); }
+            if (e.key === 'ArrowRight') { przewinGalerie(1); }
         });
 
         // delegacja: kafelki powstają dopiero po pobraniu danych
