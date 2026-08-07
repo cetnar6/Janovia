@@ -701,10 +701,12 @@ a {
     transition: opacity 0.5s;
 }
 
-/* zdjęcie pobrane z posta na Facebooku */
+/* zdjęcie pobrane z posta na Facebooku — contain, nie cover, z tego samego
+   powodu co w oknie z pełną treścią: grafiki to często plakaty meczowe
+   z datą i godziną przy krawędziach, więc nic nie może zostać obcięte */
 .post__media--foto {
     background-color: var(--surface);
-    background-size: cover;
+    background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
 }
