@@ -252,7 +252,12 @@
                         .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
-    /* rozmiar: 'xs' (tabela), 'sm' (karty meczów), 'md' (odliczanie) */
+    /* rozmiar: 'xs' (tabela), 'sm' (karty meczów), 'md' (odliczanie)
+
+       Wpisy w HERBY to zwykle same nazwy plików z folderu png/ (klub z ligi),
+       ale herb wgrany w panelu dla przeciwnika spoza listy trafia tu jako pełna
+       ścieżka (uploads/mecze/...) — rozpoznajemy ją po obecności ukośnika,
+       więc nie dokładamy do niej z automatu przedrostka "png/". */
     function herb(nazwa, rozmiar) {
         var plik = HERBY[nazwa];
 
@@ -261,8 +266,10 @@
                    '" data-letter="' + esc(litera(nazwa)) + '"></span>';
         }
 
+        var src = plik.indexOf('/') === -1 ? 'png/' + plik : plik;
+
         return '<span class="crest-plate crest-plate--' + (rozmiar || 'sm') + '">' +
-               '<img src="png/' + plik + '" alt="' + esc(nazwa) + '" loading="lazy">' +
+               '<img src="' + src + '" alt="' + esc(nazwa) + '" loading="lazy">' +
                '</span>';
     }
 
@@ -383,9 +390,13 @@
 
             var gdzie = m.gospodarz === NASZ_KLUB ? 'u siebie' : 'wyjazd';
 
+            var liga = m.kolejka
+                ? 'Klasa B · kolejka ' + m.kolejka
+                : (m.etykieta || 'Mecz towarzyski');
+
             return '<article class="fixture" data-reveal style="--d:' + (i * 80) + 'ms">' +
                    '<strong class="fixture__date">' + dzien + '</strong>' +
-                   '<span class="fixture__league">Klasa B · kolejka ' + m.kolejka + '</span>' +
+                   '<span class="fixture__league">' + esc(liga) + '</span>' +
                    '<div class="fixture__match">' +
                        '<div class="fixture__side">' +
                            herb(m.gospodarz, 'sm') +
@@ -436,8 +447,12 @@
                 : data.getDate() + ' ' + MIESIACE_SKROT[data.getMonth()] +
                   ', ' + pad(data.getHours()) + ':' + pad(data.getMinutes());
 
+            var opisKolejki = nastepny.kolejka
+                ? 'kolejka ' + nastepny.kolejka
+                : (nastepny.etykieta || 'mecz towarzyski');
+
             meta.textContent = skrot(nastepny.gospodarz) + ' — ' + skrot(nastepny.gosc) +
-                               ' · kolejka ' + nastepny.kolejka + ' · ' + kiedy;
+                               ' · ' + opisKolejki + ' · ' + kiedy;
         }
     }
 
@@ -942,8 +957,32 @@
             rysujKadre(dane);
         });
 
-        pobierzJSON('data/liga.json').then(function (dane) {
+        Promise.all([
+            pobierzJSON('data/liga.json'),
+            pobierzJSON('data/mecze-panelu.json')
+        ]).then(function (wyniki) {
+            var dane = wyniki[0];
+            var panel = wyniki[1];
             if (!dane) { return; }
+
+            if (panel && panel.mecze && panel.mecze.length) {
+                // herb wgrany w panelu dla przeciwnika spoza listy klubów ligowych —
+                // rejestrujemy go w HERBY, żeby herb() znalazł go po nazwie drużyny
+                panel.mecze.forEach(function (m) {
+                    if (m.przeciwnik && m.herb_przeciwnika) {
+                        HERBY[m.przeciwnik] = m.herb_przeciwnika;
+                    }
+                });
+
+                // mecze dodane ręcznie w panelu (sparingi itp.) dołączają do
+                // terminarza obok ligowych — nierozegrane trafiają do
+                // "nadchodzące", posortowane razem z resztą po dacie
+                var doGrania = panel.mecze.filter(function (m) { return !m.wynik; });
+                dane.nadchodzace = (dane.nadchodzace || []).concat(doGrania).sort(function (a, b) {
+                    return new Date(a.data_iso) - new Date(b.data_iso);
+                });
+            }
+
             rysujTabele(dane);
             rysujKolejke(dane);
             rysujTerminarz(dane);

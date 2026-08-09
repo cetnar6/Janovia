@@ -83,10 +83,42 @@ zapisz_json($katalog . '/posty.json', [
     'posty'          => $lista_postow,
 ]);
 
+/* ---------- mecze dodane ręcznie w panelu ---------- */
+
+const NASZ_KLUB_EKSPORT = 'Janovia Janowiec';
+
+$mecze = $db->query(
+    'SELECT przeciwnik, u_siebie, termin, etykieta, wynik, herb
+     FROM mecze
+     WHERE widoczny = 1
+     ORDER BY termin'
+)->fetchAll();
+
+$lista_meczow = array_map(static function (array $m): array {
+    return [
+        'gospodarz'        => $m['u_siebie'] ? NASZ_KLUB_EKSPORT : $m['przeciwnik'],
+        'gosc'             => $m['u_siebie'] ? $m['przeciwnik'] : NASZ_KLUB_EKSPORT,
+        'przeciwnik'       => $m['przeciwnik'],
+        'herb_przeciwnika' => adres_zdjecia($m['herb'], 'mecze'),
+        'wynik'            => $m['wynik'],
+        'kolejka'          => null,
+        'kolejka_opis'     => $m['etykieta'],
+        'etykieta'         => $m['etykieta'],
+        'data_iso'         => date('c', strtotime($m['termin'])),
+        'data_przyblizona' => false,
+    ];
+}, $mecze);
+
+zapisz_json($katalog . '/mecze-panelu.json', [
+    'zaktualizowano' => date('c'),
+    'mecze'          => $lista_meczow,
+]);
+
 komunikat(sprintf(
-    'Opublikowano: %d zawodników i %d aktualności.',
+    'Opublikowano: %d zawodników, %d aktualności i %d meczów.',
     count($lista_zawodnikow),
-    count($lista_postow)
+    count($lista_postow),
+    count($lista_meczow)
 ));
 
 przekieruj('index.php');

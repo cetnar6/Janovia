@@ -28,6 +28,7 @@ function naglowek(string $tytul, bool $zNawigacja = true): void
     <nav class="pasek__nav">
         <a href="zawodnicy.php">Zawodnicy</a>
         <a href="posty.php">Aktualności</a>
+        <a href="mecze.php">Mecze</a>
         <a href="../index.html" target="_blank" rel="noopener">Strona &nearr;</a>
     </nav>
 

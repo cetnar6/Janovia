@@ -9,12 +9,16 @@ $db = baza();
 
 $zawodnikow = (int) $db->query('SELECT COUNT(*) FROM zawodnicy WHERE aktywny = 1')->fetchColumn();
 $postow     = (int) $db->query('SELECT COUNT(*) FROM posty WHERE widoczny = 1')->fetchColumn();
+$meczow     = (int) $db->query('SELECT COUNT(*) FROM mecze WHERE widoczny = 1')->fetchColumn();
 
 $plik_json = katalog_strony() . '/data/zawodnicy.json';
 $eksport = is_file($plik_json) ? date('d.m.Y, H:i', filemtime($plik_json)) : null;
 
 $plik_fb = katalog_strony() . '/data/facebook.json';
 $fb_sprawdzono = is_file($plik_fb) ? date('d.m.Y, H:i', filemtime($plik_fb)) : null;
+
+$plik_liga = katalog_strony() . '/data/liga.json';
+$liga_sprawdzono = is_file($plik_liga) ? date('d.m.Y, H:i', filemtime($plik_liga)) : null;
 
 naglowek('Pulpit');
 ?>
@@ -30,6 +34,11 @@ naglowek('Pulpit');
     <a class="kafel" href="posty.php">
         <strong><?= $postow ?></strong>
         <span>opublikowanych aktualności</span>
+    </a>
+
+    <a class="kafel" href="mecze.php">
+        <strong><?= $meczow ?></strong>
+        <span>ręcznie dodanych meczów</span>
     </a>
 </div>
 
@@ -62,6 +71,22 @@ naglowek('Pulpit');
     <form method="post" action="facebook.php">
         <?= pole_csrf() ?>
         <button class="btn" type="submit">Sprawdź Facebooka teraz</button>
+    </form>
+</section>
+
+<section class="karta">
+    <h2>Tabela i terminarz z 90minut.pl</h2>
+    <p>
+        Sprawdza teraz, na żądanie, aktualną tabelę i terminarz ligowy —
+        bez czekania na codzienny automat.
+    </p>
+    <p class="drobne">
+        Ostatnie sprawdzenie: <?= $liga_sprawdzono ? e($liga_sprawdzono) : 'jeszcze nie było' ?>
+    </p>
+
+    <form method="post" action="liga.php">
+        <?= pole_csrf() ?>
+        <button class="btn" type="submit">Odśwież dane z 90minut.pl teraz</button>
     </form>
 </section>
 

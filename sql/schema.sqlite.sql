@@ -41,6 +41,24 @@ CREATE TABLE IF NOT EXISTS posty (
 
 CREATE INDEX IF NOT EXISTS posty_sort ON posty (widoczny, opublikowano DESC);
 
+-- ---------- MECZE (dodawane ręcznie, np. sparingi spoza 90minut.pl) ----------
+
+CREATE TABLE IF NOT EXISTS mecze (
+    id        INTEGER PRIMARY KEY AUTOINCREMENT,
+    przeciwnik TEXT   NOT NULL,
+    u_siebie  INTEGER NOT NULL DEFAULT 1 CHECK (u_siebie IN (0,1)),
+    termin    TEXT    NOT NULL,
+    etykieta  TEXT    NOT NULL DEFAULT 'Sparing',
+    -- np. "3-1"; puste, dopóki mecz się nie odbędzie
+    wynik     TEXT,
+    -- herb przeciwnika spoza listy znanych klubów; nazwa pliku z uploads/mecze
+    herb      TEXT,
+    widoczny  INTEGER NOT NULL DEFAULT 1 CHECK (widoczny IN (0,1)),
+    utworzono TEXT    NOT NULL DEFAULT (datetime('now','localtime'))
+);
+
+CREATE INDEX IF NOT EXISTS mecze_sort ON mecze (widoczny, termin);
+
 -- ---------- ADMINISTRATORZY ----------
 
 CREATE TABLE IF NOT EXISTS administratorzy (

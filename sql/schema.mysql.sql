@@ -43,6 +43,23 @@ CREATE TABLE IF NOT EXISTS posty (
     INDEX posty_sort (widoczny, opublikowano)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_polish_ci;
 
+-- ---------- MECZE (dodawane ręcznie, np. sparingi spoza 90minut.pl) ----------
+
+CREATE TABLE IF NOT EXISTS mecze (
+    id         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    przeciwnik VARCHAR(80)  NOT NULL,
+    u_siebie   TINYINT(1)   NOT NULL DEFAULT 1,
+    termin     DATETIME     NOT NULL,
+    etykieta   VARCHAR(30)  NOT NULL DEFAULT 'Sparing',
+    -- np. "3-1"; puste, dopóki mecz się nie odbędzie
+    wynik      VARCHAR(10)  NULL,
+    -- herb przeciwnika spoza listy znanych klubów; nazwa pliku z uploads/mecze
+    herb       VARCHAR(120) NULL,
+    widoczny   TINYINT(1)   NOT NULL DEFAULT 1,
+    utworzono  TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX mecze_sort (widoczny, termin)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_polish_ci;
+
 -- ---------- ADMINISTRATORZY ----------
 
 CREATE TABLE IF NOT EXISTS administratorzy (
