@@ -72,6 +72,7 @@
        ========================================= */
 
     var revealer = null;
+    var revealerKaruzeli = null;
 
     if ('IntersectionObserver' in window) {
         revealer = new IntersectionObserver(function (entries) {
@@ -82,11 +83,26 @@
                 }
             });
         }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+
+        /* Karty w poziomych karuzelach (.rail) na telefonie często są tylko
+           częściowo odsłonięte jako "podgląd" kolejnej — przy progu 0.15 taki
+           skrawek nie wystarczał, żeby kartę w ogóle odsłonić, więc karuzela
+           wyglądała jak jeden, nieprzewijalny kafelek. Próg 0 odsłania kartę
+           przy pierwszym widocznym pikselu. */
+        revealerKaruzeli = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-in');
+                    revealerKaruzeli.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0 });
     }
 
     function obserwuj(nodes) {
         Array.prototype.forEach.call(nodes, function (el) {
-            if (revealer) { revealer.observe(el); }
+            var obs = el.closest('.rail') ? revealerKaruzeli : revealer;
+            if (obs) { obs.observe(el); }
             else { el.classList.add('is-in'); }
         });
     }
@@ -222,6 +238,9 @@
     var MIESIACE_SKROT = ['sty', 'lut', 'mar', 'kwi', 'maj', 'cze',
                           'lip', 'sie', 'wrz', 'paź', 'lis', 'gru'];
 
+    var DNI_TYGODNIA = ['niedziela', 'poniedziałek', 'wtorek', 'środa',
+                        'czwartek', 'piątek', 'sobota'];
+
     /* Nazwa drużyny u 90minut -> plik herbu w folderze png/.
        Klub spoza listy (np. po zmianie ligi) dostanie zastępczą tarczę z literą. */
     var HERBY = {
@@ -238,6 +257,16 @@
         'Sokół Pień':               'SokolPien.png',
         'Sprint Żarówka':           'Sprint_Zarowka.png'
     };
+
+    /* Posty z Facebooka często zaczynają się od emoji (np. "🏆 Podsumowanie…") —
+       w dużym nagłówku hero wygląda to niechlujnie, więc tam je wycinamy. */
+    var WZOR_EMOJI = new RegExp(
+        '\\p{Extended_Pictographic}(\u200D\\p{Extended_Pictographic})*|\uFE0F', 'gu'
+    );
+
+    function bezEmoji(tekst) {
+        return tekst.replace(WZOR_EMOJI, '').replace(/\s+/g, ' ').trim();
+    }
 
     function skrot(nazwa) {
         return nazwa.replace(/\s*\b(I{1,3}|II)\b\s*/g, ' ').trim();
@@ -394,6 +423,10 @@
                 ? 'Klasa B · kolejka ' + m.kolejka
                 : (m.etykieta || 'Mecz towarzyski');
 
+            if (data && !m.data_przyblizona) {
+                liga = DNI_TYGODNIA[data.getDay()] + ' · ' + liga;
+            }
+
             return '<article class="fixture" data-reveal style="--d:' + (i * 80) + 'ms">' +
                    '<strong class="fixture__date">' + dzien + '</strong>' +
                    '<span class="fixture__league">' + esc(liga) + '</span>' +
@@ -444,8 +477,8 @@
             var data = new Date(nastepny.data_iso);
             var kiedy = nastepny.data_przyblizona
                 ? nastepny.kolejka_opis
-                : data.getDate() + ' ' + MIESIACE_SKROT[data.getMonth()] +
-                  ', ' + pad(data.getHours()) + ':' + pad(data.getMinutes());
+                : DNI_TYGODNIA[data.getDay()] + ', ' + data.getDate() + ' ' +
+                  MIESIACE_SKROT[data.getMonth()] + ', ' + pad(data.getHours()) + ':' + pad(data.getMinutes());
 
             var opisKolejki = nastepny.kolejka
                 ? 'kolejka ' + nastepny.kolejka
@@ -657,7 +690,7 @@
 
         /* Pierwsza część nagłówka biała, końcówka na złoto —
            tak jak w oryginalnym, wpisanym na sztywno tytule. */
-        var slowa = p.naglowek.split(' ').filter(Boolean);
+        var slowa = bezEmoji(p.naglowek).split(' ').filter(Boolean);
         var podzial = Math.max(1, Math.floor(slowa.length * 0.6));
         var biale = esc(slowa.slice(0, podzial).join(' '));
         var zlote = esc(slowa.slice(podzial).join(' '));

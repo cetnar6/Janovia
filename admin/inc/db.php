@@ -6,6 +6,10 @@
 
 declare(strict_types=1);
 
+// bez tego PHP liczy godziny w UTC, a strona pokazuje je w czasie polskim —
+// mecz wpisany w panelu na 11:00 wychodził na stronie jako 13:00
+date_default_timezone_set('Europe/Warsaw');
+
 function konfiguracja(): array
 {
     static $config = null;
