@@ -110,26 +110,6 @@
     obserwuj(document.querySelectorAll('[data-reveal]'));
 
     /* =========================================
-       2b. ZDJĘCIE ZAWODNIKA — ZOOM ZA KURSOREM
-       Kadr powiększa się w tym miejscu karty, nad którym akurat jest kursor,
-       zamiast zawsze od środka.
-       ========================================= */
-
-    if (!reduced) {
-        document.addEventListener('mousemove', function (e) {
-            var karta = e.target.closest ? e.target.closest('.player') : null;
-            if (!karta) { return; }
-
-            var foto = karta.querySelector('.player__photo');
-            if (!foto) { return; }
-
-            var r = karta.getBoundingClientRect();
-            foto.style.setProperty('--ox', ((e.clientX - r.left) / r.width * 100) + '%');
-            foto.style.setProperty('--oy', ((e.clientY - r.top) / r.height * 100) + '%');
-        });
-    }
-
-    /* =========================================
        3. LICZNIKI
        ========================================= */
 
@@ -895,14 +875,18 @@
     /* ---------- kadra z panelu administratora ---------- */
 
     function kartaZawodnika(z, i) {
-        var tlo = z.zdjecie
-            ? ' style="background-image:url(\'' + encodeURI(z.zdjecie) + '\')"'
+        /* Zdjęcie to wycięta sylwetka na przezroczystym tle (PNG z kanałem
+           alfa) — <img> osobno od .player__photo, żeby przezroczyste miejsca
+           pokazywały ten sam gradientowy deseń co puste kafelki, zamiast
+           czarnego tła strony. */
+        var foto = z.zdjecie
+            ? '<img class="player__foto" src="' + encodeURI(z.zdjecie) + '" alt="" loading="lazy">'
             : '';
 
         var kierunek = i % 2 === 0 ? 'left' : 'right';
 
         return '<article class="player" data-reveal="' + kierunek + '" style="--d:' + (Math.min(i, 8) * 80) + 'ms">' +
-               '<div class="player__photo' + (z.zdjecie ? ' player__photo--foto' : '') + '"' + tlo + '></div>' +
+               '<div class="player__photo">' + foto + '</div>' +
                '<div class="player__label">' +
                    '<span class="player__no">' + (z.numer !== null ? z.numer : '–') + '</span>' +
                    '<span class="player__name">' +
