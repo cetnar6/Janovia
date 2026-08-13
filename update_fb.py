@@ -34,8 +34,10 @@ POLA = ",".join([
     "permalink_url",
     "full_picture",
     # subattachments to zdjęcia w środku albumu — bez tego dostajemy tylko
-    # media_type="album" i jedno full_picture, a nie całą galerię
-    "attachments{media_type,media,subattachments{media}}",
+    # media_type="album" i jedno full_picture, a nie całą galerię.
+    # Bez jawnego limitu Facebook ucina listę do swojego domyślnego rozmiaru
+    # strony (np. tylko 12 zdjęć z kilkudziesięciu w poście).
+    "attachments{media_type,media,subattachments.limit(200){media}}",
 ])
 
 
