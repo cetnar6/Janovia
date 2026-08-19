@@ -157,9 +157,19 @@
        ========================================= */
 
     var clock = document.getElementById('clock');
+    var sekcjaOdliczania = clock ? clock.closest('.countdown') : null;
     var cel = clock ? new Date(clock.getAttribute('data-target')).getTime() : 0;
+    var meczeDoOdliczania = [];
 
     function pad(n) { return n < 10 ? '0' + n : String(n); }
+
+    /* Cała sekcja znika, gdy nie ma do czego odliczać — zamiast zamrożonego
+       „00 00 00 00" po terminie ostatniego znanego meczu. Łapie to zarówno
+       termin wpisany na sztywno w HTML (gdy JSON się nie wczyta), jak i
+       stronę zostawioną otwartą na czas pierwszego gwizdka. */
+    function pokazOdliczanie(widoczne) {
+        if (sekcjaOdliczania) { sekcjaOdliczania.hidden = !widoczne; }
+    }
 
     if (clock) {
         var pola = {
@@ -170,7 +180,23 @@
         };
 
         var tick = function () {
-            var diff = Math.max(cel - Date.now(), 0);
+            var diff = cel - Date.now();
+
+            /* Termin minął przy otwartej stronie (ktoś zostawił kartę na czas
+               pierwszego gwizdka) — przestawiamy zegar na kolejny mecz. */
+            if (!(diff > 0) && meczeDoOdliczania.length) {
+                odswiezOdliczanie();
+                diff = cel - Date.now();
+            }
+
+            // warunek odwrotnie, żeby złapać też NaN z niepoprawnej daty
+            if (!(diff > 0)) {
+                pokazOdliczanie(false);
+                return;
+            }
+
+            pokazOdliczanie(true);
+
             var s = Math.floor(diff / 1000);
             pola.d.textContent = pad(Math.floor(s / 86400));
             pola.h.textContent = pad(Math.floor(s / 3600) % 24);
@@ -383,9 +409,36 @@
         return 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(cel);
     }
 
+    /* Do kiedy mecz ma jeszcze prawo wisieć w „nadchodzących".
+
+       Przy przybliżonym terminie data_iso to północ pierwszego dnia okna
+       („22-23 sierpnia"), a nie godzina meczu — liczymy więc do końca dnia
+       drugiego, żeby spotkanie nie zniknęło z terminarza w dniu, w którym
+       ma być dopiero rozegrane. */
+    function koniecTerminu(m) {
+        var czas = m && m.data_iso ? new Date(m.data_iso).getTime() : NaN;
+        return m && m.data_przyblizona ? czas + 2 * 86400000 : czas;
+    }
+
+    /* Mecz bez czytelnej daty zostaje — lepiej pokazać go z „—" niż po cichu
+       zgubić pozycję z terminarza. */
+    function czyPrzyszly(m) {
+        var koniec = koniecTerminu(m);
+        return isNaN(koniec) || koniec > Date.now();
+    }
+
     function rysujMecze(dane) {
         var rail = document.querySelector('[data-rail-id="fix"]');
-        if (!rail || !dane.nadchodzace || !dane.nadchodzace.length) { return; }
+        if (!rail) { return; }
+
+        var sekcja = document.getElementById('mecze');
+
+        if (!dane.nadchodzace || !dane.nadchodzace.length) {
+            if (sekcja) { sekcja.hidden = true; }
+            return;
+        }
+
+        if (sekcja) { sekcja.hidden = false; }
 
         rail.innerHTML = dane.nadchodzace.slice(0, 6).map(function (m, i) {
             var data = m.data_iso ? new Date(m.data_iso) : null;
@@ -439,10 +492,29 @@
     }
 
     function rysujOdliczanie(dane) {
-        var nastepny = (dane.nadchodzace || [])[0];
-        if (!clock || !nastepny || !nastepny.data_iso) { return; }
+        meczeDoOdliczania = dane.nadchodzace || [];
+        odswiezOdliczanie();
+    }
+
+    /* Wywoływane też z zegara, gdy termin minie przy otwartej stronie. */
+    function odswiezOdliczanie() {
+        if (!clock) { return; }
+
+        /* Zegar potrzebuje terminu z przyszłości, a nie „najbliższego" —
+           mecz z przybliżoną datą zostaje na liście przez całe okno, więc
+           w dniu meczu jego data_iso (północ) jest już za nami. */
+        var nastepny = meczeDoOdliczania.filter(function (m) {
+            return m.data_iso && new Date(m.data_iso).getTime() > Date.now();
+        })[0];
+
+        if (!nastepny) {
+            cel = NaN;
+            pokazOdliczanie(false);
+            return;
+        }
 
         cel = new Date(nastepny.data_iso).getTime();
+        pokazOdliczanie(true);
 
         var teams = document.querySelector('.countdown__teams');
         if (teams) {
@@ -999,6 +1071,12 @@
                     return new Date(a.data_iso) - new Date(b.data_iso);
                 });
             }
+
+            /* Mecz bez wpisanego wyniku wisi w danych także po terminie —
+               w panelu do czasu uzupełnienia wyniku, u 90minut do aktualizacji
+               po kolejce. Odsiewamy je tutaj, żeby wszystkie sekcje niżej
+               dostały już tylko to, co faktycznie przed nami. */
+            dane.nadchodzace = (dane.nadchodzace || []).filter(czyPrzyszly);
 
             rysujTabele(dane);
             rysujKolejke(dane);
