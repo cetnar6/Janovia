@@ -2,7 +2,7 @@
   "zrodlo": "http://www.90minut.pl/liga/1/liga15094.html",
   "liga": "Klasa B 2026/2027, grupa: Rzeszów VI - Mielec",
   "klub": "Janovia Janowiec",
-  "zaktualizowano": "2026-08-13T08:52:27",
+  "zaktualizowano": "2026-08-19T05:16:56",
   "tabela": [
     {
       "poz": 1,
@@ -137,9 +137,9 @@
         "gospodarz": "Apollo Dulcza Mała",
         "gosc": "Atut II Podborze",
         "wynik": null,
-        "termin": null,
-        "data_iso": "2026-08-22T00:00:00",
-        "data_przyblizona": true
+        "termin": "22 sierpnia, 17:00",
+        "data_iso": "2026-08-22T17:00:00",
+        "data_przyblizona": false
       },
       {
         "kolejka": 1,
@@ -147,9 +147,9 @@
         "gospodarz": "Hetman Dąbrówka Wisłocka",
         "gosc": "Jamnica Dulcza Wielka",
         "wynik": null,
-        "termin": null,
-        "data_iso": "2026-08-22T00:00:00",
-        "data_przyblizona": true
+        "termin": "23 sierpnia, 11:00",
+        "data_iso": "2026-08-23T11:00:00",
+        "data_przyblizona": false
       },
       {
         "kolejka": 1,
@@ -157,9 +157,9 @@
         "gospodarz": "Janovia Janowiec",
         "gosc": "KS SMP Tuszyma",
         "wynik": null,
-        "termin": null,
-        "data_iso": "2026-08-22T00:00:00",
-        "data_przyblizona": true
+        "termin": "23 sierpnia, 13:00",
+        "data_iso": "2026-08-23T13:00:00",
+        "data_przyblizona": false
       },
       {
         "kolejka": 1,
@@ -167,9 +167,9 @@
         "gospodarz": "KS Zgórsko",
         "gosc": "LKS Wierzchowiny",
         "wynik": null,
-        "termin": null,
-        "data_iso": "2026-08-22T00:00:00",
-        "data_przyblizona": true
+        "termin": "23 sierpnia, 11:00",
+        "data_iso": "2026-08-23T11:00:00",
+        "data_przyblizona": false
       },
       {
         "kolejka": 1,
@@ -177,9 +177,9 @@
         "gospodarz": "Madras Goleszów",
         "gosc": "Piast II Wadowice Górne",
         "wynik": null,
-        "termin": null,
-        "data_iso": "2026-08-22T00:00:00",
-        "data_przyblizona": true
+        "termin": "23 sierpnia, 11:00",
+        "data_iso": "2026-08-23T11:00:00",
+        "data_przyblizona": false
       },
       {
         "kolejka": 1,
@@ -187,9 +187,9 @@
         "gospodarz": "Sokół Pień",
         "gosc": "Sprint Żarówka",
         "wynik": null,
-        "termin": null,
-        "data_iso": "2026-08-22T00:00:00",
-        "data_przyblizona": true
+        "termin": "22 sierpnia, 14:00",
+        "data_iso": "2026-08-22T14:00:00",
+        "data_przyblizona": false
       }
     ]
   },
@@ -200,9 +200,9 @@
       "gospodarz": "Janovia Janowiec",
       "gosc": "KS SMP Tuszyma",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-08-22T00:00:00",
-      "data_przyblizona": true
+      "termin": "23 sierpnia, 13:00",
+      "data_iso": "2026-08-23T13:00:00",
+      "data_przyblizona": false
     },
     {
       "kolejka": 2,
@@ -283,9 +283,9 @@
       "gospodarz": "Apollo Dulcza Mała",
       "gosc": "Atut II Podborze",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-08-22T00:00:00",
-      "data_przyblizona": true
+      "termin": "22 sierpnia, 17:00",
+      "data_iso": "2026-08-22T17:00:00",
+      "data_przyblizona": false
     },
     {
       "kolejka": 1,
@@ -293,9 +293,9 @@
       "gospodarz": "Hetman Dąbrówka Wisłocka",
       "gosc": "Jamnica Dulcza Wielka",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-08-22T00:00:00",
-      "data_przyblizona": true
+      "termin": "23 sierpnia, 11:00",
+      "data_iso": "2026-08-23T11:00:00",
+      "data_przyblizona": false
     },
     {
       "kolejka": 1,
@@ -303,9 +303,9 @@
       "gospodarz": "Janovia Janowiec",
       "gosc": "KS SMP Tuszyma",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-08-22T00:00:00",
-      "data_przyblizona": true
+      "termin": "23 sierpnia, 13:00",
+      "data_iso": "2026-08-23T13:00:00",
+      "data_przyblizona": false
     },
     {
       "kolejka": 1,
@@ -313,9 +313,9 @@
       "gospodarz": "KS Zgórsko",
       "gosc": "LKS Wierzchowiny",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-08-22T00:00:00",
-      "data_przyblizona": true
+      "termin": "23 sierpnia, 11:00",
+      "data_iso": "2026-08-23T11:00:00",
+      "data_przyblizona": false
     },
     {
       "kolejka": 1,
@@ -323,9 +323,9 @@
       "gospodarz": "Madras Goleszów",
       "gosc": "Piast II Wadowice Górne",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-08-22T00:00:00",
-      "data_przyblizona": true
+      "termin": "23 sierpnia, 11:00",
+      "data_iso": "2026-08-23T11:00:00",
+      "data_przyblizona": false
     },
     {
       "kolejka": 1,
@@ -333,9 +333,9 @@
       "gospodarz": "Sokół Pień",
       "gosc": "Sprint Żarówka",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-08-22T00:00:00",
-      "data_przyblizona": true
+      "termin": "22 sierpnia, 14:00",
+      "data_iso": "2026-08-22T14:00:00",
+      "data_przyblizona": false
     },
     {
       "kolejka": 2,
