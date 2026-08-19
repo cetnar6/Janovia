@@ -114,11 +114,35 @@ zapisz_json($katalog . '/mecze-panelu.json', [
     'mecze'          => $lista_meczow,
 ]);
 
+/* ---------- sponsorzy (pasek na stronie głównej) ---------- */
+
+$sponsorzy = $db->query(
+    'SELECT nazwa, rola, logo, poswiata
+     FROM sponsorzy
+     WHERE widoczny = 1
+     ORDER BY kolejnosc, nazwa'
+)->fetchAll();
+
+$lista_sponsorow = array_map(static function (array $s): array {
+    return [
+        'nazwa'    => $s['nazwa'],
+        'rola'     => $s['rola'],
+        'logo'     => adres_zdjecia($s['logo'], 'sponsorzy'),
+        'poswiata' => (bool) $s['poswiata'],
+    ];
+}, $sponsorzy);
+
+zapisz_json($katalog . '/sponsorzy.json', [
+    'zaktualizowano' => date('c'),
+    'sponsorzy'      => $lista_sponsorow,
+]);
+
 komunikat(sprintf(
-    'Opublikowano: %d zawodników, %d aktualności i %d meczów.',
+    'Opublikowano: %d zawodników, %d aktualności, %d meczów i %d sponsorów.',
     count($lista_zawodnikow),
     count($lista_postow),
-    count($lista_meczow)
+    count($lista_meczow),
+    count($lista_sponsorow)
 ));
 
 przekieruj('index.php');

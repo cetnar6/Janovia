@@ -59,6 +59,26 @@ CREATE TABLE IF NOT EXISTS mecze (
 
 CREATE INDEX IF NOT EXISTS mecze_sort ON mecze (widoczny, termin);
 
+-- ---------- SPONSORZY (przewijający się pasek na stronie głównej) ----------
+
+CREATE TABLE IF NOT EXISTS sponsorzy (
+    id        INTEGER PRIMARY KEY AUTOINCREMENT,
+    nazwa     TEXT    NOT NULL,
+    -- podpis pod logo, np. "Partner główny"; dowolny tekst, bo kategorie
+    -- sponsorów zmieniają się częściej niż kod strony
+    rola      TEXT    NOT NULL DEFAULT 'Sponsor',
+    -- sama nazwa pliku z katalogu uploads/sponsorzy, nie zawartość obrazu
+    logo      TEXT    NOT NULL,
+    -- delikatna poświata pod logo — wyróżnia najważniejszych partnerów
+    poswiata  INTEGER NOT NULL DEFAULT 0 CHECK (poswiata IN (0,1)),
+    -- kolejność w pasku; przy równych decyduje nazwa
+    kolejnosc INTEGER NOT NULL DEFAULT 0,
+    widoczny  INTEGER NOT NULL DEFAULT 1 CHECK (widoczny IN (0,1)),
+    utworzono TEXT    NOT NULL DEFAULT (datetime('now','localtime'))
+);
+
+CREATE INDEX IF NOT EXISTS sponsorzy_sort ON sponsorzy (widoczny, kolejnosc);
+
 -- ---------- ADMINISTRATORZY ----------
 
 CREATE TABLE IF NOT EXISTS administratorzy (

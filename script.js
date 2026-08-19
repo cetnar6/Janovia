@@ -1019,6 +1019,33 @@
         obserwuj(box.querySelectorAll('[data-reveal]'));
     }
 
+    /* ---------- pasek sponsorów z panelu administratora ---------- */
+
+    function rysujSponsorow(dane) {
+        var track = document.querySelector('.marquee__track');
+        var lista = (dane && dane.sponsorzy) || [];
+
+        /* Pusta lista to najczęściej „panel jeszcze nieużywany", a nie „klub
+           stracił sponsorów" — zostawiamy wtedy pasek wpisany w index.html. */
+        if (!track || !lista.length) { return; }
+
+        var pozycje = lista.map(function (s) {
+            // adres trafia i do CSS-owego url(), i do src — apostrof zamykałby url()
+            var src = encodeURI(s.logo).replace(/'/g, '%27');
+            var blask = s.poswiata ? ' marquee__glow' : '';
+
+            return '<div class="marquee__item">' +
+                       '<div class="marquee__logo' + blask + '" style="--logo:url(\'' + src + '\')">' +
+                           '<img src="' + src + '" alt="' + esc(s.nazwa) + '">' +
+                       '</div>' +
+                       '<span>' + esc(s.rola) + '</span>' +
+                   '</div><i></i>';
+        }).join('');
+
+        // animacja przesuwa tor o -50%, więc lista musi w nim być dokładnie dwa razy
+        track.innerHTML = pozycje + pozycje;
+    }
+
     /* Brak pliku nie jest błędem — sekcja zostaje przy treści wpisanej w HTML,
        więc strona działa nawet zanim ktokolwiek uruchomi panel czy skrypty. */
     function pobierzJSON(sciezka) {
@@ -1045,6 +1072,8 @@
             rysujZawodnikow(dane);
             rysujKadre(dane);
         });
+
+        pobierzJSON('data/sponsorzy.json').then(rysujSponsorow);
 
         Promise.all([
             pobierzJSON('data/liga.json'),

@@ -60,6 +60,25 @@ CREATE TABLE IF NOT EXISTS mecze (
     INDEX mecze_sort (widoczny, termin)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_polish_ci;
 
+-- ---------- SPONSORZY (przewijający się pasek na stronie głównej) ----------
+
+CREATE TABLE IF NOT EXISTS sponsorzy (
+    id        INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    nazwa     VARCHAR(80)  NOT NULL,
+    -- podpis pod logo, np. "Partner główny"; dowolny tekst, bo kategorie
+    -- sponsorów zmieniają się częściej niż kod strony
+    rola      VARCHAR(40)  NOT NULL DEFAULT 'Sponsor',
+    -- sama nazwa pliku z katalogu uploads/sponsorzy, nie zawartość obrazu
+    logo      VARCHAR(120) NOT NULL,
+    -- delikatna poświata pod logo — wyróżnia najważniejszych partnerów
+    poswiata  TINYINT(1)   NOT NULL DEFAULT 0,
+    -- kolejność w pasku; przy równych decyduje nazwa
+    kolejnosc INT          NOT NULL DEFAULT 0,
+    widoczny  TINYINT(1)   NOT NULL DEFAULT 1,
+    utworzono TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX sponsorzy_sort (widoczny, kolejnosc)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_polish_ci;
+
 -- ---------- ADMINISTRATORZY ----------
 
 CREATE TABLE IF NOT EXISTS administratorzy (

@@ -1,0 +1,47 @@
+{
+    "zaktualizowano": "2026-08-19T12:40:52+02:00",
+    "sponsorzy": [
+        {
+            "nazwa": "Komars",
+            "rola": "Sponsor techniczny",
+            "logo": "uploads/sponsorzy/komars-bez.png",
+            "poswiata": true
+        },
+        {
+            "nazwa": "ABDACHY",
+            "rola": "Partner medialny",
+            "logo": "uploads/sponsorzy/ABDACHY-bez.png",
+            "poswiata": false
+        },
+        {
+            "nazwa": "Dachpol",
+            "rola": "Sponsor techniczny",
+            "logo": "uploads/sponsorzy/dachpol-bez1.png",
+            "poswiata": false
+        },
+        {
+            "nazwa": "Znicz",
+            "rola": "Partner medialny",
+            "logo": "uploads/sponsorzy/ZNICZ-bez.png",
+            "poswiata": false
+        },
+        {
+            "nazwa": "Kokoszka",
+            "rola": "Partner główny",
+            "logo": "uploads/sponsorzy/kokoszka.png",
+            "poswiata": true
+        },
+        {
+            "nazwa": "Piątka",
+            "rola": "Partner akademii",
+            "logo": "uploads/sponsorzy/piatka-bez.png",
+            "poswiata": true
+        },
+        {
+            "nazwa": "Ryba",
+            "rola": "Partner medialny",
+            "logo": "uploads/sponsorzy/ryba-bez.png",
+            "poswiata": false
+        }
+    ]
+}
