@@ -4,6 +4,10 @@ logs/
 *.pkg
 __pycache__/
 
+# zależności npm — do repozytorium trafia tylko gotowy plik js/lenis.min.js,
+# bo strona jest statyczna i nie ma kroku budowania
+node_modules/
+
 # panel administratora
 
 # dane dostępowe do bazy
