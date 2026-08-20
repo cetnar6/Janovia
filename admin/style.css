@@ -292,8 +292,15 @@ small {
     font-weight: 800;
 }
 
-.akcje { display: flex; gap: 0.5rem; align-items: center; }
-.akcje form { display: inline; }
+/* Komórka z przyciskami musi zostać komórką tabeli — display:flex wyjmuje ją
+   z układu tabeli, więc nie rozciąga się na wysokość wiersza: przyciski jadą
+   do góry, a kreska pod nimi rozmija się z kreską reszty wiersza.
+   font-size:0 zjada odstęp, który przeglądarka robi z nowej linii w HTML-u
+   między przyciskami — własny rozmiar tekstu wnosi .btn--maly. */
+/* td.akcje, bo samo .akcje przegrywa specyficznością z .tabela td */
+td.akcje { white-space: nowrap; font-size: 0; }
+.akcje > * { vertical-align: middle; }
+.akcje form { display: inline-block; margin-left: 0.5rem; }
 
 /* ---------- logowanie ---------- */
 
