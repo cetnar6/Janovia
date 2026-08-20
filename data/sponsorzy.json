@@ -1,46 +1,32 @@
 {
-    "zaktualizowano": "2026-08-20T09:30:18+02:00",
+    "zaktualizowano": "2026-08-20T14:30:15+02:00",
     "sponsorzy": [
         {
-            "nazwa": "Komars",
-            "rola": "Sponsor techniczny",
-            "logo": "uploads/sponsorzy/komars-bez.png",
-            "poswiata": true
-        },
-        {
-            "nazwa": "ABDACHY",
-            "rola": "Partner medialny",
-            "logo": "uploads/sponsorzy/ABDACHY-bez.png",
+            "nazwa": "United logistics",
+            "rola": "Sponsor główny",
+            "logo": "uploads/sponsorzy/52bddee7de9c842d.png",
+            "strona": null,
             "poswiata": false
         },
         {
             "nazwa": "Dachpol",
-            "rola": "Sponsor techniczny",
+            "rola": "Partner strategiczny",
             "logo": "uploads/sponsorzy/dachpol-bez1.png",
+            "strona": null,
             "poswiata": false
         },
         {
-            "nazwa": "Znicz",
-            "rola": "Partner medialny",
-            "logo": "uploads/sponsorzy/ZNICZ-bez.png",
+            "nazwa": "Cerez.pl",
+            "rola": "Partner strategiczny",
+            "logo": "uploads/sponsorzy/f60fc44da3e6c42a.png",
+            "strona": null,
             "poswiata": false
         },
         {
-            "nazwa": "Kokoszka",
-            "rola": "Partner główny",
-            "logo": "uploads/sponsorzy/kokoszka.png",
-            "poswiata": true
-        },
-        {
-            "nazwa": "Piątka",
-            "rola": "Partner akademii",
-            "logo": "uploads/sponsorzy/piatka-bez.png",
-            "poswiata": true
-        },
-        {
-            "nazwa": "Ryba",
-            "rola": "Partner medialny",
-            "logo": "uploads/sponsorzy/ryba-bez.png",
+            "nazwa": "Alfatrans",
+            "rola": "Partner wspierający",
+            "logo": "uploads/sponsorzy/9b6a09c7d7b092d6.png",
+            "strona": null,
             "poswiata": false
         }
     ]
