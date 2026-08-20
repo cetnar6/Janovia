@@ -20,6 +20,11 @@
     --wrap: 1360px;
     --pad: clamp(1.25rem, 4vw, 4rem);
     --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    /* lekkie przestrzelenie i powrót — element „dosiada" na miejsce
+       zamiast tylko wyhamować; używane tam, gdzie coś się pojawia */
+    --ease-back: cubic-bezier(0.34, 1.42, 0.64, 1);
+    /* ostre ruszenie, długie wytracanie — do przesunięć i najechań */
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 * {
@@ -28,16 +33,54 @@
     box-sizing: border-box;
 }
 
-html {
+/* scroll-behavior celowo NIE jest tu ustawione: płynnym przewijaniem
+   zajmuje się Lenis (js/lenis.min.js), a natywne smooth gryzłoby się z nim
+   przy skokach do kotwic. Zapasowe „smooth" włącza się tylko wtedy, gdy
+   JS nie wystartował — patrz reguła html:not(.lenis) niżej. */
+html:not(.lenis) {
     scroll-behavior: smooth;
 }
 
 body {
-    font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+    font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
     line-height: 1.55;
     color: var(--text);
     background-color: var(--bg);
-    overflow-x: hidden;
+    /* clip, nie hidden: hidden robi z <body> własny kontener przewijania,
+       przez co window.scrollY stoi w miejscu i Lenis nie ma czego przewijać.
+       clip przycina tak samo, ale kontenera nie tworzy. */
+    overflow-x: clip;
+}
+
+/* ---------- Lenis (płynne przewijanie) ---------- */
+/* Wklejone z node_modules/lenis/dist/lenis.css, żeby nie robić osobnego
+   żądania po plik o kilkunastu linijkach. */
+
+html.lenis,
+html.lenis body {
+    height: auto;
+}
+
+.lenis:not(.lenis-autoToggle).lenis-stopped {
+    overflow: clip;
+}
+
+.lenis [data-lenis-prevent],
+.lenis [data-lenis-prevent-wheel],
+.lenis [data-lenis-prevent-touch],
+.lenis [data-lenis-prevent-vertical],
+.lenis [data-lenis-prevent-horizontal] {
+    overscroll-behavior: contain;
+}
+
+.lenis.lenis-smooth iframe {
+    pointer-events: none;
+}
+
+.lenis.lenis-autoToggle {
+    transition-property: overflow;
+    transition-duration: 1ms;
+    transition-behavior: allow-discrete;
 }
 
 img {
@@ -289,10 +332,17 @@ a {
 .nav a {
     position: relative;
     font-size: 0.82rem;
-    font-weight: 800;
+    /* Poppins w 800 jest wyraźnie cięższy od dawnego system-ui przy tym
+       samym numerze — 600 przywraca dawną wagę optyczną paska */
+    font-weight: 600;
     letter-spacing: 0.14em;
     text-transform: uppercase;
     padding: 0.4rem 0;
+    transition: color 0.35s var(--ease-out);
+}
+
+.nav a:hover {
+    color: var(--gold);
 }
 
 .header__side a::after,
@@ -1891,7 +1941,12 @@ a {
 [data-reveal] {
     opacity: 0;
     transform: translateY(34px);
-    transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+    /* przezroczystość wchodzi szybciej niż ruch (0.55s vs 0.9s), więc
+       element jest już czytelny, gdy jeszcze dojeżdża — bez wrażenia,
+       że treść „doskakuje" na końcu */
+    transition:
+        opacity 0.55s var(--ease-out),
+        transform 0.9s var(--ease-back);
     transition-delay: var(--d, 0ms);
 }
 

@@ -10,6 +10,34 @@
     var STADION_JANOVIA = 'Janowiec 70, 39-312 Janowiec';
 
     /* =========================================
+       0. PŁYNNE PRZEWIJANIE (Lenis)
+       Przewijanie zostaje natywne — Lenis tylko wygładza jego dojazd,
+       więc window.scrollY, pasek postępu i paralaksa działają dalej bez zmian.
+       ========================================= */
+
+    var lenis = null;
+
+    if (window.Lenis && !reduced) {
+        lenis = new window.Lenis({
+            // szybki start, długie wytracanie — kółko myszy „niesie" stronę
+            duration: 1.05,
+            easing: function (t) { return 1 - Math.pow(1 - t, 4); },
+            // skoki do #kotwic przejmuje Lenis; natywne smooth jest wyłączone
+            // w CSS regułą html:not(.lenis), żeby ruchy się nie nakładały
+            anchors: { offset: -70, duration: 1.3 },
+            autoRaf: true
+        });
+    }
+
+    /* Samo body{overflow:hidden} nie zatrzyma Lenisa — on przewija niezależnie
+       od przepełnienia, więc okno z postem trzeba mu wprost wstrzymać.
+       Blokada na body zostaje jako zapas, gdy Lenis nie wystartował. */
+    function blokujPrzewijanie(zablokuj) {
+        if (lenis) { zablokuj ? lenis.stop() : lenis.start(); }
+        document.body.style.overflow = zablokuj ? 'hidden' : '';
+    }
+
+    /* =========================================
        1. PASEK POSTĘPU, NAGŁÓWEK, PARALAKSA
        ========================================= */
 
@@ -653,7 +681,7 @@
         link.hidden = !p.link;
 
         modal.hidden = false;
-        document.body.style.overflow = 'hidden';
+        blokujPrzewijanie(true);
         modal.querySelector('.modal__zamknij').focus();
     }
 
@@ -661,7 +689,7 @@
         if (!modal || modal.hidden) { return; }
 
         modal.hidden = true;
-        document.body.style.overflow = '';
+        blokujPrzewijanie(false);
 
         // usuwa iframe, żeby wideo przestało grać w tle po zamknięciu
         var foto = document.getElementById('modal-foto');
