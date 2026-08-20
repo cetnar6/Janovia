@@ -1,53 +1,158 @@
 {
-    "zaktualizowano": "2026-08-13T02:28:09+02:00",
+    "zaktualizowano": "2026-08-20T09:30:18+02:00",
     "zawodnicy": [
         {
+            "imie": "Łukasz",
+            "nazwisko": "Potępa",
+            "pozycja": "bramkarz",
+            "numer": 1,
+            "zdjecie": null
+        },
+        {
+            "imie": "Jakub",
+            "nazwisko": "Gagatek",
+            "pozycja": "obrońca",
+            "numer": 3,
+            "zdjecie": null
+        },
+        {
+            "imie": "Kacper",
+            "nazwisko": "Waśko",
+            "pozycja": "pomocnik",
+            "numer": 4,
+            "zdjecie": null
+        },
+        {
             "imie": "Jacek",
-            "nazwisko": "Skwron",
+            "nazwisko": "Skowron",
             "pozycja": "pomocnik",
             "numer": 5,
+            "zdjecie": null
+        },
+        {
+            "imie": "Mateusz",
+            "nazwisko": "Pulak",
+            "pozycja": "obrońca",
+            "numer": 6,
+            "zdjecie": null
+        },
+        {
+            "imie": "Wiktor",
+            "nazwisko": "Pulak",
+            "pozycja": "napastnik",
+            "numer": 7,
+            "zdjecie": null
+        },
+        {
+            "imie": "Karol",
+            "nazwisko": "Kiełbasa",
+            "pozycja": "napastnik",
+            "numer": 8,
             "zdjecie": null
         },
         {
             "imie": "Paweł",
             "nazwisko": "Olejarz",
             "pozycja": "napastnik",
-            "numer": 8,
-            "zdjecie": null
-        },
-        {
-            "imie": "Marek",
-            "nazwisko": "Pęczek",
-            "pozycja": "napastnik",
             "numer": 9,
             "zdjecie": null
         },
         {
-            "imie": "Seweryn",
-            "nazwisko": "Mrozowski",
-            "pozycja": "napastnik",
+            "imie": "Rafał",
+            "nazwisko": "Perz",
+            "pozycja": "obrońca",
             "numer": 10,
             "zdjecie": null
         },
         {
-            "imie": "Bartek",
+            "imie": "Bartłomiej",
             "nazwisko": "Pulak",
             "pozycja": "pomocnik",
             "numer": 11,
             "zdjecie": null
         },
         {
-            "imie": "Eryk",
-            "nazwisko": "Bajor",
+            "imie": "Wiktor",
+            "nazwisko": "Solon",
+            "pozycja": "pomocnik",
+            "numer": 17,
+            "zdjecie": null
+        },
+        {
+            "imie": "Michał",
+            "nazwisko": "Sadowski",
             "pozycja": "obrońca",
             "numer": 18,
             "zdjecie": null
         },
         {
-            "imie": "Makysmilian",
+            "imie": "Eryk",
+            "nazwisko": "Bajor",
+            "pozycja": "obrońca",
+            "numer": 21,
+            "zdjecie": null
+        },
+        {
+            "imie": "Paweł",
+            "nazwisko": "Toporek",
+            "pozycja": "obrońca",
+            "numer": 27,
+            "zdjecie": null
+        },
+        {
+            "imie": "Łukasz",
+            "nazwisko": "Kmieć",
+            "pozycja": "bramkarz",
+            "numer": 52,
+            "zdjecie": null
+        },
+        {
+            "imie": "Dawid",
+            "nazwisko": "Maziarski",
+            "pozycja": "napastnik",
+            "numer": 77,
+            "zdjecie": null
+        },
+        {
+            "imie": "Grzegorz",
+            "nazwisko": "Starzyk",
+            "pozycja": "obrońca",
+            "numer": 92,
+            "zdjecie": null
+        },
+        {
+            "imie": "Maksymilian",
             "nazwisko": "Błachaniec",
             "pozycja": "napastnik",
-            "numer": 98,
+            "numer": 99,
+            "zdjecie": null
+        },
+        {
+            "imie": "Marcin",
+            "nazwisko": "Kmieć",
+            "pozycja": "bramkarz",
+            "numer": null,
+            "zdjecie": null
+        },
+        {
+            "imie": "Seweryn",
+            "nazwisko": "Mrozowski",
+            "pozycja": "napastnik",
+            "numer": null,
+            "zdjecie": null
+        },
+        {
+            "imie": "Albert",
+            "nazwisko": "Mrozowski",
+            "pozycja": "obrońca",
+            "numer": null,
+            "zdjecie": null
+        },
+        {
+            "imie": "Marek",
+            "nazwisko": "Pęczek",
+            "pozycja": "napastnik",
+            "numer": null,
             "zdjecie": null
         }
     ]
