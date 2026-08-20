@@ -697,19 +697,43 @@ a {
     content: "";
     position: absolute;
     inset: 0;
+    /* nad rozmytym tłem i nad samym zdjęciem */
+    z-index: 2;
     background: linear-gradient(to top, rgba(8, 9, 12, 0.7), transparent 55%);
     opacity: 0;
     transition: opacity 0.5s;
 }
 
-/* zdjęcie pobrane z posta na Facebooku — contain, nie cover, z tego samego
-   powodu co w oknie z pełną treścią: grafiki to często plakaty meczowe
-   z datą i godziną przy krawędziach, więc nic nie może zostać obcięte */
+/* Zdjęcie z Facebooka nie może być przycięte (plakaty meczowe mają datę
+   i godzinę przy samej krawędzi), ale zdjęcie poziome w pionowym kafelku
+   zostawiało szerokie puste pasy. Kafelek wypełnia więc rozmyta, powiększona
+   kopia tego samego zdjęcia, a ostre zdjęcie leży na niej w całości.
+
+   Inline style="background-image" z JS-a służy tu tylko za źródło adresu —
+   ::before dziedziczy je i przykrywa, więc samo tło nigdy nie jest widoczne. */
 .post__media--foto {
     background-color: var(--surface);
-    background-size: contain;
+}
+
+.post__media--foto::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: inherit;
+    background-size: cover;
     background-position: center;
-    background-repeat: no-repeat;
+    /* powiększenie chowa wyblakłe krawędzie, które zostawia rozmycie */
+    transform: scale(1.25);
+    filter: blur(24px) brightness(0.55) saturate(1.2);
+}
+
+.post__foto {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
 
 .post__media--2 { background: linear-gradient(150deg, var(--gold), #0D2B44); }
@@ -990,6 +1014,37 @@ a {
    więc kafelek trzyma swój rozmiar, a nadmiar po prostu się chowa */
 .player:hover .player__foto {
     transform: scale(1.12);
+}
+
+/* Zawodnik bez wgranego zdjęcia dostaje sylwetkę z png/zdjecieProfilowe.png.
+   Plik to czarny kształt na przezroczystym tle, więc wprost na ciemnym
+   kafelku byłby prawie niewidoczny — bierzemy z niego sam kształt (maska)
+   i wypełniamy stonowaną jasnością, tak jak loga sponsorów w pasku.
+   Sylwetka stoi na dolnej krawędzi, bo to popiersie: obcięte u dołu ramiona
+   wyglądają jak kadr prawdziwego zdjęcia, a nie jak ikonka wisząca w środku. */
+.player__zastepcze {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: 86%;
+    aspect-ratio: 1;
+    transform: translateX(-50%);
+    background-color: rgba(255, 255, 255, 0.22);
+    -webkit-mask-image: url('png/zdjecieProfilowe.png');
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: bottom center;
+    -webkit-mask-size: contain;
+    mask-image: url('png/zdjecieProfilowe.png');
+    mask-repeat: no-repeat;
+    mask-position: bottom center;
+    mask-size: contain;
+    transition: transform 0.5s var(--ease), background-color 0.5s;
+}
+
+/* ten sam ruch co przy prawdziwym zdjęciu — translateX trzyma wyśrodkowanie */
+.player:hover .player__zastepcze {
+    transform: translateX(-50%) scale(1.08);
+    background-color: rgba(255, 255, 255, 0.32);
 }
 
 .player__label {

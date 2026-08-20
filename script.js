@@ -753,14 +753,19 @@
     }
 
     function kartaAktualnosci(p, i) {
-        var tlo = p.zdjecie
-            ? ' style="background-image:url(\'' + encodeURI(p.zdjecie) + '\')"'
+        // adres trafia i do CSS-owego url(), i do src — apostrof zamykałby url()
+        var src = p.zdjecie ? encodeURI(p.zdjecie).replace(/'/g, '%27') : '';
+
+        // tło jest źródłem adresu dla rozmytej warstwy (::before dziedziczy je)
+        var tlo = src ? ' style="background-image:url(\'' + src + '\')"' : '';
+        var foto = src
+            ? '<img class="post__foto" src="' + src + '" alt="" loading="lazy">'
             : '';
 
         return '<article class="post" role="button" tabindex="0"' +
                ' data-post="' + i + '" aria-haspopup="dialog"' +
                ' data-reveal style="--d:' + (Math.min(i, 10) * 60) + 'ms">' +
-               '<div class="post__media' + (p.zdjecie ? ' post__media--foto' : ' post__media--' + ((i % 6) + 1)) + '"' + tlo + '></div>' +
+               '<div class="post__media' + (p.zdjecie ? ' post__media--foto' : ' post__media--' + ((i % 6) + 1)) + '"' + tlo + '>' + foto + '</div>' +
                '<div class="post__body">' +
                    '<span class="tag tag--sm">' + esc(etykietaPosta(p)) + '</span>' +
                    '<span class="post__time">' + odKiedy(p.data) + '</span>' +
@@ -953,7 +958,7 @@
            czarnego tła strony. */
         var foto = z.zdjecie
             ? '<img class="player__foto" src="' + encodeURI(z.zdjecie) + '" alt="" loading="lazy">'
-            : '';
+            : '<div class="player__zastepcze"></div>';
 
         var kierunek = i % 2 === 0 ? 'left' : 'right';
 
