@@ -455,64 +455,72 @@
         return isNaN(koniec) || koniec > Date.now();
     }
 
+    /* Jedna karta meczu — używana i w karuzeli na stronie głównej,
+       i w pełnej siatce na podstronie z terminarzem. */
+    function kartaMeczu(m, i, dane) {
+        var data = m.data_iso ? new Date(m.data_iso) : null;
+        var dzien = data
+            ? pad(data.getDate()) + '.' + pad(data.getMonth() + 1)
+            : '—';
+
+        var kiedy = m.data_przyblizona
+            ? (m.kolejka_opis || 'termin nieznany')
+            : pad(data.getHours()) + ':' + pad(data.getMinutes());
+
+        var gdzie = m.gospodarz === NASZ_KLUB ? 'u siebie' : 'wyjazd';
+
+        var liga = m.kolejka
+            ? 'Klasa B · kolejka ' + m.kolejka
+            : (m.etykieta || 'Mecz towarzyski');
+
+        if (data && !m.data_przyblizona) {
+            liga = DNI_TYGODNIA[data.getDay()] + ' · ' + liga;
+        }
+
+        return '<article class="fixture" data-reveal style="--d:' + (i * 80) + 'ms">' +
+               '<strong class="fixture__date">' + dzien + '</strong>' +
+               '<span class="fixture__league">' + esc(liga) + '</span>' +
+               '<div class="fixture__match">' +
+                   '<div class="fixture__side">' +
+                       herb(m.gospodarz, 'sm') +
+                       '<b class="fixture__team">' + esc(skrot(m.gospodarz)) + '</b>' +
+                       rysujForme(m.gospodarz, dane.forma) +
+                   '</div>' +
+                   '<span class="fixture__vs">vs</span>' +
+                   '<div class="fixture__side">' +
+                       herb(m.gosc, 'sm') +
+                       '<b class="fixture__team">' + esc(skrot(m.gosc)) + '</b>' +
+                       rysujForme(m.gosc, dane.forma) +
+                   '</div>' +
+               '</div>' +
+               '<span class="fixture__time">' +
+                   kiedy + ' · ' + gdzie +
+                   '<a class="fixture__mapa" href="' + linkMapy(m.gospodarz) + '" ' +
+                       'target="_blank" rel="noopener" title="Pokaż lokalizację na mapie" ' +
+                       'aria-label="Pokaż lokalizację meczu na mapie" onclick="event.stopPropagation()">' +
+                       IKONA_PINEZKI +
+                   '</a>' +
+               '</span>' +
+               '</article>';
+    }
+
     function rysujMecze(dane) {
         var rail = document.querySelector('[data-rail-id="fix"]');
         if (!rail) { return; }
 
+        var mecze = dane.nadchodzace || [];
         var sekcja = document.getElementById('mecze');
 
-        if (!dane.nadchodzace || !dane.nadchodzace.length) {
+        if (!mecze.length) {
             if (sekcja) { sekcja.hidden = true; }
             return;
         }
 
         if (sekcja) { sekcja.hidden = false; }
 
-        rail.innerHTML = dane.nadchodzace.slice(0, 6).map(function (m, i) {
-            var data = m.data_iso ? new Date(m.data_iso) : null;
-            var dzien = data
-                ? pad(data.getDate()) + '.' + pad(data.getMonth() + 1)
-                : '—';
-
-            var kiedy = m.data_przyblizona
-                ? (m.kolejka_opis || 'termin nieznany')
-                : pad(data.getHours()) + ':' + pad(data.getMinutes());
-
-            var gdzie = m.gospodarz === NASZ_KLUB ? 'u siebie' : 'wyjazd';
-
-            var liga = m.kolejka
-                ? 'Klasa B · kolejka ' + m.kolejka
-                : (m.etykieta || 'Mecz towarzyski');
-
-            if (data && !m.data_przyblizona) {
-                liga = DNI_TYGODNIA[data.getDay()] + ' · ' + liga;
-            }
-
-            return '<article class="fixture" data-reveal style="--d:' + (i * 80) + 'ms">' +
-                   '<strong class="fixture__date">' + dzien + '</strong>' +
-                   '<span class="fixture__league">' + esc(liga) + '</span>' +
-                   '<div class="fixture__match">' +
-                       '<div class="fixture__side">' +
-                           herb(m.gospodarz, 'sm') +
-                           '<b class="fixture__team">' + esc(skrot(m.gospodarz)) + '</b>' +
-                           rysujForme(m.gospodarz, dane.forma) +
-                       '</div>' +
-                       '<span class="fixture__vs">vs</span>' +
-                       '<div class="fixture__side">' +
-                           herb(m.gosc, 'sm') +
-                           '<b class="fixture__team">' + esc(skrot(m.gosc)) + '</b>' +
-                           rysujForme(m.gosc, dane.forma) +
-                       '</div>' +
-                   '</div>' +
-                   '<span class="fixture__time">' +
-                       kiedy + ' · ' + gdzie +
-                       '<a class="fixture__mapa" href="' + linkMapy(m.gospodarz) + '" ' +
-                           'target="_blank" rel="noopener" title="Pokaż lokalizację na mapie" ' +
-                           'aria-label="Pokaż lokalizację meczu na mapie" onclick="event.stopPropagation()">' +
-                           IKONA_PINEZKI +
-                       '</a>' +
-                   '</span>' +
-                   '</article>';
+        // karuzela pokazuje zajawkę; komplet terminów jest na terminarz.html
+        rail.innerHTML = mecze.slice(0, 6).map(function (m, i) {
+            return kartaMeczu(m, i, dane);
         }).join('');
 
         obserwuj(rail.querySelectorAll('[data-reveal]'));
@@ -874,6 +882,19 @@
                '</li>';
     }
 
+    /* Rozwijanie i zwijanie kolejki. Całą animację robi CSS (siatka jedzie
+       z 0fr do 1fr), tutaj tylko przełączamy klasę i stan dla czytników
+       ekranu — dzięki temu nie trzeba niczego mierzyć ani liczyć wysokości. */
+    function plynneRozwijanie(box) {
+        Array.prototype.forEach.call(box.querySelectorAll('.kolejka__head'), function (przycisk) {
+            przycisk.addEventListener('click', function () {
+                var kolejka = przycisk.closest('.kolejka');
+                var otwarta = kolejka.classList.toggle('is-otwarta');
+                przycisk.setAttribute('aria-expanded', otwarta ? 'true' : 'false');
+            });
+        });
+    }
+
     function rysujTerminarz(dane) {
         var box = document.getElementById('terminarz');
         var mecze = dane && dane.wszystkie_mecze;
@@ -907,20 +928,60 @@
         // pierwsza połowa numerów to runda jesienna, reszta wiosenna
         var polowa = Math.ceil(numery.length / 2);
 
-        function blokKolejki(nr, i) {
-            var k = wgKolejki[nr];
-            var rozegrana = k.mecze.some(function (m) { return m.wynik; });
+        function czyRozegrana(nr) {
+            return wgKolejki[nr].mecze.some(function (m) { return m.wynik; });
+        }
 
-            return '<article class="kolejka" data-reveal style="--d:' + Math.min(i * 40, 320) + 'ms">' +
-                       '<header class="kolejka__head">' +
+        /* Na zwiniętym pasku pokazujemy sam mecz Janovii — po to, żeby dało się
+           przejrzeć sezon bez rozwijania każdej kolejki. */
+        function wynikJanovii(k) {
+            var nasz = k.mecze.filter(function (m) {
+                return m.gospodarz === NASZ_KLUB || m.gosc === NASZ_KLUB;
+            })[0];
+
+            if (!nasz || !nasz.wynik) { return ''; }
+
+            return '<span class="kolejka__wynik">' +
+                       '<span>' + esc(skrot(nasz.gospodarz)) + '</span>' +
+                       '<b>' + esc(nasz.wynik.replace('-', ' : ')) + '</b>' +
+                       '<span>' + esc(skrot(nasz.gosc)) + '</span>' +
+                   '</span>';
+        }
+
+        function blokKolejki(nr, i, otwarta) {
+            var k = wgKolejki[nr];
+            var rozegrana = czyRozegrana(nr);
+
+            var id = 'kolejka-' + nr;
+
+            return '<article class="kolejka' + (otwarta ? ' is-otwarta' : '') +
+                       '" data-reveal style="--d:' + Math.min(i * 40, 320) + 'ms">' +
+                       '<button class="kolejka__head" type="button"' +
+                           ' aria-expanded="' + (otwarta ? 'true' : 'false') + '"' +
+                           ' aria-controls="' + id + '">' +
                            '<h3>Kolejka ' + nr + '</h3>' +
+                           wynikJanovii(k) +
                            '<span>' + esc(k.opis || 'termin nieustalony') +
                                (rozegrana ? '' : ' · nierozegrana') +
                            '</span>' +
-                       '</header>' +
-                       '<ul class="wyniki">' + k.mecze.map(wierszMeczu).join('') + '</ul>' +
+                       '</button>' +
+                       '<div class="kolejka__tresc" id="' + id + '">' +
+                           '<ul class="wyniki">' + k.mecze.map(wierszMeczu).join('') + '</ul>' +
+                       '</div>' +
                    '</article>';
         }
+
+        /* Otwarte zostają dwie kolejki: ostatnia rozegrana (świeże wyniki)
+           i najbliższa nierozegrana (co gramy dalej). Reszta jest zwinięta,
+           więc sezon mieści się na ekranie zamiast ciągnąć się przez 22 bloki.
+           Przy pierwszej rozegranej kolejce nie ma czego zwijać — zostaje
+           otwarta sama z siebie, bo jest jednocześnie tą ostatnią. */
+        var rozegrane = numery.filter(czyRozegrana);
+        var nierozegrane = numery.filter(function (nr) { return !czyRozegrana(nr); });
+
+        var otwarte = {};
+        if (rozegrane.length)    { otwarte[rozegrane[rozegrane.length - 1]] = true; }
+        if (nierozegrane.length) { otwarte[nierozegrane[0]] = true; }
 
         function runda(tytul, lista, przesuniecie) {
             if (!lista.length) { return ''; }
@@ -928,7 +989,7 @@
             return '<section class="runda">' +
                        '<h2 class="runda__tytul">' + tytul + '</h2>' +
                        lista.map(function (nr, i) {
-                           return blokKolejki(nr, i + przesuniecie);
+                           return blokKolejki(nr, i + przesuniecie, otwarte[nr]);
                        }).join('') +
                    '</section>';
         }
@@ -936,6 +997,8 @@
         box.innerHTML =
             runda('Runda <em>jesienna</em>', numery.slice(0, polowa), 0) +
             runda('Runda <em>wiosenna</em>', numery.slice(polowa), 0);
+
+        plynneRozwijanie(box);
 
         obserwuj(box.querySelectorAll('[data-reveal]'));
     }
@@ -1067,16 +1130,70 @@
             var src = encodeURI(s.logo).replace(/'/g, '%27');
             var blask = s.poswiata ? ' marquee__glow' : '';
 
-            return '<div class="marquee__item">' +
-                       '<div class="marquee__logo' + blask + '" style="--logo:url(\'' + src + '\')">' +
-                           '<img src="' + src + '" alt="' + esc(s.nazwa) + '">' +
-                       '</div>' +
-                       '<span>' + esc(s.rola) + '</span>' +
-                   '</div><i></i>';
+            var srodek = '<div class="marquee__logo' + blask + '" style="--logo:url(\'' + src + '\')">' +
+                             '<img src="' + src + '" alt="' + esc(s.nazwa) + '">' +
+                         '</div>' +
+                         '<span>' + esc(s.rola) + '</span>';
+
+            /* Adres jest sprawdzany już w panelu, ale trzymamy drugą kontrolę
+               tutaj: gdyby do JSON-a trafiło kiedyś "javascript:", kliknięcie
+               logo wykonałoby obcy kod. Do href wpuszczamy tylko http(s). */
+            if (s.strona && /^https?:\/\//i.test(s.strona)) {
+                return '<a class="marquee__item" href="' + esc(s.strona) + '"' +
+                           ' target="_blank" rel="noopener noreferrer"' +
+                           ' title="Przejdź na stronę: ' + esc(s.nazwa) + '">' +
+                           srodek +
+                       '</a><i></i>';
+            }
+
+            return '<div class="marquee__item">' + srodek + '</div><i></i>';
         }).join('');
 
-        // animacja przesuwa tor o -50%, więc lista musi w nim być dokładnie dwa razy
-        track.innerHTML = pozycje + pozycje;
+        /* Ile kopii listy wrzucić w tor.
+
+           Pasek przesuwa się o szerokość jednego zestawu i wraca na start —
+           żeby ruch był niewidoczny, zestaw musi wypełniać ekran. Przy dwóch
+           kopiach i kilku logo (np. czterech) zestaw był węższy niż ekran
+           i po jego przejechaniu w pasku zostawała pusta luka. Liczbę kopii
+           dobieramy więc do szerokości okna, z jednym zapasem. */
+        var naZestaw = lista.length * 2;    // każda pozycja to kafelek + separator
+
+        function ulozPasek() {
+            track.innerHTML = pozycje + pozycje;   // dwie kopie wystarczą do pomiaru
+
+            var dzieci = track.children;
+            if (dzieci.length <= naZestaw) { return; }
+
+            // odległość między początkiem zestawu a początkiem następnego —
+            // zawiera odstęp między pozycjami, więc pętla domyka się bez skoku
+            var szerZestawu = dzieci[naZestaw].offsetLeft - dzieci[0].offsetLeft;
+            if (szerZestawu <= 0) { return; }
+
+            var szerEkranu = (track.parentElement || document.body).clientWidth;
+            var kopii = Math.max(2, Math.ceil(szerEkranu / szerZestawu) + 1);
+
+            var html = '';
+            for (var i = 0; i < kopii; i++) { html += pozycje; }
+            track.innerHTML = html;
+
+            track.style.setProperty('--przesuniecie', szerZestawu + 'px');
+            // stała prędkość ok. 60 px/s, niezależnie od liczby sponsorów
+            track.style.setProperty('--czas-paska', (szerZestawu / 60).toFixed(2) + 's');
+        }
+
+        ulozPasek();
+
+        /* Poppins zmienia szerokość podpisów, więc po jego wczytaniu trzeba
+           przeliczyć — inaczej pomiar bierze wymiary fontu zastępczego. */
+        if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(ulozPasek);
+        }
+
+        var przeliczanieePaska;
+        window.addEventListener('resize', function () {
+            window.clearTimeout(przeliczanieePaska);
+            przeliczanieePaska = window.setTimeout(ulozPasek, 200);
+        });
     }
 
     /* Brak pliku nie jest błędem — sekcja zostaje przy treści wpisanej w HTML,

@@ -69,6 +69,8 @@ CREATE TABLE IF NOT EXISTS sponsorzy (
     rola      TEXT    NOT NULL DEFAULT 'Sponsor',
     -- sama nazwa pliku z katalogu uploads/sponsorzy, nie zawartość obrazu
     logo      TEXT    NOT NULL,
+    -- adres strony sponsora; puste = logo bez odnośnika
+    strona    TEXT,
     -- delikatna poświata pod logo — wyróżnia najważniejszych partnerów
     poswiata  INTEGER NOT NULL DEFAULT 0 CHECK (poswiata IN (0,1)),
     -- kolejność w pasku; przy równych decyduje nazwa

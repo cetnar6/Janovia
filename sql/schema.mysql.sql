@@ -70,6 +70,8 @@ CREATE TABLE IF NOT EXISTS sponsorzy (
     rola      VARCHAR(40)  NOT NULL DEFAULT 'Sponsor',
     -- sama nazwa pliku z katalogu uploads/sponsorzy, nie zawartość obrazu
     logo      VARCHAR(120) NOT NULL,
+    -- adres strony sponsora; puste = logo bez odnośnika
+    strona    VARCHAR(255) NULL,
     -- delikatna poświata pod logo — wyróżnia najważniejszych partnerów
     poswiata  TINYINT(1)   NOT NULL DEFAULT 0,
     -- kolejność w pasku; przy równych decyduje nazwa

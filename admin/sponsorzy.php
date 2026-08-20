@@ -23,8 +23,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['akcja'] ?? '') === 'usun')
     przekieruj('sponsorzy.php');
 }
 
+// ukryci lądują pod widocznymi — tak samo jak zawodnicy poza kadrą,
+// żeby na górze była zawsze faktyczna zawartość paska na stronie
 $sponsorzy = baza()
-    ->query('SELECT * FROM sponsorzy ORDER BY kolejnosc, nazwa')
+    ->query('SELECT * FROM sponsorzy ORDER BY widoczny DESC, kolejnosc, nazwa')
     ->fetchAll();
 
 naglowek('Sponsorzy');

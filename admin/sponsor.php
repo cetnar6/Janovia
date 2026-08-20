@@ -34,7 +34,7 @@ if ($id) {
     // nowy sponsor ląduje na końcu paska
     $ostatnia = (int) baza()->query('SELECT COALESCE(MAX(kolejnosc), 0) FROM sponsorzy')->fetchColumn();
 
-    $s = ['nazwa' => '', 'rola' => 'Partner główny', 'logo' => null,
+    $s = ['nazwa' => '', 'rola' => 'Partner główny', 'logo' => null, 'strona' => '',
           'poswiata' => 0, 'kolejnosc' => $ostatnia + 10, 'widoczny' => 1];
 }
 
@@ -43,12 +43,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $s['nazwa']     = trim((string) ($_POST['nazwa'] ?? ''));
     $s['rola']      = trim((string) ($_POST['rola'] ?? ''));
+    $s['strona']    = trim((string) ($_POST['strona'] ?? ''));
     $s['kolejnosc'] = (int) ($_POST['kolejnosc'] ?? 0);
     $s['poswiata']  = isset($_POST['poswiata']) ? 1 : 0;
     $s['widoczny']  = isset($_POST['widoczny']) ? 1 : 0;
 
     if ($s['nazwa'] === '') { $bledy[] = 'Nazwa sponsora jest wymagana.'; }
     if ($s['rola'] === '')  { $bledy[] = 'Rola (podpis pod logo) jest wymagana.'; }
+
+    if ($s['strona'] !== '') {
+        // bez schematu ludzie wpisują "firma.pl" — dokładamy https sami
+        if (!preg_match('~^[a-z][a-z0-9+.-]*://~i', $s['strona'])) {
+            $s['strona'] = 'https://' . $s['strona'];
+        }
+
+        $schemat = strtolower((string) parse_url($s['strona'], PHP_URL_SCHEME));
+
+        /* Tylko http(s). Adres trafia prosto do href na stronie klubu, więc
+           bez tego dałoby się wstawić javascript: i wykonać obcy kod
+           u każdego, kto kliknie logo. */
+        if (!filter_var($s['strona'], FILTER_VALIDATE_URL) || !in_array($schemat, ['http', 'https'], true)) {
+            $bledy[] = 'Adres strony musi być poprawnym odnośnikiem http:// lub https://';
+        }
+    }
 
     $nowe_logo = null;
 
@@ -74,17 +91,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($id) {
             $sql = 'UPDATE sponsorzy
-                    SET nazwa = ?, rola = ?, logo = ?, poswiata = ?, kolejnosc = ?, widoczny = ?
+                    SET nazwa = ?, rola = ?, logo = ?, strona = ?, poswiata = ?, kolejnosc = ?, widoczny = ?
                     WHERE id = ?';
             baza()->prepare($sql)->execute([
-                $s['nazwa'], $s['rola'], $logo, $s['poswiata'], $s['kolejnosc'], $s['widoczny'], $id,
+                $s['nazwa'], $s['rola'], $logo, $s['strona'] !== '' ? $s['strona'] : null,
+                $s['poswiata'], $s['kolejnosc'], $s['widoczny'], $id,
             ]);
             komunikat('Sponsor zapisany.');
         } else {
-            $sql = 'INSERT INTO sponsorzy (nazwa, rola, logo, poswiata, kolejnosc, widoczny)
-                    VALUES (?, ?, ?, ?, ?, ?)';
+            $sql = 'INSERT INTO sponsorzy (nazwa, rola, logo, strona, poswiata, kolejnosc, widoczny)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)';
             baza()->prepare($sql)->execute([
-                $s['nazwa'], $s['rola'], $logo, $s['poswiata'], $s['kolejnosc'], $s['widoczny'],
+                $s['nazwa'], $s['rola'], $logo, $s['strona'] !== '' ? $s['strona'] : null,
+                $s['poswiata'], $s['kolejnosc'], $s['widoczny'],
             ]);
             komunikat('Sponsor dodany.');
         }
@@ -132,6 +151,16 @@ naglowek($id ? 'Edycja sponsora' : 'Nowy sponsor');
             <small>Im mniejsza liczba, tym wcześniej w pasku.</small>
         </label>
     </div>
+
+    <label>Adres strony sponsora
+        <input type="url" name="strona" maxlength="255" placeholder="https://firma.pl"
+               value="<?= e($s['strona'] ?? '') ?>">
+        <small>
+            Nieobowiązkowy. Gdy podasz, logo w pasku stanie się odnośnikiem
+            otwieranym w nowej karcie. Samo „firma.pl" też przejdzie — https://
+            dopiszemy automatycznie.
+        </small>
+    </label>
 
     <div class="zdjecie-pole">
         <?php if ($logo_podglad): ?>

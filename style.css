@@ -558,7 +558,10 @@ a {
     align-items: center;
     gap: 3rem;
     width: max-content;
-    animation: slide 32s linear infinite;
+    /* Przesunięcie i czas ustawia JS po zmierzeniu jednego zestawu logo.
+       Zapasowe 50% obsługuje pasek wpisany na sztywno w index.html, gdzie
+       lista jest podwojona — przy danych z panelu kopii bywa więcej. */
+    animation: slide var(--czas-paska, 32s) linear infinite;
 }
 
 .marquee:hover .marquee__track {
@@ -571,6 +574,11 @@ a {
     align-items: center;
     gap: 0.6rem;
     white-space: nowrap;
+}
+
+/* sponsor z podanym adresem jest odnośnikiem — sygnalizujemy to kursorem */
+a.marquee__item {
+    cursor: pointer;
 }
 
 .marquee__item .marquee__logo {
@@ -635,7 +643,7 @@ a {
 }
 
 @keyframes slide {
-    to { transform: translateX(-50%); }
+    to { transform: translateX(calc(-1 * var(--przesuniecie, 50%))); }
 }
 
 /* ---------- SEKCJE ---------- */
@@ -1703,15 +1711,113 @@ a {
 
 .runda__tytul em { font-style: normal; color: var(--gold); }
 
-.kolejka { margin-bottom: 2.5rem; }
+.kolejka { margin-bottom: 1rem; }
 
+/* Kolejka zwinięta pokazuje sam pasek z wynikiem Janovii, rozwinięta —
+   wszystkie mecze. Otwarta zostaje ostatnia rozegrana i najbliższa
+   nadchodząca; resztę rozwija się kliknięciem. */
 .kolejka__head {
     display: flex;
-    align-items: baseline;
-    justify-content: space-between;
+    align-items: center;
     gap: 1rem;
     flex-wrap: wrap;
-    margin-bottom: 0.5rem;
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background-color: var(--surface);
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.3s, background-color 0.3s;
+}
+
+.kolejka__head:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+}
+
+/* Rozwijanie: siatka jedzie z 0fr do 1fr, więc przeglądarka sama animuje
+   wysokość treści — bez mierzenia jej w JS i bez skoku na końcu. */
+.kolejka__tresc {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.42s var(--ease-out), opacity 0.3s;
+    opacity: 0;
+}
+
+.kolejka__tresc > * {
+    overflow: hidden;
+    min-height: 0;
+}
+
+.kolejka.is-otwarta .kolejka__tresc {
+    grid-template-rows: 1fr;
+    opacity: 1;
+}
+
+.kolejka__head:hover {
+    border-color: var(--blue);
+    background-color: var(--surface-2);
+}
+
+.kolejka.is-otwarta .kolejka__head {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-color: transparent;
+}
+
+/* własna strzałka po prawej, obracana przy rozwinięciu */
+.kolejka__head::after {
+    content: "";
+    width: 8px;
+    height: 8px;
+    margin-left: 0.25rem;
+    border-right: 2px solid var(--muted);
+    border-bottom: 2px solid var(--muted);
+    transform: rotate(45deg) translate(-2px, -2px);
+    transition: transform 0.35s var(--ease-out), border-color 0.3s;
+}
+
+/* strzałka obraca się razem z rozwinięciem */
+.kolejka.is-otwarta .kolejka__head::after {
+    transform: rotate(-135deg) translate(-2px, -2px);
+}
+
+.kolejka__head:hover::after { border-color: var(--gold); }
+
+/* wynik Janovii na zwiniętym pasku */
+.kolejka__wynik {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-left: auto;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.kolejka__wynik b {
+    padding: 0.15rem 0.5rem;
+    border-radius: 5px;
+    background-color: var(--bg-2);
+    color: var(--gold);
+    font-size: 0.82rem;
+    white-space: nowrap;
+}
+
+/* opis terminu odsuwamy od wyniku; gdy wyniku nie ma, sam idzie do prawej */
+.kolejka__wynik ~ span { margin-left: 0; }
+.kolejka__head > span:not(.kolejka__wynik) { margin-left: auto; }
+.kolejka__wynik ~ span:not(.kolejka__wynik) { margin-left: 0; }
+
+.kolejka.is-otwarta .wyniki {
+    border: 1px solid var(--line);
+    border-top: none;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    padding: 0.75rem 1rem;
 }
 
 .kolejka__head h3 {
@@ -1884,12 +1990,20 @@ a {
 
 /* ---------- STOPKA ---------- */
 
+/* flex, nie sztywne 2fr 1fr 1fr 1fr: kolumn w stopce bywa raz jedna, raz
+   kilka, a przy siatce na cztery ślady po usuniętych zostawały jako pusta
+   przestrzeń po prawej */
 .footer__inner {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr;
-    gap: 2.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 2.5rem clamp(2.5rem, 6vw, 5rem);
     padding-top: clamp(3rem, 8vh, 5rem);
     padding-bottom: 3rem;
+}
+
+.footer__brand {
+    flex: 1 1 260px;
 }
 
 .footer__brand p {
@@ -2011,8 +2125,21 @@ a {
         display: none;
     }
 
-    .footer__inner {
-        grid-template-columns: repeat(2, 1fr);
+    /* Trzy liczby klubu w jednym rzędzie — przy flexie z dużym odstępem
+       trzecia zawijała się do drugiej linii i zostawała samotnie pod spodem.
+       Sztywne trzy kolumny trzymają je równo, a mniejszy podpis (krótszy
+       odstęp między literami) mieści się w wąskiej kolumnie. */
+    .stats__grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        align-items: start;
+        gap: 0 0.75rem;
+    }
+
+    .stat span {
+        margin-top: 0.45rem;
+        font-size: 0.62rem;
+        letter-spacing: 0.06em;
     }
 }
 

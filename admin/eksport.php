@@ -117,7 +117,7 @@ zapisz_json($katalog . '/mecze-panelu.json', [
 /* ---------- sponsorzy (pasek na stronie głównej) ---------- */
 
 $sponsorzy = $db->query(
-    'SELECT nazwa, rola, logo, poswiata
+    'SELECT nazwa, rola, logo, strona, poswiata
      FROM sponsorzy
      WHERE widoczny = 1
      ORDER BY kolejnosc, nazwa'
@@ -128,6 +128,7 @@ $lista_sponsorow = array_map(static function (array $s): array {
         'nazwa'    => $s['nazwa'],
         'rola'     => $s['rola'],
         'logo'     => adres_zdjecia($s['logo'], 'sponsorzy'),
+        'strona'   => $s['strona'] ?: null,
         'poswiata' => (bool) $s['poswiata'],
     ];
 }, $sponsorzy);
