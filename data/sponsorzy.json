@@ -1,32 +1,32 @@
 {
-    "zaktualizowano": "2026-08-20T14:30:15+02:00",
+    "zaktualizowano": "2026-08-21T13:26:52+02:00",
     "sponsorzy": [
         {
             "nazwa": "United logistics",
             "rola": "Sponsor główny",
             "logo": "uploads/sponsorzy/52bddee7de9c842d.png",
-            "strona": null,
+            "strona": "http://www.unitedlogistics.com.pl/",
             "poswiata": false
         },
         {
             "nazwa": "Dachpol",
             "rola": "Partner strategiczny",
             "logo": "uploads/sponsorzy/dachpol-bez1.png",
-            "strona": null,
+            "strona": "https://www.facebook.com/p/Us%C5%82ugi-le%C5%9Bne-Dach-Pol-Mariusz-Bajor-100089731746481/",
             "poswiata": false
         },
         {
             "nazwa": "Cerez.pl",
             "rola": "Partner strategiczny",
             "logo": "uploads/sponsorzy/f60fc44da3e6c42a.png",
-            "strona": null,
+            "strona": "https://cerez.pl/",
             "poswiata": false
         },
         {
             "nazwa": "Alfatrans",
             "rola": "Partner wspierający",
             "logo": "uploads/sponsorzy/9b6a09c7d7b092d6.png",
-            "strona": null,
+            "strona": "https://alfa-trans.com.pl/",
             "poswiata": false
         }
     ]
