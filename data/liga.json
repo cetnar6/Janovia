@@ -2,7 +2,7 @@
   "zrodlo": "http://www.90minut.pl/liga/1/liga15094.html",
   "liga": "Klasa B 2026/2027, grupa: Rzeszów VI - Mielec",
   "klub": "Janovia Janowiec",
-  "zaktualizowano": "2026-08-21T05:49:33",
+  "zaktualizowano": "2026-08-22T05:04:36",
   "tabela": [
     {
       "poz": 1,
@@ -210,9 +210,9 @@
       "gospodarz": "Jamnica Dulcza Wielka",
       "gosc": "Janovia Janowiec",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-08-29T00:00:00",
-      "data_przyblizona": true
+      "termin": "30 sierpnia, 14:00",
+      "data_iso": "2026-08-30T14:00:00",
+      "data_przyblizona": false
     },
     {
       "kolejka": 3,
@@ -343,9 +343,9 @@
       "gospodarz": "Atut II Podborze",
       "gosc": "Sprint Żarówka",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-08-29T00:00:00",
-      "data_przyblizona": true
+      "termin": "30 sierpnia, 14:00",
+      "data_iso": "2026-08-30T14:00:00",
+      "data_przyblizona": false
     },
     {
       "kolejka": 2,
@@ -353,9 +353,9 @@
       "gospodarz": "Piast II Wadowice Górne",
       "gosc": "Sokół Pień",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-08-29T00:00:00",
-      "data_przyblizona": true
+      "termin": "29 sierpnia, 17:00",
+      "data_iso": "2026-08-29T17:00:00",
+      "data_przyblizona": false
     },
     {
       "kolejka": 2,
@@ -363,9 +363,9 @@
       "gospodarz": "LKS Wierzchowiny",
       "gosc": "Madras Goleszów",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-08-29T00:00:00",
-      "data_przyblizona": true
+      "termin": "30 sierpnia, 14:00",
+      "data_iso": "2026-08-30T14:00:00",
+      "data_przyblizona": false
     },
     {
       "kolejka": 2,
@@ -373,9 +373,9 @@
       "gospodarz": "KS SMP Tuszyma",
       "gosc": "KS Zgórsko",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-08-29T00:00:00",
-      "data_przyblizona": true
+      "termin": "30 sierpnia, 14:00",
+      "data_iso": "2026-08-30T14:00:00",
+      "data_przyblizona": false
     },
     {
       "kolejka": 2,
@@ -383,9 +383,9 @@
       "gospodarz": "Jamnica Dulcza Wielka",
       "gosc": "Janovia Janowiec",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-08-29T00:00:00",
-      "data_przyblizona": true
+      "termin": "30 sierpnia, 14:00",
+      "data_iso": "2026-08-30T14:00:00",
+      "data_przyblizona": false
     },
     {
       "kolejka": 2,
@@ -393,9 +393,9 @@
       "gospodarz": "Apollo Dulcza Mała",
       "gosc": "Hetman Dąbrówka Wisłocka",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-08-29T00:00:00",
-      "data_przyblizona": true
+      "termin": "30 sierpnia, 13:00",
+      "data_iso": "2026-08-30T13:00:00",
+      "data_przyblizona": false
     },
     {
       "kolejka": 3,
