@@ -1,6 +1,6 @@
 {
   "klub": "Janovia Janowiec",
-  "zaktualizowano": "2026-08-21T05:49:37",
+  "zaktualizowano": "2026-08-23T05:16:03",
   "sezony": [
     {
       "sezon": "2026/27",
@@ -8,7 +8,7 @@
       "zrodlo": "http://www.90minut.pl/liga/1/liga15094.html",
       "bierzacy": true,
       "nasza_pozycja": {
-        "poz": 3,
+        "poz": 4,
         "klub": "Janovia Janowiec",
         "m": 0,
         "pkt": 0,
@@ -20,16 +20,26 @@
       "tabela": [
         {
           "poz": 1,
-          "klub": "Apollo Dulcza Mała",
-          "m": 0,
-          "pkt": 0,
-          "z": 0,
+          "klub": "Sokół Pień",
+          "m": 1,
+          "pkt": 3,
+          "z": 1,
           "r": 0,
           "p": 0,
-          "bramki": "0-0"
+          "bramki": "3-0"
         },
         {
           "poz": 2,
+          "klub": "Atut II Podborze",
+          "m": 1,
+          "pkt": 3,
+          "z": 1,
+          "r": 0,
+          "p": 0,
+          "bramki": "4-3"
+        },
+        {
+          "poz": 3,
           "klub": "Hetman Dąbrówka Wisłocka",
           "m": 0,
           "pkt": 0,
@@ -39,7 +49,7 @@
           "bramki": "0-0"
         },
         {
-          "poz": 3,
+          "poz": 4,
           "klub": "Janovia Janowiec",
           "m": 0,
           "pkt": 0,
@@ -49,7 +59,7 @@
           "bramki": "0-0"
         },
         {
-          "poz": 4,
+          "poz": 5,
           "klub": "KS Zgórsko",
           "m": 0,
           "pkt": 0,
@@ -59,7 +69,7 @@
           "bramki": "0-0"
         },
         {
-          "poz": 5,
+          "poz": 6,
           "klub": "Madras Goleszów",
           "m": 0,
           "pkt": 0,
@@ -69,27 +79,7 @@
           "bramki": "0-0"
         },
         {
-          "poz": 6,
-          "klub": "Sokół Pień",
-          "m": 0,
-          "pkt": 0,
-          "z": 0,
-          "r": 0,
-          "p": 0,
-          "bramki": "0-0"
-        },
-        {
           "poz": 7,
-          "klub": "Sprint Żarówka",
-          "m": 0,
-          "pkt": 0,
-          "z": 0,
-          "r": 0,
-          "p": 0,
-          "bramki": "0-0"
-        },
-        {
-          "poz": 8,
           "klub": "Piast II Wadowice Górne",
           "m": 0,
           "pkt": 0,
@@ -99,7 +89,7 @@
           "bramki": "0-0"
         },
         {
-          "poz": 9,
+          "poz": 8,
           "klub": "LKS Wierzchowiny",
           "m": 0,
           "pkt": 0,
@@ -109,7 +99,7 @@
           "bramki": "0-0"
         },
         {
-          "poz": 10,
+          "poz": 9,
           "klub": "KS SMP Tuszyma",
           "m": 0,
           "pkt": 0,
@@ -119,7 +109,7 @@
           "bramki": "0-0"
         },
         {
-          "poz": 11,
+          "poz": 10,
           "klub": "Jamnica Dulcza Wielka",
           "m": 0,
           "pkt": 0,
@@ -129,14 +119,24 @@
           "bramki": "0-0"
         },
         {
-          "poz": 12,
-          "klub": "Atut II Podborze",
-          "m": 0,
+          "poz": 11,
+          "klub": "Apollo Dulcza Mała",
+          "m": 1,
           "pkt": 0,
           "z": 0,
           "r": 0,
-          "p": 0,
-          "bramki": "0-0"
+          "p": 1,
+          "bramki": "3-4"
+        },
+        {
+          "poz": 12,
+          "klub": "Sprint Żarówka",
+          "m": 1,
+          "pkt": 0,
+          "z": 0,
+          "r": 0,
+          "p": 1,
+          "bramki": "0-3"
         }
       ]
     },
