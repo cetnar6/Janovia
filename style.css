@@ -1465,8 +1465,15 @@ a.marquee__item {
     display: none;
 }
 
-.countdown__trwa {
+.countdown.is-trwa .countdown__trwa {
     display: flex;
+}
+
+/* Etykieta pokazuje się WYŁĄCZNIE przez klasę .is-trwa. Sam atrybut hidden
+   tu nie wystarcza: reguła z display przebija [hidden] z arkusza przeglądarki,
+   więc napis wisiał obok tykającego zegara. */
+.countdown__trwa {
+    display: none;
     align-items: center;
     justify-content: center;
     gap: 0.7rem;
