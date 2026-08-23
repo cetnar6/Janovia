@@ -186,8 +186,13 @@
 
     var clock = document.getElementById('clock');
     var sekcjaOdliczania = clock ? clock.closest('.countdown') : null;
+    var znacznikTrwa = document.getElementById('countdown-trwa');
     var cel = clock ? new Date(clock.getAttribute('data-target')).getTime() : 0;
     var meczeDoOdliczania = [];
+
+    /* Ile mecz „trwa" od pierwszego gwizdka: dwie połowy, przerwa i doliczony
+       czas. Po tym oknie sekcja przechodzi na kolejne spotkanie. */
+    var CZAS_MECZU_MS = 2 * 60 * 60 * 1000;
 
     function pad(n) { return n < 10 ? '0' + n : String(n); }
 
@@ -197,6 +202,26 @@
        stronę zostawioną otwartą na czas pierwszego gwizdka. */
     function pokazOdliczanie(widoczne) {
         if (sekcjaOdliczania) { sekcjaOdliczania.hidden = !widoczne; }
+    }
+
+    /* Na czas meczu zegar ustępuje miejsca etykiecie „Mecz w trakcie". */
+    function ustawTrakcie(trwa) {
+        if (sekcjaOdliczania) { sekcjaOdliczania.classList.toggle('is-trwa', trwa); }
+        if (znacznikTrwa) { znacznikTrwa.hidden = !trwa; }
+    }
+
+    /* Mecz uznajemy za trwający tylko przy znanej godzinie. Przy terminie
+       przybliżonym data_iso to północ pierwszego dnia okna, więc etykieta
+       wisiałaby przez cały dzień, zanim ktokolwiek wyjdzie na boisko. */
+    function trwajacyMecz() {
+        var teraz = Date.now();
+
+        return meczeDoOdliczania.filter(function (m) {
+            if (!m.data_iso || m.data_przyblizona) { return false; }
+
+            var start = new Date(m.data_iso).getTime();
+            return teraz >= start && teraz < start + CZAS_MECZU_MS;
+        })[0];
     }
 
     if (clock) {
@@ -445,7 +470,12 @@
        ma być dopiero rozegrane. */
     function koniecTerminu(m) {
         var czas = m && m.data_iso ? new Date(m.data_iso).getTime() : NaN;
-        return m && m.data_przyblizona ? czas + 2 * 86400000 : czas;
+        if (!m) { return NaN; }
+
+        /* Przy dokładnej godzinie doliczamy czas gry — inaczej mecz znikałby
+           z terminarza w chwili pierwszego gwizdka, a wtedy odliczanie nie
+           miałoby czego oznaczyć jako trwające. */
+        return m.data_przyblizona ? czas + 2 * 86400000 : czas + CZAS_MECZU_MS;
     }
 
     /* Mecz bez czytelnej daty zostaje — lepiej pokazać go z „—" niż po cichu
@@ -532,9 +562,51 @@
         odswiezOdliczanie();
     }
 
+    /* Herby i podpis pod zegarem — wspólne dla meczu nadchodzącego i trwającego. */
+    function wypiszMecz(m) {
+        var teams = document.querySelector('.countdown__teams');
+        if (teams) {
+            teams.innerHTML =
+                herb(m.gospodarz, 'md') +
+                '<span class="vs">vs</span>' +
+                herb(m.gosc, 'md');
+        }
+
+        var meta = document.querySelector('.countdown__meta');
+        if (!meta) { return; }
+
+        var data = new Date(m.data_iso);
+        var kiedy = m.data_przyblizona
+            ? m.kolejka_opis
+            : DNI_TYGODNIA[data.getDay()] + ', ' + data.getDate() + ' ' +
+              MIESIACE_SKROT[data.getMonth()] + ', ' + pad(data.getHours()) + ':' + pad(data.getMinutes());
+
+        var opisKolejki = m.kolejka
+            ? 'kolejka ' + m.kolejka
+            : (m.etykieta || 'mecz towarzyski');
+
+        meta.textContent = skrot(m.gospodarz) + ' — ' + skrot(m.gosc) +
+                           ' · ' + opisKolejki + ' · ' + kiedy;
+    }
+
     /* Wywoływane też z zegara, gdy termin minie przy otwartej stronie. */
     function odswiezOdliczanie() {
         if (!clock) { return; }
+
+        /* Mecz rozgrywany właśnie teraz wyprzedza odliczanie: zamiast zegara
+           idzie etykieta, a celem staje się koniec spotkania — po nim sekcja
+           sama przeskoczy na następny termin. */
+        var trwa = trwajacyMecz();
+
+        if (trwa) {
+            cel = new Date(trwa.data_iso).getTime() + CZAS_MECZU_MS;
+            pokazOdliczanie(true);
+            ustawTrakcie(true);
+            wypiszMecz(trwa);
+            return;
+        }
+
+        ustawTrakcie(false);
 
         /* Zegar potrzebuje terminu z przyszłości, a nie „najbliższego" —
            mecz z przybliżoną datą zostaje na liście przez całe okno, więc
@@ -551,30 +623,7 @@
 
         cel = new Date(nastepny.data_iso).getTime();
         pokazOdliczanie(true);
-
-        var teams = document.querySelector('.countdown__teams');
-        if (teams) {
-            teams.innerHTML =
-                herb(nastepny.gospodarz, 'md') +
-                '<span class="vs">vs</span>' +
-                herb(nastepny.gosc, 'md');
-        }
-
-        var meta = document.querySelector('.countdown__meta');
-        if (meta) {
-            var data = new Date(nastepny.data_iso);
-            var kiedy = nastepny.data_przyblizona
-                ? nastepny.kolejka_opis
-                : DNI_TYGODNIA[data.getDay()] + ', ' + data.getDate() + ' ' +
-                  MIESIACE_SKROT[data.getMonth()] + ', ' + pad(data.getHours()) + ':' + pad(data.getMinutes());
-
-            var opisKolejki = nastepny.kolejka
-                ? 'kolejka ' + nastepny.kolejka
-                : (nastepny.etykieta || 'mecz towarzyski');
-
-            meta.textContent = skrot(nastepny.gospodarz) + ' — ' + skrot(nastepny.gosc) +
-                               ' · ' + opisKolejki + ' · ' + kiedy;
-        }
+        wypiszMecz(nastepny);
     }
 
     /* =========================================

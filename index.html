@@ -14,7 +14,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap">
-    <link rel="stylesheet" href="style.css?v=44">
+    <link rel="stylesheet" href="style.css?v=45">
 </head>
 <body>
 
@@ -185,6 +185,12 @@
                     <div class="clock__unit"><strong data-unit="m">00</strong><span>min</span></div>
                     <div class="clock__unit"><strong data-unit="s">00</strong><span>sek</span></div>
                 </div>
+
+                <!-- zastępuje zegar na czas trwania meczu; pokazuje je JS -->
+                <p class="countdown__trwa" id="countdown-trwa" hidden>
+                    <span class="countdown__kropka" aria-hidden="true"></span>
+                    Mecz w trakcie
+                </p>
 
                 <p class="countdown__meta">Orzeł — Janovia · 13. kolejka · sobota, 15 sierpnia, 18:00</p>
             </div>
@@ -457,6 +463,6 @@
     </div>
 
     <script src="js/lenis.min.js?v=1"></script>
-    <script src="script.js?v=38"></script>
+    <script src="script.js?v=39"></script>
 </body>
 </html>
