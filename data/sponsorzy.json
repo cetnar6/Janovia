@@ -1,5 +1,5 @@
 {
-    "zaktualizowano": "2026-08-21T13:26:52+02:00",
+    "zaktualizowano": "2026-08-23T18:17:32+02:00",
     "sponsorzy": [
         {
             "nazwa": "United logistics",
@@ -27,6 +27,13 @@
             "rola": "Partner wspierający",
             "logo": "uploads/sponsorzy/9b6a09c7d7b092d6.png",
             "strona": "https://alfa-trans.com.pl/",
+            "poswiata": false
+        },
+        {
+            "nazwa": "Magdalena Pryga Rzeczozawca Majątkowy",
+            "rola": "Partner wspierający",
+            "logo": "uploads/sponsorzy/77409e132fb14c44.png",
+            "strona": "https://www.pryga.pl/",
             "poswiata": false
         }
     ]
