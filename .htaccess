@@ -49,7 +49,8 @@ Options -Indexes
 # Reguła znika sama, gdy strona ruszy pod janovia.pl — nie trzeba jej
 # pamiętać ani ręcznie wyłączać.
 <IfModule mod_setenvif.c>
-    SetEnvIf Host !^(www\.)?janovia\.pl$ WERSJA_ROBOCZA
+    # NoCase, bo nagłówek Host bywa przysyłany wielkimi literami
+    SetEnvIfNoCase Host !^(www\.)?janovia\.pl$ WERSJA_ROBOCZA
 </IfModule>
 
 <IfModule mod_headers.c>
