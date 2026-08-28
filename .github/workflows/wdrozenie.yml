@@ -1,11 +1,16 @@
 name: Wdrożenie na serwer
 
-# Wysyła stronę na hosting OVH przez FTPS.
+# Wysyła stronę na hosting OVH przez SFTP.
 #
 # Po co to, skoro jest cron na serwerze: OVH zablokował hostingowi połączenia
 # wychodzące, więc cron.php nie dosięgnie 90minut.pl ani Facebooka. GitHub
 # takiej blokady nie ma — pobiera dane u siebie i przywozi gotowe pliki tutaj.
 # Połączenie idzie DO OVH, nie Z OVH, więc blokada go nie dotyczy.
+#
+# Dlaczego SFTP, a nie FTPS: serwer cluster121 na "AUTH TLS" odpowiada
+# "500 This security scheme is not implemented", czyli szyfrowanego FTP nie
+# obsługuje. Zwykły FTP odpada, bo przesyłałby hasło otwartym tekstem — a to
+# samo konto ma dostęp również do drugiej strony na tym hostingu.
 
 on:
   push:
@@ -22,6 +27,9 @@ concurrency:
   group: wdrozenie
   cancel-in-progress: false
 
+env:
+  ZDALNY_KATALOG: /janovia
+
 jobs:
   wyslij:
     runs-on: ubuntu-latest
@@ -36,8 +44,22 @@ jobs:
         with:
           ref: main
 
-      - name: Zainstaluj lftp
-        run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
+      - name: Zainstaluj lftp i sshpass
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp sshpass
+
+      # Klucz serwera wpisany na stałe zamiast ślepego akceptowania pierwszego
+      # napotkanego (StrictHostKeyChecking=no). Runner GitHuba jest za każdym
+      # razem nowy, więc bez tego każde połączenie ufałoby czemukolwiek, co
+      # odpowie pod tym adresem. Klucz publiczny — może być jawny.
+      - name: Przypnij klucz serwera
+        run: |
+          mkdir -p ~/.ssh
+          cat > ~/.ssh/known_hosts <<'KLUCZ'
+          ftp.cluster121.hosting.ovh.net ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJSgweEQn216+sUrv4A0HwrnvJi03tu/LPeJ176yB29a
+          KLUCZ
+          chmod 600 ~/.ssh/known_hosts
+          echo "Odcisk przypiętego klucza:"
+          ssh-keygen -lf ~/.ssh/known_hosts
 
       # Katalog "wysylka" zawiera dokładnie to, co ma trafić na serwer.
       # Łatwiej wskazać, co wysłać, niż budować regułę wykluczeń w lftp.
@@ -59,34 +81,38 @@ jobs:
             --exclude '.gitignore'
           echo "Do wysłania: $(find wysylka -type f | wc -l) plików, $(du -sh wysylka | cut -f1)"
 
-      # UWAGA — te ścieżki należą do panelu administratora na serwerze,
+      # UWAGA — ścieżki w -x należą do panelu administratora na serwerze,
       # nie do repozytorium. Panel zapisuje je z bazy MySQL przy każdym
       # zapisie zawodnika czy sponsora. Gdyby mirror --delete ich nie omijał,
       # każde wdrożenie kasowałoby pracę wykonaną w panelu.
+      #
+      # sshpass podaje hasło procesowi ssh, bo lftp przy sftp nie potrafi
+      # zrobić tego sam — uruchamia zewnętrznego klienta ssh.
       - name: Wyślij na serwer
         env:
           HOST: ${{ secrets.FTP_HOST }}
-          USER: ${{ secrets.FTP_USER }}
-          HASLO: ${{ secrets.FTP_PASSWORD }}
+          UZYTKOWNIK: ${{ secrets.FTP_USER }}
+          SSHPASS: ${{ secrets.FTP_PASSWORD }}
         run: |
           lftp -c "
             set cmd:fail-exit true;
-            set ftp:ssl-force true;
-            set ftp:ssl-protect-data true;
-            set ssl:verify-certificate true;
+            set sftp:connect-program 'sshpass -e ssh -a -x -o StrictHostKeyChecking=yes';
             set net:max-retries 3;
             set net:timeout 20;
-            open -u '$USER','$HASLO' '$HOST';
+            open -u '$UZYTKOWNIK',dummy sftp://$HOST;
 
-            mirror --reverse --delete --verbose --parallel=4 \
+            mkdir -p -f $ZDALNY_KATALOG;
+            mirror --reverse --delete --verbose --parallel=2 \
               -x '^uploads/' \
               -x '^admin/inc/config\.php$' \
               -x '^data/zawodnicy\.json$' \
               -x '^data/posty\.json$' \
               -x '^data/mecze-panelu\.json$' \
               -x '^data/sponsorzy\.json$' \
-              wysylka/ /janovia/;
+              wysylka/ $ZDALNY_KATALOG/;
           "
+        # sshpass -e czyta hasło ze zmiennej SSHPASS, żeby nie trafiło
+        # do listy procesów, gdzie widziałby je każdy inny proces.
 
       # Osobno i BEZ --delete: logotypy sponsorów z repozytorium mają trafić
       # na serwer przy pierwszym wdrożeniu, ale pliki wgrane później przez
@@ -94,14 +120,12 @@ jobs:
       - name: Uzupełnij uploads (bez kasowania)
         env:
           HOST: ${{ secrets.FTP_HOST }}
-          USER: ${{ secrets.FTP_USER }}
-          HASLO: ${{ secrets.FTP_PASSWORD }}
+          UZYTKOWNIK: ${{ secrets.FTP_USER }}
+          SSHPASS: ${{ secrets.FTP_PASSWORD }}
         run: |
           lftp -c "
             set cmd:fail-exit true;
-            set ftp:ssl-force true;
-            set ftp:ssl-protect-data true;
-            set ssl:verify-certificate true;
-            open -u '$USER','$HASLO' '$HOST';
-            mirror --reverse --verbose wysylka/uploads/ /janovia/uploads/;
+            set sftp:connect-program 'sshpass -e ssh -a -x -o StrictHostKeyChecking=yes';
+            open -u '$UZYTKOWNIK',dummy sftp://$HOST;
+            mirror --reverse --verbose wysylka/uploads/ $ZDALNY_KATALOG/uploads/;
           "
