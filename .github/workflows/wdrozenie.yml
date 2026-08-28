@@ -1,0 +1,107 @@
+name: Wdrożenie na serwer
+
+# Wysyła stronę na hosting OVH przez FTPS.
+#
+# Po co to, skoro jest cron na serwerze: OVH zablokował hostingowi połączenia
+# wychodzące, więc cron.php nie dosięgnie 90minut.pl ani Facebooka. GitHub
+# takiej blokady nie ma — pobiera dane u siebie i przywozi gotowe pliki tutaj.
+# Połączenie idzie DO OVH, nie Z OVH, więc blokada go nie dotyczy.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  workflow_call:            # wywoływane też po odświeżeniu danych
+    secrets:
+      FTP_HOST:     { required: true }
+      FTP_USER:     { required: true }
+      FTP_PASSWORD: { required: true }
+
+# Dwa wdrożenia naraz mieszałyby pliki na serwerze w połowie transferu.
+concurrency:
+  group: wdrozenie
+  cancel-in-progress: false
+
+jobs:
+  wyslij:
+    runs-on: ubuntu-latest
+
+    steps:
+      # ref: main jest tu konieczne. Gdy ten workflow jest wywoływany po
+      # aktualizacji danych, domyślny checkout pobrałby commit, który
+      # URUCHOMIŁ przebieg — czyli stan sprzed dopisania świeżych wyników.
+      # Wysłalibyśmy wtedy na serwer poprzednią wersję data/liga.json.
+      - name: Pobierz repozytorium
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Zainstaluj lftp
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
+
+      # Katalog "wysylka" zawiera dokładnie to, co ma trafić na serwer.
+      # Łatwiej wskazać, co wysłać, niż budować regułę wykluczeń w lftp.
+      - name: Przygotuj katalog do wysyłki
+        run: |
+          mkdir -p wysylka
+          rsync -a ./ wysylka/ \
+            --exclude '.git' \
+            --exclude '.github' \
+            --exclude 'node_modules' \
+            --exclude '__pycache__' \
+            --exclude 'dane' \
+            --exclude 'sql' \
+            --exclude 'logs' \
+            --exclude 'wysylka' \
+            --exclude '*.py' \
+            --exclude '*.md' \
+            --exclude '.DS_Store' \
+            --exclude '.gitignore'
+          echo "Do wysłania: $(find wysylka -type f | wc -l) plików, $(du -sh wysylka | cut -f1)"
+
+      # UWAGA — te ścieżki należą do panelu administratora na serwerze,
+      # nie do repozytorium. Panel zapisuje je z bazy MySQL przy każdym
+      # zapisie zawodnika czy sponsora. Gdyby mirror --delete ich nie omijał,
+      # każde wdrożenie kasowałoby pracę wykonaną w panelu.
+      - name: Wyślij na serwer
+        env:
+          HOST: ${{ secrets.FTP_HOST }}
+          USER: ${{ secrets.FTP_USER }}
+          HASLO: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          lftp -c "
+            set cmd:fail-exit true;
+            set ftp:ssl-force true;
+            set ftp:ssl-protect-data true;
+            set ssl:verify-certificate true;
+            set net:max-retries 3;
+            set net:timeout 20;
+            open -u '$USER','$HASLO' '$HOST';
+
+            mirror --reverse --delete --verbose --parallel=4 \
+              -x '^uploads/' \
+              -x '^admin/inc/config\.php$' \
+              -x '^data/zawodnicy\.json$' \
+              -x '^data/posty\.json$' \
+              -x '^data/mecze-panelu\.json$' \
+              -x '^data/sponsorzy\.json$' \
+              wysylka/ /janovia/;
+          "
+
+      # Osobno i BEZ --delete: logotypy sponsorów z repozytorium mają trafić
+      # na serwer przy pierwszym wdrożeniu, ale pliki wgrane później przez
+      # panel muszą przetrwać. Brak --delete oznacza "dodawaj, nigdy nie usuwaj".
+      - name: Uzupełnij uploads (bez kasowania)
+        env:
+          HOST: ${{ secrets.FTP_HOST }}
+          USER: ${{ secrets.FTP_USER }}
+          HASLO: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          lftp -c "
+            set cmd:fail-exit true;
+            set ftp:ssl-force true;
+            set ftp:ssl-protect-data true;
+            set ssl:verify-certificate true;
+            open -u '$USER','$HASLO' '$HOST';
+            mirror --reverse --verbose wysylka/uploads/ /janovia/uploads/;
+          "

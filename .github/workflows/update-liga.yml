@@ -58,3 +58,11 @@ jobs:
           git add data/
           git commit -m "Aktualizacja danych (90minut.pl, Facebook)"
           git push
+
+  # Commit zrobiony powyżej przez GITHUB_TOKEN nie uruchomi wdrożenia sam z
+  # siebie — GitHub celowo nie wyzwala workflow commitami z workflow, żeby nie
+  # powstała pętla. Dlatego wołamy wdrożenie wprost.
+  wdroz:
+    needs: aktualizuj
+    uses: ./.github/workflows/wdrozenie.yml
+    secrets: inherit
