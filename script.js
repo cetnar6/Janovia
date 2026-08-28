@@ -102,11 +102,23 @@
     var revealer = null;
     var revealerKaruzeli = null;
 
+    /* Rozmyte tło pod zdjęciem posta dostaje adres dopiero teraz — patrz
+       komentarz przy data-tlo w kartaAktualnosci. */
+    function odsloń(el) {
+        el.classList.add('is-in');
+
+        var zTlem = el.matches('[data-tlo]') ? el : el.querySelector('[data-tlo]');
+        if (zTlem) {
+            zTlem.style.backgroundImage = "url('" + zTlem.getAttribute('data-tlo') + "')";
+            zTlem.removeAttribute('data-tlo');
+        }
+    }
+
     if ('IntersectionObserver' in window) {
         revealer = new IntersectionObserver(function (entries) {
             entries.forEach(function (entry) {
                 if (entry.isIntersecting) {
-                    entry.target.classList.add('is-in');
+                    odsloń(entry.target);
                     revealer.unobserve(entry.target);
                 }
             });
@@ -120,7 +132,7 @@
         revealerKaruzeli = new IntersectionObserver(function (entries) {
             entries.forEach(function (entry) {
                 if (entry.isIntersecting) {
-                    entry.target.classList.add('is-in');
+                    odsloń(entry.target);
                     revealerKaruzeli.unobserve(entry.target);
                 }
             });
@@ -131,7 +143,7 @@
         Array.prototype.forEach.call(nodes, function (el) {
             var obs = el.closest('.rail') ? revealerKaruzeli : revealer;
             if (obs) { obs.observe(el); }
-            else { el.classList.add('is-in'); }
+            else { odsloń(el); }
         });
     }
 
@@ -841,8 +853,12 @@
         // adres trafia i do CSS-owego url(), i do src — apostrof zamykałby url()
         var src = p.zdjecie ? encodeURI(p.zdjecie).replace(/'/g, '%27') : '';
 
-        // tło jest źródłem adresu dla rozmytej warstwy (::before dziedziczy je)
-        var tlo = src ? ' style="background-image:url(\'' + src + '\')"' : '';
+        /* Adres tła siedzi w data-tlo, a nie od razu w stylu. Tła CSS nie
+           podlegają loading="lazy", więc wpisane wprost pobierałyby się dla
+           wszystkich stu kafelków naraz — samych zdjęć z Facebooka robiło to
+           prawie 11 MB przy wejściu na stronę. Wstawia je dopiero obserwator,
+           gdy kafelek wjeżdża w widok. */
+        var tlo = src ? ' data-tlo="' + src + '"' : '';
         var foto = src
             ? '<img class="post__foto" src="' + src + '" alt="" loading="lazy">'
             : '';

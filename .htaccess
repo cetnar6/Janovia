@@ -1,0 +1,92 @@
+# =========================================
+#  LKS Janovia Janowiec — konfiguracja Apache
+#  Uwaga: to działa wyłącznie na Apache. Na Windows/IIS plik jest
+#  ignorowany i wszystko poniżej trzeba przenieść do web.config.
+# =========================================
+
+# ---------- HTTPS ----------
+# Przekierowanie na wersję szyfrowaną. Włącz dopiero, gdy certyfikat
+# już działa — inaczej strona wpadnie w pętlę przekierowań.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    RewriteCond %{HTTPS} !=on
+    RewriteCond %{HTTP:X-Forwarded-Proto} !https
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
+    # jedna wersja adresu zamiast dwóch — bez www
+    RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+    RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
+</IfModule>
+
+# ---------- Czego nie wolno wydać przeglądarce ----------
+# Baza SQLite trzyma hasła administratora, .git całą historię projektu,
+# a config.php dane dostępowe do bazy i token Facebooka.
+RedirectMatch 404 /\.git
+RedirectMatch 404 /dane/
+RedirectMatch 404 /sql/
+RedirectMatch 404 /logs/
+RedirectMatch 404 /node_modules/
+
+<FilesMatch "(^\.|\.(db|sqlite|sqlite3|log|md|json5|lock|py|yml|yaml|pkg)$|^(package(-lock)?\.json|composer\.json)$)">
+    Require all denied
+</FilesMatch>
+
+# pliki konfiguracyjne panelu — nigdy przez HTTP
+<FilesMatch "^config(\.przyklad)?\.php$">
+    Require all denied
+</FilesMatch>
+
+# katalog nie ma prawa pokazywać swojej zawartości
+Options -Indexes
+
+# ---------- Nagłówki bezpieczeństwa ----------
+<IfModule mod_headers.c>
+    # przeglądarka nie zgaduje typu pliku wbrew nagłówkowi
+    Header always set X-Content-Type-Options "nosniff"
+    # strona nie da się osadzić w cudzej ramce (obrona przed podszywaniem)
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+
+    # HSTS — włącz dopiero, gdy HTTPS działa stabilnie; cofnięcie tego
+    # trwa tyle, ile max-age, więc na start lepiej zostawić zakomentowane
+    # Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+</IfModule>
+
+# ---------- Kompresja ----------
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml
+    AddOutputFilterByType DEFLATE application/javascript application/json
+    AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>
+
+# ---------- Cache ----------
+# Grafika i biblioteki mogą leżeć w cache długo. HTML i pliki data/ muszą
+# być świeże, bo to przez nie strona dowiaduje się o nowych meczach.
+<IfModule mod_expires.c>
+    ExpiresActive On
+
+    ExpiresByType image/png            "access plus 1 year"
+    ExpiresByType image/jpeg           "access plus 1 year"
+    ExpiresByType image/webp           "access plus 1 year"
+    ExpiresByType image/x-icon         "access plus 1 year"
+    ExpiresByType font/woff2           "access plus 1 year"
+
+    # CSS i JS mają w adresie ?v=, więc podbicie numeru i tak wymusi pobranie
+    ExpiresByType text/css             "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+
+    ExpiresByType text/html            "access plus 0 seconds"
+    ExpiresByType application/json     "access plus 0 seconds"
+</IfModule>
+
+<IfModule mod_headers.c>
+    # pliki z danymi muszą się odświeżać, inaczej tabela zostanie zamrożona
+    <FilesMatch "\.json$">
+        Header set Cache-Control "no-cache, must-revalidate"
+    </FilesMatch>
+</IfModule>
+
+# ---------- Strony błędów ----------
+ErrorDocument 404 /index.html

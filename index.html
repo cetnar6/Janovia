@@ -10,6 +10,21 @@
     <link rel="icon" type="image/png" sizes="32x32" href="png/favicon-32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="png/favicon-180.png">
     <meta name="theme-color" content="#08090C">
+
+    <meta name="description" content="Oficjalna strona LKS Janovia Janowiec. Aktualności klubu, terminarz i wyniki Klasy B, tabela ligowa, kadra zawodników i sponsorzy.">
+    <link rel="canonical" href="https://janovia.pl/">
+
+    <!-- podgląd linku na Facebooku i w Messengerze -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="LKS Janovia Janowiec">
+    <meta property="og:locale" content="pl_PL">
+    <meta property="og:title" content="Janovia Janowiec — oficjalna strona klubu">
+    <meta property="og:description" content="Oficjalna strona LKS Janovia Janowiec. Aktualności klubu, terminarz i wyniki Klasy B, tabela ligowa, kadra zawodników i sponsorzy.">
+    <meta property="og:url" content="https://janovia.pl/">
+    <meta property="og:image" content="https://janovia.pl/png/stadion1.jpg">
+    <meta property="og:image:width" content="1672">
+    <meta property="og:image:height" content="941">
+    <meta name="twitter:card" content="summary_large_image">
     <!-- ?v= wymusza pobranie nowej wersji po zmianach; podbij numer przy wdrożeniu -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -77,23 +92,11 @@
 
     <!-- ===== PASEK SPONSORÓW (przewijający się) ===== -->
     <div class="marquee">
-        <div class="marquee__track">
-            <div class="marquee__item"><div class="marquee__logo marquee__glow" style="--logo:url('png/sponsorzy/komars-bez.png')"><img src="png/sponsorzy/komars-bez.png" alt="Komars"></div><span>Sponsor techniczny</span></div><i></i>
-            <div class="marquee__item"><div class="marquee__logo" style="--logo:url('png/sponsorzy/ABDACHY-bez.png')"><img src="png/sponsorzy/ABDACHY-bez.png" alt="ABDACHY"></div><span>Partner medialny</span></div><i></i>
-            <div class="marquee__item"><div class="marquee__logo" style="--logo:url('png/sponsorzy/dachpol-bez1.png')"><img src="png/sponsorzy/dachpol-bez1.png" alt="Dachpol"></div><span>Sponsor techniczny</span></div><i></i>
-            <div class="marquee__item"><div class="marquee__logo" style="--logo:url('png/sponsorzy/ZNICZ-bez.png')"><img src="png/sponsorzy/ZNICZ-bez.png" alt="Znicz"></div><span>Partner medialny</span></div><i></i>
-            <div class="marquee__item"><div class="marquee__logo marquee__glow" style="--logo:url('png/sponsorzy/kokoszka.png')"><img src="png/sponsorzy/kokoszka.png" alt="Kokoszka"></div><span>Partner główny</span></div><i></i>
-            <div class="marquee__item"><div class="marquee__logo marquee__glow" style="--logo:url('png/sponsorzy/piatka-bez.png')"><img src="png/sponsorzy/piatka-bez.png" alt="Piątka"></div><span>Partner akademii</span></div><i></i>
-            <div class="marquee__item"><div class="marquee__logo" style="--logo:url('png/sponsorzy/ryba-bez.png')"><img src="png/sponsorzy/ryba-bez.png" alt="Ryba"></div><span>Partner medialny</span></div><i></i>
-
-            <div class="marquee__item"><div class="marquee__logo marquee__glow" style="--logo:url('png/sponsorzy/komars-bez.png')"><img src="png/sponsorzy/komars-bez.png" alt="Komars"></div><span>Sponsor techniczny</span></div><i></i>
-            <div class="marquee__item"><div class="marquee__logo" style="--logo:url('png/sponsorzy/ABDACHY-bez.png')"><img src="png/sponsorzy/ABDACHY-bez.png" alt="ABDACHY"></div><span>Partner medialny</span></div><i></i>
-            <div class="marquee__item"><div class="marquee__logo" style="--logo:url('png/sponsorzy/dachpol-bez1.png')"><img src="png/sponsorzy/dachpol-bez1.png" alt="Dachpol"></div><span>Sponsor techniczny</span></div><i></i>
-            <div class="marquee__item"><div class="marquee__logo" style="--logo:url('png/sponsorzy/ZNICZ-bez.png')"><img src="png/sponsorzy/ZNICZ-bez.png" alt="Znicz"></div><span>Partner medialny</span></div><i></i>
-            <div class="marquee__item"><div class="marquee__logo marquee__glow" style="--logo:url('png/sponsorzy/kokoszka.png')"><img src="png/sponsorzy/kokoszka.png" alt="Kokoszka"></div><span>Partner główny</span></div><i></i>
-            <div class="marquee__item"><div class="marquee__logo marquee__glow" style="--logo:url('png/sponsorzy/piatka-bez.png')"><img src="png/sponsorzy/piatka-bez.png" alt="Piątka"></div><span>Partner akademii</span></div><i></i>
-            <div class="marquee__item"><div class="marquee__logo" style="--logo:url('png/sponsorzy/ryba-bez.png')"><img src="png/sponsorzy/ryba-bez.png" alt="Ryba"></div><span>Partner medialny</span></div><i></i>
-        </div>
+        <!-- Zawartość wstawia script.js z data/sponsorzy.json. Wcześniej stała
+             tu lista wpisana na sztywno, ale po przejściu na panel pokazywała
+             już nieaktualnych sponsorów, a przeglądarka pobierała jej logotypy
+             (ponad 700 KB), żeby chwilę później je wyrzucić. -->
+        <div class="marquee__track"></div>
     </div>
 
     <!-- ===== AKTUALNOŚCI ===== -->
@@ -463,6 +466,6 @@
     </div>
 
     <script src="js/lenis.min.js?v=1"></script>
-    <script src="script.js?v=39"></script>
+    <script src="script.js?v=40"></script>
 </body>
 </html>

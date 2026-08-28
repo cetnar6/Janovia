@@ -1,0 +1,12 @@
+# LKS Janovia Janowiec
+User-agent: *
+Allow: /
+
+# panel administratora i dane robocze nie mają czego szukać w wyszukiwarce
+Disallow: /admin/
+Disallow: /uploads/
+Disallow: /dane/
+Disallow: /sql/
+Disallow: /logs/
+
+Sitemap: https://janovia.pl/sitemap.xml
