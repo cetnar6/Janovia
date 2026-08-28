@@ -49,8 +49,16 @@ Options -Indexes
 # Reguła znika sama, gdy strona ruszy pod janovia.pl — nie trzeba jej
 # pamiętać ani ręcznie wyłączać.
 <IfModule mod_setenvif.c>
-    # NoCase, bo nagłówek Host bywa przysyłany wielkimi literami
-    SetEnvIfNoCase Host !^(www\.)?janovia\.pl$ WERSJA_ROBOCZA
+    # Dwa kroki, bo SetEnvIf NIE potrafi zanegować wzorca: wykrzyknik kasuje
+    # zmienną i stawia się go przed JEJ nazwą, nie przed wyrażeniem. Zapis
+    # "!^(www\.)?janovia\.pl$" byłby zwykłym wzorcem zaczynającym się od "!",
+    # którego nagłówek Host nigdy nie dopasuje — zmienna nie ustawiłaby się
+    # w ogóle, a noindex nie zadziałałby nawet na wersji roboczej.
+    #
+    # Dlatego: najpierw ustaw dla każdego hosta, potem skasuj dla docelowego.
+    # NoCase, bo Host bywa przysyłany wielkimi literami.
+    SetEnvIf        Host .                    WERSJA_ROBOCZA
+    SetEnvIfNoCase  Host ^(www\.)?janovia\.pl$ !WERSJA_ROBOCZA
 </IfModule>
 
 <IfModule mod_headers.c>
