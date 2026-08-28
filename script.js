@@ -312,6 +312,9 @@
     var DNI_TYGODNIA = ['niedziela', 'poniedziałek', 'wtorek', 'środa',
                         'czwartek', 'piątek', 'sobota'];
 
+    // skróty do wąskiej kolumny z terminem w terminarzu
+    var DNI_SKROT = ['nd', 'pon', 'wt', 'śr', 'czw', 'pt', 'sob'];
+
     /* Nazwa drużyny u 90minut -> plik herbu w folderze png/.
        Klub spoza listy (np. po zmianie ligi) dostanie zastępczą tarczę z literą. */
     var HERBY = {
@@ -927,6 +930,28 @@
 
     /* ---------- pełny terminarz (podstrona terminarz.html) ---------- */
 
+    /* Termin pojedynczego meczu, pokazywany przed gospodarzem.
+       Przy dacie przybliżonej data_iso to północ pierwszego dnia okna, więc
+       godziny nie ma co wypisywać — zostaje sam dzień, a okno („22-23 sierpnia")
+       i tak widnieje w nagłówku kolejki. */
+    function terminMeczu(m) {
+        if (!m.data_iso) { return '<span class="wynik__termin">—</span>'; }
+
+        var d = new Date(m.data_iso);
+        if (isNaN(d.getTime())) { return '<span class="wynik__termin">—</span>'; }
+
+        var dzien = DNI_SKROT[d.getDay()] + ' ' + pad(d.getDate()) + '.' + pad(d.getMonth() + 1);
+
+        if (m.data_przyblizona) {
+            return '<span class="wynik__termin"><b>' + dzien + '</b></span>';
+        }
+
+        return '<span class="wynik__termin">' +
+                   '<b>' + dzien + '</b>' +
+                   '<i>' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + '</i>' +
+               '</span>';
+    }
+
     function wierszMeczu(m) {
         var nasz = m.gospodarz === NASZ_KLUB || m.gosc === NASZ_KLUB;
 
@@ -935,6 +960,7 @@
             : '<span class="wynik__rezultat wynik__rezultat--brak">–</span>';
 
         return '<li class="wynik' + (nasz ? ' is-us' : '') + '">' +
+                   terminMeczu(m) +
                    '<span class="wynik__druzyna wynik__druzyna--gosp">' +
                        '<span>' + esc(skrot(m.gospodarz)) + '</span>' +
                        herb(m.gospodarz, 'xs') +
