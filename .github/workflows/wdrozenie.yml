@@ -28,7 +28,11 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  ZDALNY_KATALOG: /janovia
+  # Ścieżka WZGLĘDNA, liczona od katalogu logowania. Z ukośnikiem na początku
+  # wskazywałaby korzeń systemu plików: przy FTP konto jest zamknięte w katalogu
+  # domowym, ale SFTP w OpenSSH zwykle nie zakłada takiej klatki i "/janovia"
+  # celowałoby wtedy w miejsce, gdzie nie ma prawa zapisu.
+  ZDALNY_KATALOG: janovia
 
 jobs:
   wyslij:
