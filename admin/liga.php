@@ -1,39 +1,32 @@
 <?php
 /**
- * Ręczne odświeżenie tabeli i terminarza z 90minut.pl, na żądanie z panelu —
- * zamiast czekać na codzienny automat w GitHub Actions.
+ * Ręczne odświeżenie tabeli i terminarza z 90minut.pl, na żądanie z panelu.
  *
- * Uruchamia lokalnie ten sam skrypt co workflow (update_liga.py). Nie
- * wymaga żadnego tokenu — 90minut.pl jest publiczne.
+ * Wcześniej uruchamiało to skrypt w Pythonie przez shell_exec, czyli działało
+ * wyłącznie na maszynie z Pythonem. Teraz woła aktualizuj_lige() z pliku
+ * update_liga.php — więc chodzi też na współdzielonym hostingu, gdzie jest
+ * samo PHP. 90minut.pl jest publiczne, żaden token nie jest potrzebny.
  */
 
 declare(strict_types=1);
 
 require_once __DIR__ . '/inc/auth.php';
+require_once katalog_strony() . '/update_liga.php';
 
 wymagaj_logowania();
 sprawdz_csrf();
 
-if (!function_exists('shell_exec')) {
-    komunikat('Funkcja shell_exec jest wyłączona na tym serwerze — nie da się stąd uruchomić skryptu.', 'blad');
-    przekieruj('index.php');
-}
+try {
+    $wynik = aktualizuj_lige();
 
-$polecenie = sprintf(
-    'cd %s && python3 update_liga.py 2>&1',
-    escapeshellarg(katalog_strony())
-);
-
-$wyjscie = trim((string) shell_exec($polecenie));
-$ostatnia_linia = trim((string) strrchr("\n" . $wyjscie, "\n"));
-
-if ($wyjscie !== '' && stripos($wyjscie, 'Zapisano') !== false) {
-    komunikat('Odświeżono dane z 90minut.pl — ' . $ostatnia_linia);
-} else {
-    komunikat(
-        '90minut.pl nie odpowiedziało poprawnie: ' . ($ostatnia_linia !== '' ? $ostatnia_linia : '(brak odpowiedzi skryptu)'),
-        'blad'
-    );
+    komunikat(sprintf(
+        'Odświeżono dane z 90minut.pl: %d zespołów w tabeli, %d meczów, %d nadchodzących.',
+        $wynik['tabela'],
+        $wynik['mecze'],
+        $wynik['nadchodzace']
+    ));
+} catch (Throwable $e) {
+    komunikat('Nie udało się odświeżyć danych: ' . $e->getMessage(), 'blad');
 }
 
 przekieruj('index.php');
