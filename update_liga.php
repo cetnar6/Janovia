@@ -14,6 +14,10 @@
 
 declare(strict_types=1);
 
+/* Bez tego PHP liczy w UTC i znacznik „zaktualizowano" wychodzi o dwie
+   godziny wstecz — ta sama pułapka, co kiedyś przy godzinach meczów. */
+date_default_timezone_set('Europe/Warsaw');
+
 const LIGA_URL       = 'http://www.90minut.pl/liga/1/liga15094.html';
 const LIGA_NASZ_KLUB = 'Janovia Janowiec';
 

@@ -1,24 +1,26 @@
 <?php
 /**
- * Ręczne sprawdzenie nowych postów na Facebooku, na żądanie z panelu —
- * zamiast czekać na codzienny automat w GitHub Actions.
+ * Ręczne sprawdzenie nowych postów na Facebooku, na żądanie z panelu.
  *
- * Uruchamia lokalnie ten sam skrypt co workflow (update_fb.py), z tokenem
- * wziętym z admin/inc/config.php (osobna kopia od sekretu na GitHubie —
- * ten sam token trzeba wkleić w oba miejsca).
+ * Wcześniej uruchamiało to skrypt w Pythonie przez shell_exec, czyli działało
+ * wyłącznie na maszynie z Pythonem. Teraz woła aktualizuj_facebooka()
+ * z update_fb.php — więc chodzi też na współdzielonym hostingu.
+ *
+ * Token bierze się z admin/inc/config.php (osobna kopia od sekretu na
+ * GitHubie — ten sam token trzeba wkleić w oba miejsca).
  */
 
 declare(strict_types=1);
 
 require_once __DIR__ . '/inc/auth.php';
+require_once katalog_strony() . '/update_fb.php';
 
 wymagaj_logowania();
 sprawdz_csrf();
 
 $config = konfiguracja();
-$token = trim((string) ($config['fb_token'] ?? ''));
 
-if ($token === '') {
+if (trim((string) ($config['fb_token'] ?? '')) === '') {
     komunikat(
         'Brak tokenu Facebooka. Dodaj "fb_token" (i opcjonalnie "fb_page_id") ' .
         'w admin/inc/config.php — ten sam token, którego używasz w sekrecie FB_TOKEN na GitHubie.',
@@ -27,33 +29,28 @@ if ($token === '') {
     przekieruj('index.php');
 }
 
-if (!function_exists('shell_exec')) {
-    komunikat('Funkcja shell_exec jest wyłączona na tym serwerze — nie da się stąd uruchomić skryptu.', 'blad');
-    przekieruj('index.php');
-}
+try {
+    $wynik = aktualizuj_facebooka();
 
-$env = 'FB_TOKEN=' . escapeshellarg($token);
-
-if (!empty($config['fb_page_id'])) {
-    $env .= ' FB_PAGE_ID=' . escapeshellarg((string) $config['fb_page_id']);
-}
-
-$polecenie = sprintf(
-    'cd %s && %s python3 update_fb.py 2>&1',
-    escapeshellarg(katalog_strony()),
-    $env
-);
-
-$wyjscie = trim((string) shell_exec($polecenie));
-$ostatnia_linia = trim((string) strrchr("\n" . $wyjscie, "\n"));
-
-if ($wyjscie !== '' && stripos($wyjscie, 'Zapisano') !== false) {
-    komunikat('Sprawdzono Facebooka — ' . $ostatnia_linia);
-} else {
-    komunikat(
-        'Facebook nie odpowiedział poprawnie: ' . ($ostatnia_linia !== '' ? $ostatnia_linia : '(brak odpowiedzi skryptu)'),
-        'blad'
+    $tresc = sprintf(
+        'Sprawdzono Facebooka: %d postów, %d zdjęć.',
+        $wynik['posty'],
+        $wynik['zdjecia']
     );
+
+    if ($wynik['usuniete'] > 0) {
+        $tresc .= sprintf(' Usunięto %d nieużywanych zdjęć.', $wynik['usuniete']);
+    }
+
+    // nieudane pobrania pojedynczych zdjęć nie przerywają całości,
+    // ale warto o nich wiedzieć
+    if ($wynik['bledy']) {
+        $tresc .= ' Uwaga: ' . count($wynik['bledy']) . ' zdjęć się nie pobrało.';
+    }
+
+    komunikat($tresc);
+} catch (Throwable $e) {
+    komunikat('Nie udało się pobrać postów: ' . $e->getMessage(), 'blad');
 }
 
 przekieruj('index.php');
