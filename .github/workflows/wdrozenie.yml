@@ -88,31 +88,35 @@ jobs:
       #
       # sshpass podaje hasło procesowi ssh, bo lftp przy sftp nie potrafi
       # zrobić tego sam — uruchamia zewnętrznego klienta ssh.
+      # Osobny, głośny test logowania. Bez niego każda awaria wygląda tak samo
+      # i nie wiadomo, czy zawiodło hasło, klucz hosta, czy dopiero transfer.
+      - name: Sprawdź połączenie
+        env:
+          HOST: ${{ secrets.FTP_HOST }}
+          UZYTKOWNIK: ${{ secrets.FTP_USER }}
+          SSHPASS: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          echo "Host: [$HOST]  Użytkownik: [$UZYTKOWNIK]  Długość hasła: ${#SSHPASS}"
+          lftp -c "set sftp:connect-program 'sshpass -e ssh -a -x -o StrictHostKeyChecking=yes'; debug 3; open -u '$UZYTKOWNIK',dummy sftp://$HOST; pwd; ls"
+
+      # Cała komenda mirror w JEDNEJ linii. lftp ma własny parser i nie łamie
+      # poleceń odwrotnym ukośnikiem tak jak shell — rozbicie na wiele linii
+      # kończy polecenie w połowie.
+      #
+      # Ścieżki w -x należą do panelu administratora na serwerze, nie do
+      # repozytorium. Panel zapisuje je z bazy MySQL przy każdym zapisie
+      # zawodnika czy sponsora. Gdyby mirror --delete ich nie omijał, każde
+      # wdrożenie kasowałoby pracę wykonaną w panelu.
+      #
+      # sshpass -e czyta hasło ze zmiennej SSHPASS, żeby nie trafiło do listy
+      # procesów, gdzie widziałby je każdy inny proces na maszynie.
       - name: Wyślij na serwer
         env:
           HOST: ${{ secrets.FTP_HOST }}
           UZYTKOWNIK: ${{ secrets.FTP_USER }}
           SSHPASS: ${{ secrets.FTP_PASSWORD }}
         run: |
-          lftp -c "
-            set cmd:fail-exit true;
-            set sftp:connect-program 'sshpass -e ssh -a -x -o StrictHostKeyChecking=yes';
-            set net:max-retries 3;
-            set net:timeout 20;
-            open -u '$UZYTKOWNIK',dummy sftp://$HOST;
-
-            mkdir -p -f $ZDALNY_KATALOG;
-            mirror --reverse --delete --verbose --parallel=2 \
-              -x '^uploads/' \
-              -x '^admin/inc/config\.php$' \
-              -x '^data/zawodnicy\.json$' \
-              -x '^data/posty\.json$' \
-              -x '^data/mecze-panelu\.json$' \
-              -x '^data/sponsorzy\.json$' \
-              wysylka/ $ZDALNY_KATALOG/;
-          "
-        # sshpass -e czyta hasło ze zmiennej SSHPASS, żeby nie trafiło
-        # do listy procesów, gdzie widziałby je każdy inny proces.
+          lftp -c "set cmd:fail-exit true; set sftp:connect-program 'sshpass -e ssh -a -x -o StrictHostKeyChecking=yes'; set net:max-retries 3; set net:timeout 20; open -u '$UZYTKOWNIK',dummy sftp://$HOST; mkdir -f $ZDALNY_KATALOG; mirror --reverse --delete --verbose --parallel=2 -x '^uploads/' -x '^admin/inc/config\.php$' -x '^data/zawodnicy\.json$' -x '^data/posty\.json$' -x '^data/mecze-panelu\.json$' -x '^data/sponsorzy\.json$' wysylka/ $ZDALNY_KATALOG/"
 
       # Osobno i BEZ --delete: logotypy sponsorów z repozytorium mają trafić
       # na serwer przy pierwszym wdrożeniu, ale pliki wgrane później przez
@@ -123,9 +127,4 @@ jobs:
           UZYTKOWNIK: ${{ secrets.FTP_USER }}
           SSHPASS: ${{ secrets.FTP_PASSWORD }}
         run: |
-          lftp -c "
-            set cmd:fail-exit true;
-            set sftp:connect-program 'sshpass -e ssh -a -x -o StrictHostKeyChecking=yes';
-            open -u '$UZYTKOWNIK',dummy sftp://$HOST;
-            mirror --reverse --verbose wysylka/uploads/ $ZDALNY_KATALOG/uploads/;
-          "
+          lftp -c "set cmd:fail-exit true; set sftp:connect-program 'sshpass -e ssh -a -x -o StrictHostKeyChecking=yes'; open -u '$UZYTKOWNIK',dummy sftp://$HOST; mirror --reverse --verbose wysylka/uploads/ $ZDALNY_KATALOG/uploads/"
