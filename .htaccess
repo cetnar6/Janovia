@@ -40,6 +40,22 @@ RedirectMatch 404 /node_modules/
 # katalog nie ma prawa pokazywać swojej zawartości
 Options -Indexes
 
+# ---------- Domena robocza ----------
+# Dopóki strona stoi pod adresem innym niż docelowy (np. wersja robocza),
+# mówimy wyszukiwarkom, żeby jej nie indeksowały. Bez tego kopia robocza
+# trafiłaby do wyników obok właściwej, a wpisane w kodzie canonical
+# wskazywałyby na janovia.pl, której jeszcze nie ma.
+#
+# Reguła znika sama, gdy strona ruszy pod janovia.pl — nie trzeba jej
+# pamiętać ani ręcznie wyłączać.
+<IfModule mod_setenvif.c>
+    SetEnvIf Host !^(www\.)?janovia\.pl$ WERSJA_ROBOCZA
+</IfModule>
+
+<IfModule mod_headers.c>
+    Header always set X-Robots-Tag "noindex, nofollow" env=WERSJA_ROBOCZA
+</IfModule>
+
 # ---------- Nagłówki bezpieczeństwa ----------
 <IfModule mod_headers.c>
     # przeglądarka nie zgaduje typu pliku wbrew nagłówkowi
