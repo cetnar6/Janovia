@@ -2,7 +2,7 @@
   "zrodlo": "http://www.90minut.pl/liga/1/liga15094.html",
   "liga": "Klasa B 2026/2027, grupa: Rzeszów VI - Mielec",
   "klub": "Janovia Janowiec",
-  "zaktualizowano": "2026-08-28T21:15:04",
+  "zaktualizowano": "2026-08-29T04:06:07",
   "tabela": [
     {
       "poz": 1,
@@ -319,9 +319,9 @@
       "gospodarz": "Janovia Janowiec",
       "gosc": "Apollo Dulcza Mała",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-09-05T00:00:00",
-      "data_przyblizona": true
+      "termin": "6 września, 13:00",
+      "data_iso": "2026-09-06T13:00:00",
+      "data_przyblizona": false
     },
     {
       "kolejka": 4,
@@ -521,9 +521,9 @@
       "gospodarz": "Hetman Dąbrówka Wisłocka",
       "gosc": "Atut II Podborze",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-09-05T00:00:00",
-      "data_przyblizona": true
+      "termin": "5 września, 16:00",
+      "data_iso": "2026-09-05T16:00:00",
+      "data_przyblizona": false
     },
     {
       "kolejka": 3,
@@ -531,9 +531,9 @@
       "gospodarz": "Janovia Janowiec",
       "gosc": "Apollo Dulcza Mała",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-09-05T00:00:00",
-      "data_przyblizona": true
+      "termin": "6 września, 13:00",
+      "data_iso": "2026-09-06T13:00:00",
+      "data_przyblizona": false
     },
     {
       "kolejka": 3,
@@ -541,9 +541,9 @@
       "gospodarz": "KS Zgórsko",
       "gosc": "Jamnica Dulcza Wielka",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-09-05T00:00:00",
-      "data_przyblizona": true
+      "termin": "6 września, 12:30",
+      "data_iso": "2026-09-06T12:30:00",
+      "data_przyblizona": false
     },
     {
       "kolejka": 3,
@@ -551,9 +551,9 @@
       "gospodarz": "Madras Goleszów",
       "gosc": "KS SMP Tuszyma",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-09-05T00:00:00",
-      "data_przyblizona": true
+      "termin": "6 września, 11:00",
+      "data_iso": "2026-09-06T11:00:00",
+      "data_przyblizona": false
     },
     {
       "kolejka": 3,
@@ -561,9 +561,9 @@
       "gospodarz": "Sokół Pień",
       "gosc": "LKS Wierzchowiny",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-09-05T00:00:00",
-      "data_przyblizona": true
+      "termin": "5 września, 17:00",
+      "data_iso": "2026-09-05T17:00:00",
+      "data_przyblizona": false
     },
     {
       "kolejka": 3,
@@ -571,9 +571,9 @@
       "gospodarz": "Sprint Żarówka",
       "gosc": "Piast II Wadowice Górne",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-09-05T00:00:00",
-      "data_przyblizona": true
+      "termin": "6 września, 14:00",
+      "data_iso": "2026-09-06T14:00:00",
+      "data_przyblizona": false
     },
     {
       "kolejka": 4,
