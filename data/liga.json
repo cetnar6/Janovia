@@ -2,20 +2,30 @@
   "zrodlo": "http://www.90minut.pl/liga/1/liga15094.html",
   "liga": "Klasa B 2026/2027, grupa: Rzeszów VI - Mielec",
   "klub": "Janovia Janowiec",
-  "zaktualizowano": "2026-08-29T04:06:07",
+  "zaktualizowano": "2026-08-30T04:06:03",
   "tabela": [
     {
       "poz": 1,
-      "klub": "Piast II Wadowice Górne",
-      "m": 1,
-      "pkt": 3,
-      "z": 1,
+      "klub": "Sokół Pień",
+      "m": 2,
+      "pkt": 6,
+      "z": 2,
       "r": 0,
       "p": 0,
-      "bramki": "10-0"
+      "bramki": "6-0"
     },
     {
       "poz": 2,
+      "klub": "Piast II Wadowice Górne",
+      "m": 2,
+      "pkt": 3,
+      "z": 1,
+      "r": 0,
+      "p": 1,
+      "bramki": "10-3"
+    },
+    {
+      "poz": 3,
       "klub": "Janovia Janowiec",
       "m": 1,
       "pkt": 3,
@@ -25,7 +35,7 @@
       "bramki": "4-0"
     },
     {
-      "poz": 3,
+      "poz": 4,
       "klub": "Hetman Dąbrówka Wisłocka",
       "m": 1,
       "pkt": 3,
@@ -33,16 +43,6 @@
       "r": 0,
       "p": 0,
       "bramki": "4-1"
-    },
-    {
-      "poz": 4,
-      "klub": "Sokół Pień",
-      "m": 1,
-      "pkt": 3,
-      "z": 1,
-      "r": 0,
-      "p": 0,
-      "bramki": "3-0"
     },
     {
       "poz": 5,
@@ -214,6 +214,13 @@
         "rezultat": "10-0",
         "kolejka": 1,
         "gdzie": "na wyjeździe"
+      },
+      {
+        "wynik": "P",
+        "rywal": "Sokół Pień",
+        "rezultat": "0-3",
+        "kolejka": 2,
+        "gdzie": "u siebie"
       }
     ],
     "Sokół Pień": [
@@ -223,6 +230,13 @@
         "rezultat": "3-0",
         "kolejka": 1,
         "gdzie": "u siebie"
+      },
+      {
+        "wynik": "Z",
+        "rywal": "Piast II Wadowice Górne",
+        "rezultat": "3-0",
+        "kolejka": 2,
+        "gdzie": "na wyjeździe"
       }
     ],
     "Sprint Żarówka": [
@@ -236,68 +250,68 @@
     ]
   },
   "ostatnia_kolejka": {
-    "numer": 1,
-    "opis": "22-23 sierpnia",
+    "numer": 2,
+    "opis": "29-30 sierpnia",
     "rozegrana": true,
     "mecze": [
       {
-        "kolejka": 1,
-        "kolejka_opis": "22-23 sierpnia",
-        "gospodarz": "Apollo Dulcza Mała",
-        "gosc": "Atut II Podborze",
-        "wynik": "3-4",
-        "termin": "22 sierpnia, 17:00",
-        "data_iso": "2026-08-22T17:00:00",
-        "data_przyblizona": false
-      },
-      {
-        "kolejka": 1,
-        "kolejka_opis": "22-23 sierpnia",
-        "gospodarz": "Hetman Dąbrówka Wisłocka",
-        "gosc": "Jamnica Dulcza Wielka",
-        "wynik": "4-1",
-        "termin": "23 sierpnia, 11:00",
-        "data_iso": "2026-08-23T11:00:00",
-        "data_przyblizona": false
-      },
-      {
-        "kolejka": 1,
-        "kolejka_opis": "22-23 sierpnia",
-        "gospodarz": "Janovia Janowiec",
-        "gosc": "KS SMP Tuszyma",
-        "wynik": "4-0",
-        "termin": "23 sierpnia, 13:00",
-        "data_iso": "2026-08-23T13:00:00",
-        "data_przyblizona": false
-      },
-      {
-        "kolejka": 1,
-        "kolejka_opis": "22-23 sierpnia",
-        "gospodarz": "KS Zgórsko",
-        "gosc": "LKS Wierzchowiny",
-        "wynik": "3-2",
-        "termin": "23 sierpnia, 11:00",
-        "data_iso": "2026-08-23T11:00:00",
-        "data_przyblizona": false
-      },
-      {
-        "kolejka": 1,
-        "kolejka_opis": "22-23 sierpnia",
-        "gospodarz": "Madras Goleszów",
-        "gosc": "Piast II Wadowice Górne",
-        "wynik": "0-10",
-        "termin": "23 sierpnia, 11:00",
-        "data_iso": "2026-08-23T11:00:00",
-        "data_przyblizona": false
-      },
-      {
-        "kolejka": 1,
-        "kolejka_opis": "22-23 sierpnia",
-        "gospodarz": "Sokół Pień",
+        "kolejka": 2,
+        "kolejka_opis": "29-30 sierpnia",
+        "gospodarz": "Atut II Podborze",
         "gosc": "Sprint Żarówka",
-        "wynik": "3-0",
-        "termin": "22 sierpnia, 14:00",
-        "data_iso": "2026-08-22T14:00:00",
+        "wynik": null,
+        "termin": "30 sierpnia, 14:00",
+        "data_iso": "2026-08-30T14:00:00",
+        "data_przyblizona": false
+      },
+      {
+        "kolejka": 2,
+        "kolejka_opis": "29-30 sierpnia",
+        "gospodarz": "Piast II Wadowice Górne",
+        "gosc": "Sokół Pień",
+        "wynik": "0-3",
+        "termin": "29 sierpnia, 17:00",
+        "data_iso": "2026-08-29T17:00:00",
+        "data_przyblizona": false
+      },
+      {
+        "kolejka": 2,
+        "kolejka_opis": "29-30 sierpnia",
+        "gospodarz": "LKS Wierzchowiny",
+        "gosc": "Madras Goleszów",
+        "wynik": null,
+        "termin": "30 sierpnia, 14:00",
+        "data_iso": "2026-08-30T14:00:00",
+        "data_przyblizona": false
+      },
+      {
+        "kolejka": 2,
+        "kolejka_opis": "29-30 sierpnia",
+        "gospodarz": "KS SMP Tuszyma",
+        "gosc": "KS Zgórsko",
+        "wynik": null,
+        "termin": "30 sierpnia, 14:00",
+        "data_iso": "2026-08-30T14:00:00",
+        "data_przyblizona": false
+      },
+      {
+        "kolejka": 2,
+        "kolejka_opis": "29-30 sierpnia",
+        "gospodarz": "Jamnica Dulcza Wielka",
+        "gosc": "Janovia Janowiec",
+        "wynik": null,
+        "termin": "30 sierpnia, 14:00",
+        "data_iso": "2026-08-30T14:00:00",
+        "data_przyblizona": false
+      },
+      {
+        "kolejka": 2,
+        "kolejka_opis": "29-30 sierpnia",
+        "gospodarz": "Apollo Dulcza Mała",
+        "gosc": "Hetman Dąbrówka Wisłocka",
+        "wynik": null,
+        "termin": "30 sierpnia, 13:00",
+        "data_iso": "2026-08-30T13:00:00",
         "data_przyblizona": false
       }
     ]
@@ -470,7 +484,7 @@
       "kolejka_opis": "29-30 sierpnia",
       "gospodarz": "Piast II Wadowice Górne",
       "gosc": "Sokół Pień",
-      "wynik": null,
+      "wynik": "0-3",
       "termin": "29 sierpnia, 17:00",
       "data_iso": "2026-08-29T17:00:00",
       "data_przyblizona": false

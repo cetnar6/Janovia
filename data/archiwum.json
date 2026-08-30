@@ -1,6 +1,6 @@
 {
   "klub": "Janovia Janowiec",
-  "zaktualizowano": "2026-08-29T04:06:11",
+  "zaktualizowano": "2026-08-30T04:06:07",
   "sezony": [
     {
       "sezon": "2026/27",
@@ -8,7 +8,7 @@
       "zrodlo": "http://www.90minut.pl/liga/1/liga15094.html",
       "bierzacy": true,
       "nasza_pozycja": {
-        "poz": 2,
+        "poz": 3,
         "klub": "Janovia Janowiec",
         "m": 1,
         "pkt": 3,
@@ -20,16 +20,26 @@
       "tabela": [
         {
           "poz": 1,
-          "klub": "Piast II Wadowice Górne",
-          "m": 1,
-          "pkt": 3,
-          "z": 1,
+          "klub": "Sokół Pień",
+          "m": 2,
+          "pkt": 6,
+          "z": 2,
           "r": 0,
           "p": 0,
-          "bramki": "10-0"
+          "bramki": "6-0"
         },
         {
           "poz": 2,
+          "klub": "Piast II Wadowice Górne",
+          "m": 2,
+          "pkt": 3,
+          "z": 1,
+          "r": 0,
+          "p": 1,
+          "bramki": "10-3"
+        },
+        {
+          "poz": 3,
           "klub": "Janovia Janowiec",
           "m": 1,
           "pkt": 3,
@@ -39,7 +49,7 @@
           "bramki": "4-0"
         },
         {
-          "poz": 3,
+          "poz": 4,
           "klub": "Hetman Dąbrówka Wisłocka",
           "m": 1,
           "pkt": 3,
@@ -47,16 +57,6 @@
           "r": 0,
           "p": 0,
           "bramki": "4-1"
-        },
-        {
-          "poz": 4,
-          "klub": "Sokół Pień",
-          "m": 1,
-          "pkt": 3,
-          "z": 1,
-          "r": 0,
-          "p": 0,
-          "bramki": "3-0"
         },
         {
           "poz": 5,
