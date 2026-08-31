@@ -49,36 +49,68 @@
     var lastY = window.scrollY;
     var ticking = false;
 
+    /* Wysokość dokumentu i okna trzymamy w zmiennych zamiast czytać przy każdej
+       klatce. Odczyt scrollHeight następujący po zapisie stylu zmusza
+       przeglądarkę do natychmiastowego przeliczenia układu CAŁEJ strony —
+       przy sześćdziesięciu klatkach na sekundę to najdroższa pojedyncza rzecz
+       w tej funkcji. Przeliczamy je tylko wtedy, gdy naprawdę mogły się
+       zmienić: po zmianie rozmiaru okna i po dociągnięciu obrazków. */
+    var maxScroll = 0;
+    var wysokoscOkna = 0;
+    var pozycje = [];
+
+    function przeliczWymiary() {
+        wysokoscOkna = window.innerHeight;
+        maxScroll = document.documentElement.scrollHeight - wysokoscOkna;
+    }
+
     function onScroll() {
         var y = window.scrollY;
-        var max = document.documentElement.scrollHeight - window.innerHeight;
 
-        progress.style.transform = 'scaleX(' + (max > 0 ? y / max : 0) + ')';
+        progress.style.transform = 'scaleX(' + (maxScroll > 0 ? y / maxScroll : 0) + ')';
 
         header.classList.toggle('is-stuck', y > 40);
         header.classList.toggle('is-hidden', y > lastY && y > 400);
         lastY = y;
 
         if (!reduced) {
-            for (var i = 0; i < parallax.length; i++) {
+            /* Najpierw wszystkie odczyty, dopiero potem wszystkie zapisy.
+               Przeplatanie ich w jednej pętli każe przeglądarce przeliczać
+               układ przy każdym obrocie — im więcej elementów, tym gorzej. */
+            var i;
+            for (i = 0; i < parallax.length; i++) {
+                // getBoundingClientRect daje górę i dół jednym odczytem;
+                // sięganie po offsetHeight w pętli zapisu wymuszałoby kolejne
+                // przeliczenie układu i zniweczyło cały zysk z rozdzielenia faz
+                var r = parallax[i].parentElement.getBoundingClientRect();
+                pozycje[i] = r.bottom > 0 && r.top < wysokoscOkna ? r.top : null;
+            }
+            for (i = 0; i < parallax.length; i++) {
+                if (pozycje[i] === null) { continue; }
                 var el = parallax[i];
-                var rect = el.parentElement.getBoundingClientRect();
-                if (rect.bottom > 0 && rect.top < window.innerHeight) {
-                    var speed = parseFloat(el.getAttribute('data-parallax'));
-                    el.style.transform = 'translate3d(0,' + (-rect.top * speed) + 'px,0)';
-                }
+                el.style.transform =
+                    'translate3d(0,' + (-pozycje[i] * parseFloat(el.getAttribute('data-parallax'))) + 'px,0)';
             }
 
-            // hero: tytuł odjeżdża i znika, tło robi lekki najazd — efekt
-            // kinowej głębi przy pierwszym przewinięciu strony
-            if (heroContent) {
-                var zanik = Math.min(1, y / (window.innerHeight * 0.6));
+            /* hero: tytuł odjeżdża i znika, tło robi lekki najazd — efekt
+               kinowej głębi przy pierwszym przewinięciu strony.
+
+               Po minięciu ekranu startowego przestajemy w ogóle dotykać tych
+               elementów. Wcześniej skrypt przepisywał im style przez całą
+               długość strony, mimo że tytuł był już niewidoczny, a tło dawno
+               poza widokiem. */
+            var wHero = y < wysokoscOkna * 1.2;
+
+            if (heroContent && (wHero || heroContent.style.opacity !== '0')) {
+                var zanik = Math.min(1, y / (wysokoscOkna * 0.6));
                 heroContent.style.opacity = String(1 - zanik);
-                heroContent.style.transform = 'translateY(' + (zanik * 50) + 'px)';
+                // translate3d zamiast translateY — trzyma element na warstwie
+                // składanej przez kartę graficzną, bez przerysowywania tekstu
+                heroContent.style.transform = 'translate3d(0,' + (zanik * 50) + 'px,0)';
             }
 
-            if (heroBg) {
-                var najazd = 1 + Math.min(0.12, y / window.innerHeight * 0.12);
+            if (heroBg && wHero) {
+                var najazd = 1 + Math.min(0.12, y / wysokoscOkna * 0.12);
                 heroBg.style.transform = 'translate3d(0,' + (-y * 0.35) + 'px,0) scale(' + najazd + ')';
             }
         }
@@ -93,6 +125,25 @@
         }
     }, { passive: true });
 
+    window.addEventListener('resize', function () {
+        przeliczWymiary();
+        onScroll();
+    }, { passive: true });
+
+    // obrazki dociągane leniwie zmieniają wysokość strony, więc pasek postępu
+    // liczyłby się z nieaktualnego maksimum
+    window.addEventListener('load', przeliczWymiary);
+
+    /* Skoro przestaliśmy czytać scrollHeight w każdej klatce, ktoś musi
+       zauważyć, że strona urosła. A rośnie często: po wczytaniu postów
+       i zawodników z plików JSON oraz przy każdym rozwinięciu kolejki
+       w terminarzu. Bez tego pasek postępu liczyłby się ze starej wysokości
+       i kończył za wcześnie. */
+    if (window.ResizeObserver) {
+        new ResizeObserver(przeliczWymiary).observe(document.body);
+    }
+
+    przeliczWymiary();
     onScroll();
 
     /* =========================================

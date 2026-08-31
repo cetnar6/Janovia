@@ -464,6 +464,10 @@ a {
     position: relative;
     z-index: 2;
     max-width: 1100px;
+    /* Skrypt przepisuje temu elementowi opacity i transform przy każdej klatce
+       przewijania. Bez tej podpowiedzi przeglądarka za każdym razem od nowa
+       rysuje cały tytuł zamiast przesunąć gotową warstwę. */
+    will-change: transform, opacity;
 }
 
 .hero__meta {
