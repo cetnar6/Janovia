@@ -1750,6 +1750,35 @@ a.marquee__item {
     font-weight: 400;
 }
 
+/* Kolumna z terminem istnieje tylko po lewej stronie wiersza, więc spychała
+   trójkę „gospodarz – wynik – gość" w prawo o 47 px — dokładnie połowę
+   szerokości daty (62/2) plus połowę odstępu (32/2). Wynik nie stał wtedy
+   na osi sekcji, co widać gołym okiem przy dłuższej liście meczów.
+   Pusta kolumna po prawej o tej samej szerokości przywraca symetrię.
+
+   Próg 621 px styka się dokładnie z regułą @media (max-width: 620px) niżej,
+   która na telefonie przenosi termin do osobnego rzędu. Dzięki temu nie ma
+   przedziału szerokości, w którym wynik stałby krzywo. */
+@media (min-width: 621px) {
+    .wynik {
+        grid-template-columns: auto 1fr auto 1fr auto;
+    }
+
+    /* Szerokość rośnie z ekranem, zamiast od razu skakać do 62 px.
+       Zmierzone: sztywne 62 px wyrównuje idealnie, ale przy 621–700 px
+       zabiera nazwom klubów po ~31 px na stronę i lista rośnie o 70 px
+       przez łamanie wierszy. Powyżej 900 px koszt spada do 12 px, a od
+       1280 px do zera.
+
+       Dlatego pełne 62 px osiągamy dopiero przy 868 px szerokości okna,
+       a niżej odstęp płynnie maleje do zera — wynik dojeżdża na oś tam,
+       gdzie jest na to miejsce, i nie odbiera go nazwom, gdy go brakuje. */
+    .wynik::after {
+        content: "";
+        width: clamp(0px, (100vw - 620px) * 0.25, 62px);
+    }
+}
+
 @media (max-width: 620px) {
     .wynik {
         /* czwarta kolumna nie zmieściłaby się obok nazw klubów, więc termin
