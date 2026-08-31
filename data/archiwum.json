@@ -1,6 +1,6 @@
 {
   "klub": "Janovia Janowiec",
-  "zaktualizowano": "2026-08-30T04:06:07",
+  "zaktualizowano": "2026-08-31T04:06:19",
   "sezony": [
     {
       "sezon": "2026/27",
@@ -8,18 +8,38 @@
       "zrodlo": "http://www.90minut.pl/liga/1/liga15094.html",
       "bierzacy": true,
       "nasza_pozycja": {
-        "poz": 3,
+        "poz": 2,
         "klub": "Janovia Janowiec",
-        "m": 1,
-        "pkt": 3,
-        "z": 1,
+        "m": 2,
+        "pkt": 6,
+        "z": 2,
         "r": 0,
         "p": 0,
-        "bramki": "4-0"
+        "bramki": "6-0"
       },
       "tabela": [
         {
           "poz": 1,
+          "klub": "Hetman Dąbrówka Wisłocka",
+          "m": 2,
+          "pkt": 6,
+          "z": 2,
+          "r": 0,
+          "p": 0,
+          "bramki": "11-2"
+        },
+        {
+          "poz": 2,
+          "klub": "Janovia Janowiec",
+          "m": 2,
+          "pkt": 6,
+          "z": 2,
+          "r": 0,
+          "p": 0,
+          "bramki": "6-0"
+        },
+        {
+          "poz": 3,
           "klub": "Sokół Pień",
           "m": 2,
           "pkt": 6,
@@ -29,7 +49,17 @@
           "bramki": "6-0"
         },
         {
-          "poz": 2,
+          "poz": 4,
+          "klub": "Atut II Podborze",
+          "m": 2,
+          "pkt": 4,
+          "z": 1,
+          "r": 1,
+          "p": 0,
+          "bramki": "5-4"
+        },
+        {
+          "poz": 5,
           "klub": "Piast II Wadowice Górne",
           "m": 2,
           "pkt": 3,
@@ -39,104 +69,74 @@
           "bramki": "10-3"
         },
         {
-          "poz": 3,
-          "klub": "Janovia Janowiec",
-          "m": 1,
-          "pkt": 3,
-          "z": 1,
-          "r": 0,
-          "p": 0,
-          "bramki": "4-0"
-        },
-        {
-          "poz": 4,
-          "klub": "Hetman Dąbrówka Wisłocka",
-          "m": 1,
-          "pkt": 3,
-          "z": 1,
-          "r": 0,
-          "p": 0,
-          "bramki": "4-1"
-        },
-        {
-          "poz": 5,
-          "klub": "Atut II Podborze",
-          "m": 1,
-          "pkt": 3,
-          "z": 1,
-          "r": 0,
-          "p": 0,
-          "bramki": "4-3"
-        },
-        {
           "poz": 6,
-          "klub": "KS Zgórsko",
-          "m": 1,
+          "klub": "KS SMP Tuszyma",
+          "m": 2,
           "pkt": 3,
           "z": 1,
           "r": 0,
-          "p": 0,
-          "bramki": "3-2"
+          "p": 1,
+          "bramki": "3-6"
         },
         {
           "poz": 7,
-          "klub": "Apollo Dulcza Mała",
-          "m": 1,
-          "pkt": 0,
-          "z": 0,
+          "klub": "KS Zgórsko",
+          "m": 2,
+          "pkt": 3,
+          "z": 1,
           "r": 0,
           "p": 1,
-          "bramki": "3-4"
+          "bramki": "5-5"
         },
         {
           "poz": 8,
-          "klub": "LKS Wierzchowiny",
-          "m": 1,
-          "pkt": 0,
-          "z": 0,
+          "klub": "Madras Goleszów",
+          "m": 2,
+          "pkt": 3,
+          "z": 1,
           "r": 0,
           "p": 1,
-          "bramki": "2-3"
+          "bramki": "3-12"
         },
         {
           "poz": 9,
-          "klub": "Jamnica Dulcza Wielka",
-          "m": 1,
-          "pkt": 0,
+          "klub": "Sprint Żarówka",
+          "m": 2,
+          "pkt": 1,
           "z": 0,
-          "r": 0,
+          "r": 1,
           "p": 1,
           "bramki": "1-4"
         },
         {
           "poz": 10,
-          "klub": "Sprint Żarówka",
-          "m": 1,
+          "klub": "LKS Wierzchowiny",
+          "m": 2,
           "pkt": 0,
           "z": 0,
           "r": 0,
-          "p": 1,
-          "bramki": "0-3"
+          "p": 2,
+          "bramki": "4-6"
         },
         {
           "poz": 11,
-          "klub": "KS SMP Tuszyma",
-          "m": 1,
+          "klub": "Jamnica Dulcza Wielka",
+          "m": 2,
           "pkt": 0,
           "z": 0,
           "r": 0,
-          "p": 1,
-          "bramki": "0-4"
+          "p": 2,
+          "bramki": "1-6"
         },
         {
           "poz": 12,
-          "klub": "Madras Goleszów",
-          "m": 1,
+          "klub": "Apollo Dulcza Mała",
+          "m": 2,
           "pkt": 0,
           "z": 0,
           "r": 0,
-          "p": 1,
-          "bramki": "0-10"
+          "p": 2,
+          "bramki": "4-11"
         }
       ]
     },

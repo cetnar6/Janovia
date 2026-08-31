@@ -2,10 +2,30 @@
   "zrodlo": "http://www.90minut.pl/liga/1/liga15094.html",
   "liga": "Klasa B 2026/2027, grupa: Rzeszów VI - Mielec",
   "klub": "Janovia Janowiec",
-  "zaktualizowano": "2026-08-30T04:06:03",
+  "zaktualizowano": "2026-08-31T04:06:15",
   "tabela": [
     {
       "poz": 1,
+      "klub": "Hetman Dąbrówka Wisłocka",
+      "m": 2,
+      "pkt": 6,
+      "z": 2,
+      "r": 0,
+      "p": 0,
+      "bramki": "11-2"
+    },
+    {
+      "poz": 2,
+      "klub": "Janovia Janowiec",
+      "m": 2,
+      "pkt": 6,
+      "z": 2,
+      "r": 0,
+      "p": 0,
+      "bramki": "6-0"
+    },
+    {
+      "poz": 3,
       "klub": "Sokół Pień",
       "m": 2,
       "pkt": 6,
@@ -15,7 +35,17 @@
       "bramki": "6-0"
     },
     {
-      "poz": 2,
+      "poz": 4,
+      "klub": "Atut II Podborze",
+      "m": 2,
+      "pkt": 4,
+      "z": 1,
+      "r": 1,
+      "p": 0,
+      "bramki": "5-4"
+    },
+    {
+      "poz": 5,
       "klub": "Piast II Wadowice Górne",
       "m": 2,
       "pkt": 3,
@@ -25,104 +55,74 @@
       "bramki": "10-3"
     },
     {
-      "poz": 3,
-      "klub": "Janovia Janowiec",
-      "m": 1,
-      "pkt": 3,
-      "z": 1,
-      "r": 0,
-      "p": 0,
-      "bramki": "4-0"
-    },
-    {
-      "poz": 4,
-      "klub": "Hetman Dąbrówka Wisłocka",
-      "m": 1,
-      "pkt": 3,
-      "z": 1,
-      "r": 0,
-      "p": 0,
-      "bramki": "4-1"
-    },
-    {
-      "poz": 5,
-      "klub": "Atut II Podborze",
-      "m": 1,
-      "pkt": 3,
-      "z": 1,
-      "r": 0,
-      "p": 0,
-      "bramki": "4-3"
-    },
-    {
       "poz": 6,
-      "klub": "KS Zgórsko",
-      "m": 1,
+      "klub": "KS SMP Tuszyma",
+      "m": 2,
       "pkt": 3,
       "z": 1,
       "r": 0,
-      "p": 0,
-      "bramki": "3-2"
+      "p": 1,
+      "bramki": "3-6"
     },
     {
       "poz": 7,
-      "klub": "Apollo Dulcza Mała",
-      "m": 1,
-      "pkt": 0,
-      "z": 0,
+      "klub": "KS Zgórsko",
+      "m": 2,
+      "pkt": 3,
+      "z": 1,
       "r": 0,
       "p": 1,
-      "bramki": "3-4"
+      "bramki": "5-5"
     },
     {
       "poz": 8,
-      "klub": "LKS Wierzchowiny",
-      "m": 1,
-      "pkt": 0,
-      "z": 0,
+      "klub": "Madras Goleszów",
+      "m": 2,
+      "pkt": 3,
+      "z": 1,
       "r": 0,
       "p": 1,
-      "bramki": "2-3"
+      "bramki": "3-12"
     },
     {
       "poz": 9,
-      "klub": "Jamnica Dulcza Wielka",
-      "m": 1,
-      "pkt": 0,
+      "klub": "Sprint Żarówka",
+      "m": 2,
+      "pkt": 1,
       "z": 0,
-      "r": 0,
+      "r": 1,
       "p": 1,
       "bramki": "1-4"
     },
     {
       "poz": 10,
-      "klub": "Sprint Żarówka",
-      "m": 1,
+      "klub": "LKS Wierzchowiny",
+      "m": 2,
       "pkt": 0,
       "z": 0,
       "r": 0,
-      "p": 1,
-      "bramki": "0-3"
+      "p": 2,
+      "bramki": "4-6"
     },
     {
       "poz": 11,
-      "klub": "KS SMP Tuszyma",
-      "m": 1,
+      "klub": "Jamnica Dulcza Wielka",
+      "m": 2,
       "pkt": 0,
       "z": 0,
       "r": 0,
-      "p": 1,
-      "bramki": "0-4"
+      "p": 2,
+      "bramki": "1-6"
     },
     {
       "poz": 12,
-      "klub": "Madras Goleszów",
-      "m": 1,
+      "klub": "Apollo Dulcza Mała",
+      "m": 2,
       "pkt": 0,
       "z": 0,
       "r": 0,
-      "p": 1,
-      "bramki": "0-10"
+      "p": 2,
+      "bramki": "4-11"
     }
   ],
   "forma": {
@@ -133,6 +133,13 @@
         "rezultat": "3-4",
         "kolejka": 1,
         "gdzie": "u siebie"
+      },
+      {
+        "wynik": "P",
+        "rywal": "Hetman Dąbrówka Wisłocka",
+        "rezultat": "1-7",
+        "kolejka": 2,
+        "gdzie": "u siebie"
       }
     ],
     "Atut II Podborze": [
@@ -142,6 +149,13 @@
         "rezultat": "4-3",
         "kolejka": 1,
         "gdzie": "na wyjeździe"
+      },
+      {
+        "wynik": "R",
+        "rywal": "Sprint Żarówka",
+        "rezultat": "1-1",
+        "kolejka": 2,
+        "gdzie": "u siebie"
       }
     ],
     "Hetman Dąbrówka Wisłocka": [
@@ -151,6 +165,13 @@
         "rezultat": "4-1",
         "kolejka": 1,
         "gdzie": "u siebie"
+      },
+      {
+        "wynik": "Z",
+        "rywal": "Apollo Dulcza Mała",
+        "rezultat": "7-1",
+        "kolejka": 2,
+        "gdzie": "na wyjeździe"
       }
     ],
     "Jamnica Dulcza Wielka": [
@@ -160,6 +181,13 @@
         "rezultat": "1-4",
         "kolejka": 1,
         "gdzie": "na wyjeździe"
+      },
+      {
+        "wynik": "P",
+        "rywal": "Janovia Janowiec",
+        "rezultat": "0-2",
+        "kolejka": 2,
+        "gdzie": "u siebie"
       }
     ],
     "Janovia Janowiec": [
@@ -169,6 +197,13 @@
         "rezultat": "4-0",
         "kolejka": 1,
         "gdzie": "u siebie"
+      },
+      {
+        "wynik": "Z",
+        "rywal": "Jamnica Dulcza Wielka",
+        "rezultat": "2-0",
+        "kolejka": 2,
+        "gdzie": "na wyjeździe"
       }
     ],
     "KS SMP Tuszyma": [
@@ -178,6 +213,13 @@
         "rezultat": "0-4",
         "kolejka": 1,
         "gdzie": "na wyjeździe"
+      },
+      {
+        "wynik": "Z",
+        "rywal": "KS Zgórsko",
+        "rezultat": "3-2",
+        "kolejka": 2,
+        "gdzie": "u siebie"
       }
     ],
     "KS Zgórsko": [
@@ -187,6 +229,13 @@
         "rezultat": "3-2",
         "kolejka": 1,
         "gdzie": "u siebie"
+      },
+      {
+        "wynik": "P",
+        "rywal": "KS SMP Tuszyma",
+        "rezultat": "2-3",
+        "kolejka": 2,
+        "gdzie": "na wyjeździe"
       }
     ],
     "LKS Wierzchowiny": [
@@ -196,6 +245,13 @@
         "rezultat": "2-3",
         "kolejka": 1,
         "gdzie": "na wyjeździe"
+      },
+      {
+        "wynik": "P",
+        "rywal": "Madras Goleszów",
+        "rezultat": "2-3",
+        "kolejka": 2,
+        "gdzie": "u siebie"
       }
     ],
     "Madras Goleszów": [
@@ -205,6 +261,13 @@
         "rezultat": "0-10",
         "kolejka": 1,
         "gdzie": "u siebie"
+      },
+      {
+        "wynik": "Z",
+        "rywal": "LKS Wierzchowiny",
+        "rezultat": "3-2",
+        "kolejka": 2,
+        "gdzie": "na wyjeździe"
       }
     ],
     "Piast II Wadowice Górne": [
@@ -246,6 +309,13 @@
         "rezultat": "0-3",
         "kolejka": 1,
         "gdzie": "na wyjeździe"
+      },
+      {
+        "wynik": "R",
+        "rywal": "Atut II Podborze",
+        "rezultat": "1-1",
+        "kolejka": 2,
+        "gdzie": "na wyjeździe"
       }
     ]
   },
@@ -259,7 +329,7 @@
         "kolejka_opis": "29-30 sierpnia",
         "gospodarz": "Atut II Podborze",
         "gosc": "Sprint Żarówka",
-        "wynik": null,
+        "wynik": "1-1",
         "termin": "30 sierpnia, 14:00",
         "data_iso": "2026-08-30T14:00:00",
         "data_przyblizona": false
@@ -279,7 +349,7 @@
         "kolejka_opis": "29-30 sierpnia",
         "gospodarz": "LKS Wierzchowiny",
         "gosc": "Madras Goleszów",
-        "wynik": null,
+        "wynik": "2-3",
         "termin": "30 sierpnia, 14:00",
         "data_iso": "2026-08-30T14:00:00",
         "data_przyblizona": false
@@ -289,7 +359,7 @@
         "kolejka_opis": "29-30 sierpnia",
         "gospodarz": "KS SMP Tuszyma",
         "gosc": "KS Zgórsko",
-        "wynik": null,
+        "wynik": "3-2",
         "termin": "30 sierpnia, 14:00",
         "data_iso": "2026-08-30T14:00:00",
         "data_przyblizona": false
@@ -299,7 +369,7 @@
         "kolejka_opis": "29-30 sierpnia",
         "gospodarz": "Jamnica Dulcza Wielka",
         "gosc": "Janovia Janowiec",
-        "wynik": null,
+        "wynik": "0-2",
         "termin": "30 sierpnia, 14:00",
         "data_iso": "2026-08-30T14:00:00",
         "data_przyblizona": false
@@ -309,7 +379,7 @@
         "kolejka_opis": "29-30 sierpnia",
         "gospodarz": "Apollo Dulcza Mała",
         "gosc": "Hetman Dąbrówka Wisłocka",
-        "wynik": null,
+        "wynik": "1-7",
         "termin": "30 sierpnia, 13:00",
         "data_iso": "2026-08-30T13:00:00",
         "data_przyblizona": false
@@ -317,16 +387,6 @@
     ]
   },
   "nadchodzace": [
-    {
-      "kolejka": 2,
-      "kolejka_opis": "29-30 sierpnia",
-      "gospodarz": "Jamnica Dulcza Wielka",
-      "gosc": "Janovia Janowiec",
-      "wynik": null,
-      "termin": "30 sierpnia, 14:00",
-      "data_iso": "2026-08-30T14:00:00",
-      "data_przyblizona": false
-    },
     {
       "kolejka": 3,
       "kolejka_opis": "5-6 września",
@@ -396,16 +456,26 @@
       "termin": null,
       "data_iso": "2026-10-17T00:00:00",
       "data_przyblizona": true
+    },
+    {
+      "kolejka": 10,
+      "kolejka_opis": "24-25 października",
+      "gospodarz": "Janovia Janowiec",
+      "gosc": "Piast II Wadowice Górne",
+      "wynik": null,
+      "termin": null,
+      "data_iso": "2026-10-24T00:00:00",
+      "data_przyblizona": true
     }
   ],
   "ostatni": {
-    "kolejka": 1,
-    "kolejka_opis": "22-23 sierpnia",
-    "gospodarz": "Janovia Janowiec",
-    "gosc": "KS SMP Tuszyma",
-    "wynik": "4-0",
-    "termin": "23 sierpnia, 13:00",
-    "data_iso": "2026-08-23T13:00:00",
+    "kolejka": 2,
+    "kolejka_opis": "29-30 sierpnia",
+    "gospodarz": "Jamnica Dulcza Wielka",
+    "gosc": "Janovia Janowiec",
+    "wynik": "0-2",
+    "termin": "30 sierpnia, 14:00",
+    "data_iso": "2026-08-30T14:00:00",
     "data_przyblizona": false
   },
   "wszystkie_mecze": [
@@ -474,7 +544,7 @@
       "kolejka_opis": "29-30 sierpnia",
       "gospodarz": "Atut II Podborze",
       "gosc": "Sprint Żarówka",
-      "wynik": null,
+      "wynik": "1-1",
       "termin": "30 sierpnia, 14:00",
       "data_iso": "2026-08-30T14:00:00",
       "data_przyblizona": false
@@ -494,7 +564,7 @@
       "kolejka_opis": "29-30 sierpnia",
       "gospodarz": "LKS Wierzchowiny",
       "gosc": "Madras Goleszów",
-      "wynik": null,
+      "wynik": "2-3",
       "termin": "30 sierpnia, 14:00",
       "data_iso": "2026-08-30T14:00:00",
       "data_przyblizona": false
@@ -504,7 +574,7 @@
       "kolejka_opis": "29-30 sierpnia",
       "gospodarz": "KS SMP Tuszyma",
       "gosc": "KS Zgórsko",
-      "wynik": null,
+      "wynik": "3-2",
       "termin": "30 sierpnia, 14:00",
       "data_iso": "2026-08-30T14:00:00",
       "data_przyblizona": false
@@ -514,7 +584,7 @@
       "kolejka_opis": "29-30 sierpnia",
       "gospodarz": "Jamnica Dulcza Wielka",
       "gosc": "Janovia Janowiec",
-      "wynik": null,
+      "wynik": "0-2",
       "termin": "30 sierpnia, 14:00",
       "data_iso": "2026-08-30T14:00:00",
       "data_przyblizona": false
@@ -524,7 +594,7 @@
       "kolejka_opis": "29-30 sierpnia",
       "gospodarz": "Apollo Dulcza Mała",
       "gosc": "Hetman Dąbrówka Wisłocka",
-      "wynik": null,
+      "wynik": "1-7",
       "termin": "30 sierpnia, 13:00",
       "data_iso": "2026-08-30T13:00:00",
       "data_przyblizona": false
