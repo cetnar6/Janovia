@@ -186,6 +186,53 @@ function fb_zrodla_zdjec(array $zalacznik, ?string $fullPicture): array
     return $fullPicture ? [$fullPicture] : [];
 }
 
+/**
+ * Czy obraz jest praktycznie czarny?
+ *
+ * Facebook przy filmach i rolkach podaje jako podgląd klatkę z początku
+ * nagrania, a te niemal zawsze zaczynają się od przyciemnienia — dostajemy
+ * wtedy czarny prostokąt, który na stronie wygląda jak dziura w układzie.
+ *
+ * Zmierzone na prawdziwych danych: wpis wideo „NIECH TA MIŁOŚĆ TRWA LATAMI"
+ * miał jasność 12/255 i 90% pikseli prawie czarnych, podczas gdy zwykłe
+ * zdjęcia mieściły się w 92–168 przy najwyżej 10% ciemnych pikseli.
+ * Progi poniżej leżą bezpiecznie pomiędzy tymi zakresami.
+ *
+ * Dwa warunki naraz, bo sama średnia nie wystarcza: czytelne zdjęcie zrobione
+ * wieczorem też bywa ciemne, ale nie składa się w 80% z czerni.
+ */
+function fb_obraz_czarny(string $dane): bool
+{
+    // bez GD nie zgadujemy — lepiej zapisać wątpliwą miniaturę niż odrzucić dobrą
+    if (!function_exists('imagecreatefromstring')) { return false; }
+
+    $obraz = @imagecreatefromstring($dane);
+    if ($obraz === false) { return false; }
+
+    $bok  = 32;
+    $maly = imagecreatetruecolor($bok, $bok);
+    imagecopyresampled($maly, $obraz, 0, 0, 0, 0, $bok, $bok, imagesx($obraz), imagesy($obraz));
+    // bez imagedestroy() — od PHP 8.0 nic nie robi, a w 8.5 jest przestarzała
+    // i zasypywałaby wyjście crona ostrzeżeniami
+
+    $suma = 0.0;
+    $ciemne = 0;
+    for ($y = 0; $y < $bok; $y++) {
+        for ($x = 0; $x < $bok; $x++) {
+            $k = imagecolorat($maly, $x, $y);
+            // wagi odpowiadają temu, jak oko odbiera jasność barw składowych
+            $jasnosc = 0.299 * (($k >> 16) & 255)
+                     + 0.587 * (($k >> 8) & 255)
+                     + 0.114 * ($k & 255);
+            $suma += $jasnosc;
+            if ($jasnosc < 25) { $ciemne++; }
+        }
+    }
+
+    $pikseli = $bok * $bok;
+    return ($suma / $pikseli) < 30 && ($ciemne / $pikseli) > 0.8;
+}
+
 /** Zapisuje zdjęcie lokalnie i zwraca ścieżkę względną albo null. */
 function fb_pobierz_zdjecie(?string $url, string $nazwa, array &$bledy): ?string
 {
@@ -197,8 +244,14 @@ function fb_pobierz_zdjecie(?string $url, string $nazwa, array &$bledy): ?string
     $plik = $katalog . '/' . $nazwa . '.jpg';
     $wzgledna = 'data/fb/' . $nazwa . '.jpg';
 
-    // raz pobrane zdjęcie zostaje — adresy fbcdn wygasają, plik nie
-    if (is_file($plik) && filesize($plik) > 0) { return $wzgledna; }
+    /* Raz pobrane zdjęcie zostaje — adresy fbcdn wygasają, plik nie.
+       Sprawdzamy jednak także pliki z dysku: czarne miniatury pobrane
+       wcześniej, zanim powstał ten mechanizm, też mają zniknąć ze strony.
+       Koszt to zdekodowanie stu małych obrazów przy każdym przebiegu crona —
+       ułamek sekundy, więc nie komplikuję tego zapamiętywaniem werdyktu. */
+    if (is_file($plik) && filesize($plik) > 0) {
+        return fb_obraz_czarny((string) file_get_contents($plik)) ? null : $wzgledna;
+    }
 
     $ch = curl_init($url);
     curl_setopt_array($ch, [
@@ -213,6 +266,13 @@ function fb_pobierz_zdjecie(?string $url, string $nazwa, array &$bledy): ?string
 
     if ($dane === false || $kod >= 400 || $dane === '') {
         $bledy[] = 'nie pobrałem zdjęcia: ' . ($blad !== '' ? $blad : 'HTTP ' . $kod);
+        return null;
+    }
+
+    /* Czarną klatkę odrzucamy przed zapisem. Kafelek bez zdjęcia dostaje
+       wtedy jeden z ozdobnych wariantów post__media--1..6 — wygląda to
+       znacznie lepiej niż czarny prostokąt. */
+    if (fb_obraz_czarny($dane)) {
         return null;
     }
 
