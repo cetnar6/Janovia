@@ -27,7 +27,7 @@ return [
 
     // --- Facebook (przycisk "Sprawdź Facebooka teraz" w panelu) ---
     // ten sam token, co w sekrecie FB_TOKEN na GitHubie — panel uruchamia
-    // lokalnie update_fb.py, więc potrzebuje własnej kopii
+    // update_fb.php, więc potrzebuje własnej kopii tokenu
     'fb_token' => '',
 
     // opcjonalne — wskazuje jedną, konkretną stronę, gdy token zarządza kilkoma

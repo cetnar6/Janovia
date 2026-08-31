@@ -302,7 +302,7 @@
 
     /* =========================================
        7. DANE Z 90MINUT.PL (data/liga.json)
-       Plik odświeża skrypt update_liga.py raz dziennie.
+       Plik odświeża update_liga.php, uruchamiany cronem na serwerze.
        Gdy pliku brak — na stronie zostaje treść wpisana w HTML.
        ========================================= */
 
@@ -643,7 +643,7 @@
 
     /* =========================================
        8. POSTY Z FACEBOOKA (data/facebook.json)
-       Plik przygotowuje update_fb.py przez Graph API.
+       Plik przygotowuje update_fb.php przez Graph API.
        Gdy pliku brak — zostają kafelki wpisane w HTML.
        ========================================= */
 
