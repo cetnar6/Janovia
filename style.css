@@ -371,6 +371,15 @@ a {
     gap: 2rem;
 }
 
+/* Tabela, Archiwalne sezony i Kontakt żyją po prawej stronie nagłówka
+   (.header__side--end), która przy ≤1000px jest chowana. Wcześniej znikały
+   wtedy bez śladu — hamburger ich nie zawierał, więc na telefonie nie było
+   jak dojść do tabeli. Teraz są też w menu, ale na szerokim ekranie ukryte,
+   żeby nie dublować pozycji widocznych obok. */
+.nav__zwiniete {
+    display: none;
+}
+
 .crest-link {
     position: absolute;
     left: 50%;
@@ -2216,8 +2225,13 @@ a.marquee__item {
         transform: translateY(-8px) rotate(-45deg);
     }
 
+    /* prawa strona nagłówka znika — jej pozycje przejmuje menu */
     .header__side--end {
         display: none;
+    }
+
+    .nav__zwiniete {
+        display: block;
     }
 
     /* Trzy liczby klubu w jednym rzędzie — przy flexie z dużym odstępem
@@ -2257,6 +2271,19 @@ a.marquee__item {
 
     .hero__scroll {
         display: none;
+    }
+
+    /* Siatka kadry miała jedno ustawienie dla wszystkich ekranów:
+       minmax(180px, 1fr). Na telefonie 390 px dwie kolumny po 180 px plus
+       odstęp nie mieszczą się, więc zostawała JEDNA — a przy karcie 3:4 dawało
+       to ~570 px na zawodnika i 14 000 px całej podstrony. Dwa sztywne pasy
+       skracają ją o połowę i porządkują odstępy między pozycjami.
+
+       minmax(0, 1fr), a nie 1fr: domyślne minimum to rozmiar zawartości, więc
+       długie nazwisko rozpychałoby kolumnę i wypychało siatkę poza ekran. */
+    .kadra-siatka {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1.25rem 0.75rem;
     }
 
     /* kolumny: 1 poz. | 2 herb | 3 drużyna | 4 M | 5 bramki | 6 pkt */

@@ -320,6 +320,40 @@ td.akcje { white-space: nowrap; font-size: 0; }
 .logowanie .btn { margin-top: 0.5rem; }
 
 @media (max-width: 720px) {
+    /* Pasek górny rozpychał stronę w bok. .pasek miał flex-wrap, ale
+       .pasek__nav już nie — pięć pozycji tworzyło jeden nierozerwalny rząd
+       szerszy od ekranu, przez co treść uciekała poza widok.
+
+       Zamiast hamburgera: nawigacja schodzi do własnego, pełnej szerokości
+       rzędu i zawija się. Przy pięciu pozycjach to wygodniejsze niż menu
+       chowane — wszystko widać od razu, bez dodatkowego kliknięcia. */
+    .pasek {
+        gap: 0.75rem 1rem;
+        padding: 0.75rem 1rem;
+    }
+
+    .pasek__logo {
+        gap: 0.5rem;
+        font-size: 0.72rem;
+    }
+
+    .pasek__logo img { height: 26px; }
+
+    .pasek__nav {
+        order: 3;               /* pod logo i przyciskiem wylogowania */
+        width: 100%;
+        flex-wrap: wrap;
+        gap: 0.5rem 1.1rem;
+        margin-right: 0;        /* margin-right:auto rozpychał pasek */
+        font-size: 0.78rem;
+    }
+
+    .pasek__wyloguj {
+        margin-left: auto;
+        gap: 0.5rem;
+        font-size: 0.75rem;
+    }
+
     .tabela thead { display: none; }
     .tabela tr { display: grid; grid-template-columns: auto 1fr; gap: 0.25rem 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid var(--line); }
     .tabela td { border: none; padding: 0.2rem 0; }
