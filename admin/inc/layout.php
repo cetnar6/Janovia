@@ -13,7 +13,7 @@ function naglowek(string $tytul, bool $zNawigacja = true): void
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= e($tytul) ?> — panel Janovii</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="../png/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../png/favicon-32.png?v=2">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap">
