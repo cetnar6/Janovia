@@ -803,6 +803,55 @@ a.marquee__item {
     object-fit: contain;
 }
 
+/* ---------- znak odtwarzania na wpisach z filmem ---------- */
+
+/* z-index 3, bo .post__media::after (gradient przyciemniający) siedzi na 2
+   i bez tego przykryłby ikonę. pointer-events: none — klik ma trafiać
+   w cały kafelek, który otwiera okno z postem, a nie zatrzymywać się tutaj. */
+.post__play {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    margin: auto;
+    width: clamp(44px, 22%, 62px);
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+    border: 2px solid rgba(255, 255, 255, 0.92);
+    border-radius: 50%;
+    background-color: rgba(8, 9, 12, 0.45);
+    backdrop-filter: blur(2px);
+    pointer-events: none;
+    transition:
+        transform 0.4s var(--ease-back),
+        background-color 0.3s var(--ease-out);
+}
+
+/* Trójkąt zbudowany z obramowania — bez pliku graficznego i bez SVG
+   w treści, więc nie dokłada ani jednego żądania do serwera. */
+.post__play::before {
+    content: "";
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0.55em 0 0.55em 0.9em;
+    border-color: transparent transparent transparent #fff;
+    font-size: clamp(14px, 4vw, 18px);
+    /* Trójkąt ma masę przy podstawie, więc wyśrodkowany geometrycznie
+       wygląda na przesunięty w lewo. Te 12% to korekta optyczna. */
+    margin-left: 12%;
+}
+
+.post:hover .post__play {
+    transform: scale(1.1);
+    background-color: rgba(0, 125, 204, 0.7);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .post__play { transition: none; }
+    .post:hover .post__play { transform: none; }
+}
+
 .post__media--2 { background: linear-gradient(150deg, var(--gold), #0D2B44); }
 .post__media--3 { background: linear-gradient(150deg, #06283D, var(--blue-light)); }
 .post__media--4 { background: linear-gradient(150deg, #005C96, var(--gold)); }

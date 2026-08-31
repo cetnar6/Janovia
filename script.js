@@ -866,10 +866,20 @@
             ? '<img class="post__foto" src="' + src + '" alt="" loading="lazy">'
             : '';
 
+        /* Znak odtwarzania na wpisach z filmem. Ma to znaczenie zwłaszcza tam,
+           gdzie kafelek pokazuje samo ozdobne tło: Facebook przy rolkach podaje
+           jako podgląd czarną klatkę, którą odrzucamy, więc bez tego znaku nic
+           nie sugerowałoby, że pod spodem jest nagranie.
+           aria-hidden, bo to ozdoba — czytnik ekranu i tak przeczyta etykietę
+           „Wideo" obok tytułu. */
+        var odtwarzanie = p.typ === 'video'
+            ? '<span class="post__play" aria-hidden="true"></span>'
+            : '';
+
         return '<article class="post" role="button" tabindex="0"' +
                ' data-post="' + i + '" aria-haspopup="dialog"' +
                ' data-reveal style="--d:' + (Math.min(i, 10) * 60) + 'ms">' +
-               '<div class="post__media' + (p.zdjecie ? ' post__media--foto' : ' post__media--' + ((i % 6) + 1)) + '"' + tlo + '>' + foto + '</div>' +
+               '<div class="post__media' + (p.zdjecie ? ' post__media--foto' : ' post__media--' + ((i % 6) + 1)) + '"' + tlo + '>' + foto + odtwarzanie + '</div>' +
                '<div class="post__body">' +
                    '<span class="tag tag--sm">' + esc(etykietaPosta(p)) + '</span>' +
                    '<span class="post__time">' + odKiedy(p.data) + '</span>' +
