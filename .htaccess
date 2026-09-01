@@ -17,6 +17,25 @@
     # jedna wersja adresu zamiast dwóch — bez www
     RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
     RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
+
+    # ---------- adresy poprzedniej strony ----------
+    # Google trzyma w indeksie adresy serwisu, który stał pod janovia.pl do
+    # sierpnia 2026 (Zend Framework): /news, /season/..., /table/...,
+    # /gallery/... Wszystkie zwracają dziś 404, więc ktoś klikający wynik
+    # wyszukiwania trafia w błąd, a wyszukiwarka nie wie, że treść ma następcę.
+    #
+    # 301 znaczy „przeniesione na stałe": użytkownik ląduje tam, gdzie jest
+    # dzisiejszy odpowiednik, a pozycja wypracowana przez lata przechodzi na
+    # nową wersję zamiast przepaść razem ze starymi adresami.
+    #
+    # Kolejność ma znaczenie — season/schedule musi być przed samym season,
+    # inaczej ta druga reguła przechwyciłaby terminarz.
+    RewriteRule ^season/schedule(/.*)?$  /terminarz.html   [R=301,L]
+    RewriteRule ^season(/.*)?$           /archiwum.html    [R=301,L]
+    RewriteRule ^news(/.*)?$             /aktualnosci.html [R=301,L]
+    RewriteRule ^gallery(/.*)?$          /aktualnosci.html [R=301,L]
+    RewriteRule ^table(/.*)?$            /#tabela          [R=301,L]
+    RewriteRule ^dzialacze/?$            /kadra.html       [R=301,L]
 </IfModule>
 
 # ---------- Czego nie wolno wydać przeglądarce ----------
