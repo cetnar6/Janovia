@@ -30,12 +30,18 @@
     #
     # Kolejność ma znaczenie — season/schedule musi być przed samym season,
     # inaczej ta druga reguła przechwyciłaby terminarz.
-    RewriteRule ^season/schedule(/.*)?$  /terminarz.html   [R=301,L]
-    RewriteRule ^season(/.*)?$           /archiwum.html    [R=301,L]
-    RewriteRule ^news(/.*)?$             /aktualnosci.html [R=301,L]
-    RewriteRule ^gallery(/.*)?$          /aktualnosci.html [R=301,L]
-    RewriteRule ^table(/.*)?$            /#tabela          [R=301,L]
-    RewriteRule ^dzialacze/?$            /kadra.html       [R=301,L]
+    # Cele podane pełnym adresem, a nie samą ścieżką: przy ścieżce Apache sam
+    # buduje adres bezwzględny i dokleja do niego „:443", co działa, ale
+    # wygląda niechlujnie w pasku przeglądarki i w wynikach wyszukiwania.
+    #
+    # Flaga NE przy kotwicy jest konieczna — bez niej Apache koduje „#" jako
+    # „%23" i zamiast skoku do sekcji powstaje adres nieistniejącej ścieżki.
+    RewriteRule ^season/schedule(/.*)?$  https://janovia.pl/terminarz.html   [R=301,L]
+    RewriteRule ^season(/.*)?$           https://janovia.pl/archiwum.html    [R=301,L]
+    RewriteRule ^news(/.*)?$             https://janovia.pl/aktualnosci.html [R=301,L]
+    RewriteRule ^gallery(/.*)?$          https://janovia.pl/aktualnosci.html [R=301,L]
+    RewriteRule ^table(/.*)?$            https://janovia.pl/#tabela          [R=301,NE,L]
+    RewriteRule ^dzialacze/?$            https://janovia.pl/kadra.html       [R=301,L]
 </IfModule>
 
 # ---------- Czego nie wolno wydać przeglądarce ----------
