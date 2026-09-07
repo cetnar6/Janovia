@@ -1315,7 +1315,9 @@
         return '<article class="player" data-reveal="' + kierunek + '" style="--d:' + (Math.min(i, 8) * 80) + 'ms">' +
                '<div class="player__photo">' + foto + '</div>' +
                '<div class="player__label">' +
-                   '<span class="player__no">' + (z.numer !== null ? z.numer : '–') + '</span>' +
+                   /* bez numeru nie ma czego pokazać — pusty element z kreską
+                      tylko odsuwałby nazwisko od krawędzi kafelka */
+                   (z.numer !== null ? '<span class="player__no">' + z.numer + '</span>' : '') +
                    '<span class="player__name">' +
                        '<small>' + esc(z.imie) + '</small>' +
                        '<strong>' + esc(z.nazwisko) + '</strong>' +

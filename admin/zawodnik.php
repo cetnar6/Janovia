@@ -48,6 +48,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $bledy[] = 'Wybierz pozycję z listy.';
     }
 
+    // Sztab nie gra, więc numeru na koszulce nie ma. Czyścimy pole zamiast
+    // zwracać błąd: wpisany numer to najwyżej pomyłka przy zmianie pozycji
+    // zawodnika na sztab, a nie powód, żeby blokować zapis. Przy okazji
+    // numer wraca do puli dla grających.
+    if ($z['pozycja'] === 'sztab') {
+        $z['numer'] = '';
+    }
+
     $numer = null;
 
     if ($z['numer'] !== '') {
@@ -147,7 +155,7 @@ naglowek($id ? 'Edycja zawodnika' : 'Nowy zawodnik');
 
         <label>Numer na koszulce
             <input type="number" name="numer" min="1" max="99" value="<?= e((string) $z['numer']) ?>">
-            <small>Można zostawić puste.</small>
+            <small>Można zostawić puste. Przy pozycji „Sztab” numer jest pomijany.</small>
         </label>
     </div>
 
