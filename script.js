@@ -1335,12 +1335,15 @@
 
     /* ---------- pełna kadra wg pozycji (podstrona kadra.html) ---------- */
 
-    var POZYCJE_KOLEJNOSC = ['bramkarz', 'obrońca', 'pomocnik', 'napastnik'];
+    /* Sztab na końcu, za wszystkimi formacjami — to układ czytany jak
+       ustawienie na boisku: bramka, obrona, pomoc, atak, a za nimi ławka. */
+    var POZYCJE_KOLEJNOSC = ['bramkarz', 'obrońca', 'pomocnik', 'napastnik', 'sztab'];
     var POZYCJE_ETYKIETA = {
         bramkarz: 'Bramkarze',
         obrońca: 'Obrońcy',
         pomocnik: 'Pomocnicy',
         napastnik: 'Napastnicy',
+        sztab: 'Sztab',
     };
 
     function rysujKadre(dane) {

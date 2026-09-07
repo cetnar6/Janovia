@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS zawodnicy (
     id        INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     imie      VARCHAR(50)  NOT NULL,
     nazwisko  VARCHAR(60)  NOT NULL,
-    pozycja   ENUM('bramkarz','obrońca','pomocnik','napastnik') NOT NULL,
+    pozycja   ENUM('bramkarz','obrońca','pomocnik','napastnik','sztab') NOT NULL,
     numer     TINYINT UNSIGNED NULL,
     -- sama nazwa pliku z katalogu uploads/zawodnicy, nie zawartość obrazu
     zdjecie   VARCHAR(120) NULL,

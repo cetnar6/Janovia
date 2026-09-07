@@ -11,7 +11,9 @@ require_once __DIR__ . '/inc/zdjecia.php';
 
 wymagaj_logowania();
 
-const POZYCJE = ['bramkarz', 'obrońca', 'pomocnik', 'napastnik'];
+// 'sztab' to trener, kierownik i reszta ludzi wokół drużyny — mają własną
+// grupę na podstronie kadry i zwykle nie mają numeru na koszulce
+const POZYCJE = ['bramkarz', 'obrońca', 'pomocnik', 'napastnik', 'sztab'];
 
 $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 $bledy = [];
