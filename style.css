@@ -1133,7 +1133,7 @@ a.marquee__item {
 /* powiększa się tylko zdjęcie — .player__photo ma overflow: hidden,
    więc kafelek trzyma swój rozmiar, a nadmiar po prostu się chowa */
 .player:hover .player__foto {
-    transform: scale(1.12);
+    transform: scale(1.05);
 }
 
 /* Zawodnik bez wgranego zdjęcia dostaje sylwetkę z png/zdjecieProfilowe.png.
@@ -1163,7 +1163,7 @@ a.marquee__item {
 
 /* ten sam ruch co przy prawdziwym zdjęciu — translateX trzyma wyśrodkowanie */
 .player:hover .player__zastepcze {
-    transform: translateX(-50%) scale(1.08);
+    transform: translateX(-50%) scale(1.04);
     background-color: rgba(255, 255, 255, 0.32);
 }
 
