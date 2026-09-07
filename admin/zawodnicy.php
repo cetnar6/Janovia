@@ -68,7 +68,10 @@ naglowek('Zawodnicy');
                 <?php endif; ?>
             </td>
             <td class="nr"><?= $z['numer'] !== null ? (int) $z['numer'] : '—' ?></td>
-            <td><strong><?= e($z['imie']) ?> <?= e($z['nazwisko']) ?></strong></td>
+            <td>
+                <strong><?= e($z['imie']) ?> <?= e($z['nazwisko']) ?></strong>
+                <?php if (!empty($z['kapitan'])): ?><span class="kapitan" title="Kapitan">C</span><?php endif; ?>
+            </td>
             <td><?= e($z['pozycja']) ?></td>
             <td><?= $z['aktywny'] ? 'w kadrze' : 'poza kadrą' ?></td>
             <td class="akcje">

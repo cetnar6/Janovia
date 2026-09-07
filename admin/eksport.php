@@ -35,7 +35,7 @@ function zapisz_json(string $sciezka, array $dane): void
 /* ---------- zawodnicy ---------- */
 
 $zawodnicy = $db->query(
-    'SELECT imie, nazwisko, pozycja, numer, zdjecie
+    'SELECT imie, nazwisko, pozycja, numer, zdjecie, kapitan
      FROM zawodnicy
      WHERE aktywny = 1
      ORDER BY CASE WHEN numer IS NULL THEN 1 ELSE 0 END, numer, nazwisko'
@@ -48,6 +48,7 @@ $lista_zawodnikow = array_map(static function (array $z): array {
         'pozycja'  => $z['pozycja'],
         'numer'    => $z['numer'] !== null ? (int) $z['numer'] : null,
         'zdjecie'  => adres_zdjecia($z['zdjecie'], 'zawodnicy'),
+        'kapitan'  => (bool) $z['kapitan'],
     ];
 }, $zawodnicy);
 

@@ -18,6 +18,8 @@ CREATE TABLE IF NOT EXISTS zawodnicy (
     -- sama nazwa pliku z katalogu uploads/zawodnicy, nie zawartość obrazu
     zdjecie   TEXT,
     aktywny   INTEGER NOT NULL DEFAULT 1 CHECK (aktywny IN (0,1)),
+    -- opaska kapitana; na stronie dokłada „C" obok nazwiska
+    kapitan   INTEGER NOT NULL DEFAULT 0 CHECK (kapitan IN (0,1)),
     utworzono TEXT    NOT NULL DEFAULT (datetime('now','localtime'))
 );
 

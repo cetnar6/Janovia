@@ -76,6 +76,28 @@ function definicja_pozycji(): string
     return (string) $stmt->fetchColumn();
 }
 
+/** Czy tabela ma już taką kolumnę — podstawa dla migracji dokładających pola. */
+function kolumna_istnieje(string $tabela, string $kolumna): bool
+{
+    if (sterownik_bazy() === 'sqlite') {
+        foreach (baza()->query('PRAGMA table_info(' . $tabela . ')') as $k) {
+            if ($k['name'] === $kolumna) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    $stmt = baza()->prepare(
+        'SELECT COUNT(*) FROM information_schema.COLUMNS
+          WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND COLUMN_NAME = ?'
+    );
+    $stmt->execute([$tabela, $kolumna]);
+
+    return (int) $stmt->fetchColumn() > 0;
+}
+
 /**
  * Lista migracji. Każda umie sama powiedzieć, czy jest jeszcze potrzebna,
  * więc uruchomienie jej drugi raz niczego nie psuje.
@@ -138,6 +160,30 @@ function migracje(): array
                         ON zawodnicy (numer) WHERE aktywny = 1 AND numer IS NOT NULL'
                 );
                 $db->exec('CREATE INDEX IF NOT EXISTS zawodnicy_sort ON zawodnicy (aktywny, numer)');
+            },
+        ],
+
+        /* Uwaga na kolejność: migracja pozycji przepisuje tabelę SQLite
+           z listy kolumn wpisanej na sztywno, więc każda migracja dokładająca
+           kolumnę musi stać ZA nią. Inaczej przebudowa zgubiłaby nową kolumnę.
+           Dokładając kolejną kolumnę, dopisz ją też do tamtej listy. */
+        [
+            'id'    => 'kapitan',
+            'nazwa' => 'Oznaczenie kapitana drużyny',
+            'opis'  => 'Bez tej kolumny panel nie ma gdzie zapisać zaznaczonego kapitana.',
+
+            'potrzebna' => static function (): bool {
+                return !kolumna_istnieje('zawodnicy', 'kapitan');
+            },
+
+            'zastosuj' => static function (PDO $db): void {
+                /* ADD COLUMN rozumieją oba silniki, więc tu obywa się bez
+                   przepisywania tabeli. Domyślne 0 wypełnia istniejące wiersze. */
+                $db->exec(
+                    sterownik_bazy() === 'mysql'
+                        ? 'ALTER TABLE zawodnicy ADD COLUMN kapitan TINYINT(1) NOT NULL DEFAULT 0'
+                        : 'ALTER TABLE zawodnicy ADD COLUMN kapitan INTEGER NOT NULL DEFAULT 0'
+                );
             },
         ],
     ];

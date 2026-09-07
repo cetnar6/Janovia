@@ -18,6 +18,8 @@ CREATE TABLE IF NOT EXISTS zawodnicy (
     -- sama nazwa pliku z katalogu uploads/zawodnicy, nie zawartość obrazu
     zdjecie   VARCHAR(120) NULL,
     aktywny   TINYINT(1)   NOT NULL DEFAULT 1,
+    -- opaska kapitana; na stronie dokłada „C" obok nazwiska
+    kapitan   TINYINT(1)   NOT NULL DEFAULT 0,
     utworzono TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     INDEX zawodnicy_sort (aktywny, numer)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_polish_ci;

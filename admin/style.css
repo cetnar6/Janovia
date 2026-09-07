@@ -359,3 +359,19 @@ td.akcje { white-space: nowrap; font-size: 0; }
     .tabela td { border: none; padding: 0.2rem 0; }
     .akcje { grid-column: 1 / -1; margin-top: 0.5rem; }
 }
+
+/* oznaczenie kapitana na liście zawodników — ten sam kwadratowy znak
+   co na stronie klubu, żeby panel i strona mówiły tym samym językiem */
+.kapitan {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.3em;
+    height: 1.3em;
+    margin-left: 0.45rem;
+    border: 2px solid #FFB900;
+    color: #FFB900;
+    font-size: 0.72rem;
+    font-weight: 800;
+    line-height: 1;
+}

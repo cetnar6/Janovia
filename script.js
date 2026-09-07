@@ -1320,7 +1320,11 @@
                    (z.numer !== null ? '<span class="player__no">' + z.numer + '</span>' : '') +
                    '<span class="player__name">' +
                        '<small>' + esc(z.imie) + '</small>' +
-                       '<strong>' + esc(z.nazwisko) + '</strong>' +
+                       '<strong>' + esc(z.nazwisko) +
+                           /* samo „C" nic nie mówi czytnikowi ekranu ani osobie,
+                              która nie zna piłkarskiej konwencji — stąd podpis */
+                           (z.kapitan ? '<span class="player__kapitan" role="img" aria-label="Kapitan" title="Kapitan">C</span>' : '') +
+                       '</strong>' +
                        '<em class="player__poz">' + esc(z.pozycja) + '</em>' +
                    '</span>' +
                '</div>' +

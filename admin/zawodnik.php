@@ -31,7 +31,7 @@ if ($id) {
     }
 } else {
     $z = ['imie' => '', 'nazwisko' => '', 'pozycja' => 'pomocnik',
-          'numer' => '', 'zdjecie' => null, 'aktywny' => 1];
+          'numer' => '', 'zdjecie' => null, 'aktywny' => 1, 'kapitan' => 0];
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -42,6 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $z['pozycja']  = (string) ($_POST['pozycja'] ?? '');
     $z['numer']    = trim((string) ($_POST['numer'] ?? ''));
     $z['aktywny']  = isset($_POST['aktywny']) ? 1 : 0;
+    $z['kapitan']  = isset($_POST['kapitan']) ? 1 : 0;
 
     if ($z['imie'] === '')     { $bledy[] = 'Imię jest wymagane.'; }
     if ($z['nazwisko'] === '') { $bledy[] = 'Nazwisko jest wymagane.'; }
@@ -56,6 +57,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // numer wraca do puli dla grających.
     if (czy_sztab($z['pozycja'])) {
         $z['numer'] = '';
+        // opaskę nosi ktoś, kto wychodzi na boisko — trener kapitanem nie bywa
+        $z['kapitan'] = 0;
     }
 
     $numer = null;
@@ -100,17 +103,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($id) {
             $sql = 'UPDATE zawodnicy
-                    SET imie = ?, nazwisko = ?, pozycja = ?, numer = ?, zdjecie = ?, aktywny = ?
+                    SET imie = ?, nazwisko = ?, pozycja = ?, numer = ?, zdjecie = ?, aktywny = ?, kapitan = ?
                     WHERE id = ?';
             baza()->prepare($sql)->execute([
-                $z['imie'], $z['nazwisko'], $z['pozycja'], $numer, $zdjecie, $z['aktywny'], $id,
+                $z['imie'], $z['nazwisko'], $z['pozycja'], $numer, $zdjecie, $z['aktywny'], $z['kapitan'], $id,
             ]);
             komunikat('Dane zawodnika zapisane.');
         } else {
-            $sql = 'INSERT INTO zawodnicy (imie, nazwisko, pozycja, numer, zdjecie, aktywny)
-                    VALUES (?, ?, ?, ?, ?, ?)';
+            $sql = 'INSERT INTO zawodnicy (imie, nazwisko, pozycja, numer, zdjecie, aktywny, kapitan)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)';
             baza()->prepare($sql)->execute([
-                $z['imie'], $z['nazwisko'], $z['pozycja'], $numer, $zdjecie, $z['aktywny'],
+                $z['imie'], $z['nazwisko'], $z['pozycja'], $numer, $zdjecie, $z['aktywny'], $z['kapitan'],
             ]);
             komunikat('Zawodnik dodany do kadry.');
         }
@@ -164,6 +167,11 @@ naglowek($id ? 'Edycja zawodnika' : 'Nowy zawodnik');
     <label class="przelacznik">
         <input type="checkbox" name="aktywny" value="1"<?= $z['aktywny'] ? ' checked' : '' ?>>
         <span>W kadrze — odznacz, gdy zawodnik odszedł z klubu. Zniknie ze strony, ale zostanie w bazie.</span>
+    </label>
+
+    <label class="przelacznik">
+        <input type="checkbox" name="kapitan" value="1"<?= !empty($z['kapitan']) ? ' checked' : '' ?>>
+        <span>Kapitan — obok nazwiska na stronie pojawi się „C". Przy rolach sztabu pomijane.</span>
     </label>
 
     <div class="zdjecie-pole">

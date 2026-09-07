@@ -1199,11 +1199,34 @@ a.marquee__item {
 }
 
 .player__name strong {
-    display: block;
+    /* flex zamiast block, żeby znak kapitana stanął w jednej linii
+       z nazwiskiem i wyrównał się do jego środka, a nie do linii bazowej */
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
     font-size: 1.25rem;
     font-weight: 800;
     letter-spacing: -0.01em;
     text-transform: uppercase;
+}
+
+/* Opaska kapitana. Kwadrat, nie kółko — cała strona jest zbudowana z ostrych
+   prostokątów i krążek byłby tu jedynym zaokrągleniem. Sam kontur zamiast
+   wypełnienia, bo obok leży duży, pełny złoty numer: dwie plamy tego samego
+   koloru biłyby się o uwagę, a kontur czyta się jak naszywka na rękawie. */
+.player__kapitan {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 1.45em;
+    height: 1.45em;
+    border: 2px solid var(--gold);
+    box-shadow: 0 0 0 3px rgba(255, 185, 0, 0.12);
+    color: var(--gold);
+    font-size: 0.6em;
+    line-height: 1;
+    letter-spacing: 0;
 }
 
 /* ---------- OKNO Z PEŁNĄ TREŚCIĄ POSTA ---------- */
