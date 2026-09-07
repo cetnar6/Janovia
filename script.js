@@ -1315,16 +1315,20 @@
         return '<article class="player" data-reveal="' + kierunek + '" style="--d:' + (Math.min(i, 8) * 80) + 'ms">' +
                '<div class="player__photo">' + foto + '</div>' +
                '<div class="player__label">' +
-                   /* bez numeru nie ma czego pokazać — pusty element z kreską
-                      tylko odsuwałby nazwisko od krawędzi kafelka */
-                   (z.numer !== null ? '<span class="player__no">' + z.numer + '</span>' : '') +
+                   /* Numer i opaska stoją w jednej kolumnie, jedno pod drugim.
+                      Bez numeru i bez opaski nie ma czego pokazać — pusty
+                      element tylko odsuwałby nazwisko od krawędzi kafelka. */
+                   (z.numer !== null || z.kapitan
+                       ? '<span class="player__nr">' +
+                             (z.numer !== null ? '<span class="player__no">' + z.numer + '</span>' : '') +
+                             /* samo „C" nic nie mówi czytnikowi ekranu ani osobie,
+                                która nie zna piłkarskiej konwencji — stąd podpis */
+                             (z.kapitan ? '<span class="player__kapitan" role="img" aria-label="Kapitan" title="Kapitan">C</span>' : '') +
+                         '</span>'
+                       : '') +
                    '<span class="player__name">' +
                        '<small>' + esc(z.imie) + '</small>' +
-                       '<strong>' + esc(z.nazwisko) +
-                           /* samo „C" nic nie mówi czytnikowi ekranu ani osobie,
-                              która nie zna piłkarskiej konwencji — stąd podpis */
-                           (z.kapitan ? '<span class="player__kapitan" role="img" aria-label="Kapitan" title="Kapitan">C</span>' : '') +
-                       '</strong>' +
+                       '<strong>' + esc(z.nazwisko) + '</strong>' +
                        '<em class="player__poz">' + esc(z.pozycja) + '</em>' +
                    '</span>' +
                '</div>' +

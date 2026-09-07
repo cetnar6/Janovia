@@ -1174,6 +1174,15 @@ a.marquee__item {
     padding-top: 1rem;
 }
 
+/* numer i opaska kapitana jedno pod drugim; wyśrodkowane względem siebie,
+   żeby przy jednocyfrowym numerze stos nie wyglądał na przypadkowy */
+.player__nr {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+}
+
 .player__no {
     font-size: 2.2rem;
     font-weight: 800;
@@ -1199,11 +1208,7 @@ a.marquee__item {
 }
 
 .player__name strong {
-    /* flex zamiast block, żeby znak kapitana stanął w jednej linii
-       z nazwiskiem i wyrównał się do jego środka, a nie do linii bazowej */
-    display: flex;
-    align-items: center;
-    gap: 0.45rem;
+    display: block;
     font-size: 1.25rem;
     font-weight: 800;
     letter-spacing: -0.01em;
@@ -1219,12 +1224,13 @@ a.marquee__item {
     align-items: center;
     justify-content: center;
     flex: none;
-    width: 1.45em;
-    height: 1.45em;
+    width: 1.5em;
+    height: 1.5em;
     border: 2px solid var(--gold);
     box-shadow: 0 0 0 3px rgba(255, 185, 0, 0.12);
     color: var(--gold);
-    font-size: 0.6em;
+    font-size: 0.75rem;
+    font-weight: 800;
     line-height: 1;
     letter-spacing: 0;
 }
