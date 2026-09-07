@@ -12,7 +12,8 @@ CREATE TABLE IF NOT EXISTS zawodnicy (
     id        INTEGER PRIMARY KEY AUTOINCREMENT,
     imie      TEXT    NOT NULL,
     nazwisko  TEXT    NOT NULL,
-    pozycja   TEXT    NOT NULL CHECK (pozycja IN ('bramkarz','obrońca','pomocnik','napastnik','sztab')),
+    pozycja   TEXT    NOT NULL CHECK (pozycja IN ('bramkarz','obrońca','pomocnik','napastnik',
+                                                   'trener','asystent trenera','trener bramkarzy','kierownik','masażysta','sztab')),
     numer     INTEGER CHECK (numer IS NULL OR (numer BETWEEN 1 AND 99)),
     -- sama nazwa pliku z katalogu uploads/zawodnicy, nie zawartość obrazu
     zdjecie   TEXT,

@@ -8,12 +8,14 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/inc/layout.php';
 require_once __DIR__ . '/inc/zdjecia.php';
+require_once __DIR__ . '/inc/migracje.php';
 
 wymagaj_logowania();
 
-// 'sztab' to trener, kierownik i reszta ludzi wokół drużyny — mają własną
-// grupę na podstronie kadry i zwykle nie mają numeru na koszulce
-const POZYCJE = ['bramkarz', 'obrońca', 'pomocnik', 'napastnik', 'sztab'];
+/* Lista pozycji mieszka razem z migracjami, bo to ona wyznacza schemat bazy.
+   Trzymanie tu drugiej kopii kończyłoby się panelem oferującym rolę, której
+   baza nie zna — a wtedy MySQL po cichu zapisuje pustą wartość. */
+const POZYCJE = POZYCJE_W_SCHEMACIE;
 
 $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 $bledy = [];
@@ -50,9 +52,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Sztab nie gra, więc numeru na koszulce nie ma. Czyścimy pole zamiast
     // zwracać błąd: wpisany numer to najwyżej pomyłka przy zmianie pozycji
-    // zawodnika na sztab, a nie powód, żeby blokować zapis. Przy okazji
+    // zawodnika na rolę sztabu, a nie powód, żeby blokować zapis. Przy okazji
     // numer wraca do puli dla grających.
-    if ($z['pozycja'] === 'sztab') {
+    if (czy_sztab($z['pozycja'])) {
         $z['numer'] = '';
     }
 
@@ -155,7 +157,7 @@ naglowek($id ? 'Edycja zawodnika' : 'Nowy zawodnik');
 
         <label>Numer na koszulce
             <input type="number" name="numer" min="1" max="99" value="<?= e((string) $z['numer']) ?>">
-            <small>Można zostawić puste. Przy pozycji „Sztab” numer jest pomijany.</small>
+            <small>Można zostawić puste. Przy rolach sztabu numer jest pomijany.</small>
         </label>
     </div>
 

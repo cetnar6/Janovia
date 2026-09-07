@@ -1337,9 +1337,19 @@
 
     /* ---------- pełna kadra wg pozycji (podstrona kadra.html) ---------- */
 
-    /* Sztab na końcu, za wszystkimi formacjami — to układ czytany jak
-       ustawienie na boisku: bramka, obrona, pomoc, atak, a za nimi ławka. */
-    var POZYCJE_KOLEJNOSC = ['bramkarz', 'obrońca', 'pomocnik', 'napastnik', 'sztab'];
+    /* Kolejność czytana jak ustawienie na boisku: bramka, obrona, pomoc,
+       atak, a za nimi ławka. Role sztabu są tu wypisane osobno, bo wyznaczają
+       porządek wewnątrz sekcji „Sztab" — trener przed masażystą. */
+    var POZYCJE_KOLEJNOSC = [
+        'bramkarz', 'obrońca', 'pomocnik', 'napastnik',
+        'trener', 'asystent trenera', 'trener bramkarzy', 'kierownik', 'masażysta', 'sztab',
+    ];
+
+    /* Role sztabu dzielą jedną sekcję. Pod nazwiskiem zostaje konkretna rola —
+       „kierownik" mówi więcej niż „sztab" — ale nagłówków nie mnożymy, bo
+       sekcja z jednym masażystą wyglądałaby jak pomyłka. */
+    var ROLE_SZTABU = ['trener', 'asystent trenera', 'trener bramkarzy', 'kierownik', 'masażysta', 'sztab'];
+
     var POZYCJE_ETYKIETA = {
         bramkarz: 'Bramkarze',
         obrońca: 'Obrońcy',
@@ -1347,6 +1357,12 @@
         napastnik: 'Napastnicy',
         sztab: 'Sztab',
     };
+
+    /* Klucz sekcji, do której trafia zawodnik: grający idą po swojej pozycji,
+       cały sztab ląduje razem pod 'sztab'. */
+    function grupaPozycji(pozycja) {
+        return ROLE_SZTABU.indexOf(pozycja) !== -1 ? 'sztab' : pozycja;
+    }
 
     function rysujKadre(dane) {
         var box = document.getElementById('kadra-pelna');
@@ -1359,8 +1375,18 @@
 
         var wgPozycji = {};
         dane.zawodnicy.forEach(function (z) {
-            (wgPozycji[z.pozycja] = wgPozycji[z.pozycja] || []).push(z);
+            var g = grupaPozycji(z.pozycja);
+            (wgPozycji[g] = wgPozycji[g] || []).push(z);
         });
+
+        /* Wewnątrz sekcji sztabu porządek wyznacza rola, nie nazwisko —
+           inaczej masażysta potrafiłby stanąć przed trenerem. Reszta sekcji
+           zostaje w kolejności z eksportu, czyli po numerach. */
+        if (wgPozycji.sztab) {
+            wgPozycji.sztab.sort(function (a, b) {
+                return POZYCJE_KOLEJNOSC.indexOf(a.pozycja) - POZYCJE_KOLEJNOSC.indexOf(b.pozycja);
+            });
+        }
 
         // znane pozycje w ustalonej kolejności, potem cokolwiek nietypowego na końcu
         var kolejnosc = POZYCJE_KOLEJNOSC.concat(

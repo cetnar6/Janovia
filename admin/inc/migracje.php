@@ -14,7 +14,41 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/db.php';
 
-const POZYCJE_W_SCHEMACIE = ['bramkarz', 'obrońca', 'pomocnik', 'napastnik', 'sztab'];
+/* Pozycje grających — kolejność jak ustawienie na boisku. */
+const POZYCJE_GRAJACE = ['bramkarz', 'obrońca', 'pomocnik', 'napastnik'];
+
+/* Role sztabu. Na stronie trafiają do jednej sekcji „Sztab", ale pod nazwiskiem
+   każdy ma swoją rolę — „kierownik" mówi więcej niż „sztab". Dopisanie kolejnej
+   roli to jedna pozycja w tej tablicy: schemat bazy dociąga się z niej sam,
+   panel bierze z niej listę wyboru, a strona kolejność w sekcji.
+   'sztab' zostaje jako ogólny worek na kogoś bez konkretnej funkcji. */
+const POZYCJE_SZTABU = [
+    'trener',
+    'asystent trenera',
+    'trener bramkarzy',
+    'kierownik',
+    'masażysta',
+    'sztab',
+];
+
+const POZYCJE_W_SCHEMACIE = [
+    'bramkarz', 'obrońca', 'pomocnik', 'napastnik',
+    'trener', 'asystent trenera', 'trener bramkarzy', 'kierownik', 'masażysta', 'sztab',
+];
+
+/** Czy to ktoś wokół drużyny, a nie zawodnik — sztab numeru na koszulce nie ma. */
+function czy_sztab(string $pozycja): bool
+{
+    return in_array($pozycja, POZYCJE_SZTABU, true);
+}
+
+/** Lista pozycji w SQL-owym zapisie: 'bramkarz','obrońca',... */
+function pozycje_do_sql(): string
+{
+    return implode(',', array_map(static function (string $p): string {
+        return "'" . $p . "'";
+    }, POZYCJE_W_SCHEMACIE));
+}
 
 /** Czy baza to MySQL (hosting), czy SQLite (praca lokalna). */
 function sterownik_bazy(): string
@@ -50,21 +84,31 @@ function migracje(): array
 {
     return [
         [
-            'id'    => 'sztab',
-            'nazwa' => 'Pozycja „sztab" w tabeli zawodników',
-            'opis'  => 'Bez niej panel przyjmuje trenera, ale zapisuje go z pustą pozycją '
-                     . '— na stronie ląduje w grupie bez nazwy.',
+            'id'    => 'pozycje',
+            'nazwa' => 'Lista pozycji i ról w tabeli zawodników',
+            'opis'  => 'Baza zna węższy zestaw niż panel. Do czasu aktualizacji zapis roli, '
+                     . 'której nie zna, kończy się pustą pozycją zamiast błędu.',
 
             'potrzebna' => static function (): bool {
-                return strpos(definicja_pozycji(), 'sztab') === false;
+                $definicja = definicja_pozycji();
+
+                foreach (POZYCJE_W_SCHEMACIE as $p) {
+                    /* Szukamy wartości razem z apostrofami. Bez nich „trener"
+                       znalazłby się w „asystent trenera" i migracja uznałaby,
+                       że rola już jest, choć jej nie ma. */
+                    if (strpos($definicja, "'" . $p . "'") === false) {
+                        return true;
+                    }
+                }
+
+                return false;
             },
 
             'zastosuj' => static function (PDO $db): void {
+                $lista = pozycje_do_sql();
+
                 if (sterownik_bazy() === 'mysql') {
-                    $db->exec(
-                        "ALTER TABLE zawodnicy
-                            MODIFY pozycja ENUM('bramkarz','obrońca','pomocnik','napastnik','sztab') NOT NULL"
-                    );
+                    $db->exec("ALTER TABLE zawodnicy MODIFY pozycja ENUM($lista) NOT NULL");
                     return;
                 }
 
@@ -76,7 +120,7 @@ function migracje(): array
                         id        INTEGER PRIMARY KEY AUTOINCREMENT,
                         imie      TEXT    NOT NULL,
                         nazwisko  TEXT    NOT NULL,
-                        pozycja   TEXT    NOT NULL CHECK (pozycja IN ('bramkarz','obrońca','pomocnik','napastnik','sztab')),
+                        pozycja   TEXT    NOT NULL CHECK (pozycja IN ($lista)),
                         numer     INTEGER CHECK (numer IS NULL OR (numer BETWEEN 1 AND 99)),
                         zdjecie   TEXT,
                         aktywny   INTEGER NOT NULL DEFAULT 1 CHECK (aktywny IN (0,1)),
