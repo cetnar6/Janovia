@@ -325,21 +325,128 @@
     }
 
     /* =========================================
-       5. STRZAŁKI KARUZEL
+       5. KARUZELE — STRZAŁKI I AUTOPRZEWIJANIE
        ========================================= */
+
+    /* Szerokość jednego kroku mierzymy jako odległość między początkami dwóch
+       sąsiednich kart. To jedyna miara odporna na wszystko naraz: gap podany
+       w rem, padding pasa, zaokrąglenia subpikselowe. Liczenie „szerokość
+       karty + gap" potrafi się rozjechać z rzeczywistym rozstawem. */
+    function szerokoscKroku(rail) {
+        var karty = rail.children;
+        if (!karty.length) { return 0; }
+
+        if (karty.length > 1) {
+            return karty[1].offsetLeft - karty[0].offsetLeft;
+        }
+
+        return karty[0].getBoundingClientRect().width;
+    }
+
+    function przesunKaruzele(rail, kierunek) {
+        var krok = szerokoscKroku(rail);
+        if (!krok) { return; }
+
+        rail.scrollBy({
+            left: krok * kierunek,
+            behavior: reduced ? 'auto' : 'smooth'
+        });
+    }
 
     document.querySelectorAll('[data-rail]').forEach(function (btn) {
         btn.addEventListener('click', function () {
             var rail = document.querySelector('[data-rail-id="' + btn.getAttribute('data-rail') + '"]');
             if (!rail || !rail.firstElementChild) { return; }
 
-            var step = rail.firstElementChild.getBoundingClientRect().width + 20;
-            rail.scrollBy({
-                left: step * parseInt(btn.getAttribute('data-dir'), 10),
-                behavior: reduced ? 'auto' : 'smooth'
-            });
+            przesunKaruzele(rail, parseInt(btn.getAttribute('data-dir'), 10));
         });
     });
+
+    /* ---------- autoprzewijanie karuzeli drużyny ----------
+       Ruch jest schodkowy: co kilka sekund o dokładnie jednego zawodnika.
+       Do równej krawędzi dociąga scroll-snap z CSS, więc karty nigdy nie
+       zatrzymują się w połowie. Po dojechaniu do końca pas wraca na start. */
+
+    var AUTO_KROK = 4000;        // odstęp między krokami
+    var AUTO_WZNOWIENIE = 9000;  // cisza po ręcznej interakcji, zanim ruszy samo
+
+    function autoprzewijanie(rail) {
+        /* reduced-motion: użytkownik prosił system o brak animacji — sam
+           ruszający się pas jest dokładnie tym, czego wtedy nie chce. */
+        if (!rail || reduced) { return; }
+
+        var timer = null;
+        var wstrzymane = false;   // kursor na karuzeli albo ręczna interakcja
+        var widoczna = false;     // sekcja w polu widzenia
+
+        function przewijalna() {
+            return rail.scrollWidth - rail.clientWidth > 1;
+        }
+
+        function krok() {
+            if (wstrzymane || !widoczna || document.hidden || !przewijalna()) { return; }
+
+            // 2 px zapasu na zaokrąglenia przy nietypowym powiększeniu strony
+            var naKoncu = rail.scrollLeft + rail.clientWidth >= rail.scrollWidth - 2;
+
+            if (naKoncu) {
+                rail.scrollTo({ left: 0, behavior: 'smooth' });
+            } else {
+                przesunKaruzele(rail, 1);
+            }
+        }
+
+        function start() {
+            if (timer === null) { timer = setInterval(krok, AUTO_KROK); }
+        }
+
+        function stop() {
+            clearInterval(timer);
+            timer = null;
+        }
+
+        /* Ręczny gest ma pierwszeństwo: pas staje i daje chwilę na obejrzenie
+           tego, do czego użytkownik sam dojechał, zanim wróci do swojego rytmu. */
+        var wznowienie = null;
+
+        function wstrzymajNaChwile() {
+            wstrzymane = true;
+            clearTimeout(wznowienie);
+            wznowienie = setTimeout(function () { wstrzymane = false; }, AUTO_WZNOWIENIE);
+        }
+
+        // najechanie na karuzelę zatrzymuje ją na stałe — inaczej karta
+        // uciekałaby spod kursora w trakcie oglądania zawodnika
+        rail.addEventListener('mouseenter', function () { wstrzymane = true; });
+        rail.addEventListener('mouseleave', function () {
+            clearTimeout(wznowienie);
+            wstrzymane = false;
+        });
+
+        rail.addEventListener('focusin', function () { wstrzymane = true; });
+        rail.addEventListener('focusout', function () { wstrzymane = false; });
+
+        rail.addEventListener('pointerdown', wstrzymajNaChwile);
+        rail.addEventListener('wheel', wstrzymajNaChwile, { passive: true });
+        rail.addEventListener('touchstart', wstrzymajNaChwile, { passive: true });
+
+        document.querySelectorAll('[data-rail="team"]').forEach(function (btn) {
+            btn.addEventListener('click', wstrzymajNaChwile);
+        });
+
+        // poza ekranem nie ma po co pracować ani przesuwać pasa w tle
+        if (window.IntersectionObserver) {
+            new IntersectionObserver(function (wpisy) {
+                widoczna = wpisy[0].isIntersecting;
+                widoczna ? start() : stop();
+            }, { threshold: 0.2 }).observe(rail);
+        } else {
+            widoczna = true;
+            start();
+        }
+    }
+
+    autoprzewijanie(document.querySelector('[data-rail-id="team"]'));
 
     /* =========================================
        6. MENU MOBILNE
