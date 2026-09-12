@@ -159,6 +159,32 @@ function liga_na_iso(?string $termin, int $rokJesien, int $rokWiosna): ?string
 }
 
 /**
+ * Rozpoznaje uwagi typu „w pierwotnym terminie (13 września, 11:00) odwołany".
+ * 90minut nie oznacza przełożonych spotkań osobnym polem — zostaje treść
+ * dopisku, więc szukamy w niej słów, które o przełożeniu mówią wprost.
+ */
+function liga_czy_przelozony(string $uwaga): bool
+{
+    return (bool) preg_match(
+        '~pierwotn|przeł|przel|odwoł|odwol|przeniesion|zaleg~ui',
+        $uwaga
+    );
+}
+
+/**
+ * Pierwotny termin z dopisku — 90minut trzyma go w nawiasie:
+ * „w pierwotnym terminie (13 września, 11:00) odwołany".
+ * Karta meczu pokazuje z niego krótkie „przełożony z 13 września",
+ * bo cały dopisek rozpycha kafelek na dwie linijki.
+ */
+function liga_termin_pierwotny(string $uwaga): ?string
+{
+    if ($uwaga === '' || !liga_czy_przelozony($uwaga)) { return null; }
+
+    return preg_match('~\(([^)]+)\)~u', $uwaga, $m) ? trim($m[1]) : null;
+}
+
+/**
  * Nagłówek kolejki: <b><u>Kolejka 3 - 5-6 września</u></b>
  * Mecz: cztery komórki — gospodarz | wynik lub „-" | gość | termin.
  *
@@ -168,10 +194,16 @@ function liga_na_iso(?string $termin, int $rokJesien, int $rokWiosna): ?string
 function liga_parsuj_terminarz(string $html, int $rokJesien, int $rokWiosna): array
 {
     $wzorNaglowka = '~<b><u>\s*Kolejka\s*(\d+)\s*(?:-\s*([^<]*?))?\s*</u></b>~s';
+
+    /* Piąta grupa to wiersz z uwagą, który 90minut dokleja pod meczem
+       („w pierwotnym terminie … odwołany"). Bez niej przełożone spotkanie
+       wyglądało jak zwykły termin w listopadzie i nic nie tłumaczyło,
+       czemu kolejka 4 rozgrywa się po kolejce 11. */
     $wzorWiersza  = '~<td nowrap valign="top" width="180">(.*?)</td>\s*'
                   . '<td nowrap valign="top" align="center" width="50">(.*?)</td>\s*'
                   . '<td nowrap valign="top" width="180">(.*?)</td>\s*'
-                  . '<td valign="top" nowrap align="left" width="190">(.*?)</td>~s';
+                  . '<td valign="top" nowrap align="left" width="190">(.*?)</td>'
+                  . '(?:\s*</tr>\s*<tr[^>]*>\s*<td[^>]*colspan="4"[^>]*>(.*?)</td>)?~s';
 
     preg_match_all($wzorNaglowka, $html, $naglowki, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
 
@@ -198,6 +230,7 @@ function liga_parsuj_terminarz(string $html, int $rokJesien, int $rokWiosna): ar
 
             $wynik  = liga_czysc($w[2]);
             $termin = liga_czysc($w[4]);
+            $uwaga  = isset($w[5]) ? liga_czysc($w[5]) : '';
             $zTerminu = liga_na_iso($termin, $rokJesien, $rokWiosna);
 
             $mecze[] = [
@@ -210,6 +243,9 @@ function liga_parsuj_terminarz(string $html, int $rokJesien, int $rokWiosna): ar
                 // dokładny termin bywa pusty — wtedy bierzemy dzień z nagłówka kolejki
                 'data_iso'         => $zTerminu ?? liga_na_iso($etykieta, $rokJesien, $rokWiosna),
                 'data_przyblizona' => $zTerminu === null,
+                'uwaga'            => $uwaga !== '' ? $uwaga : null,
+                'przelozony'       => $uwaga !== '' && liga_czy_przelozony($uwaga),
+                'termin_pierwotny' => liga_termin_pierwotny($uwaga),
             ];
         }
     }
@@ -320,6 +356,18 @@ function aktualizuj_lige(bool $dryRun = false): array
 
     $nadchodzace = array_values(array_filter($nasze, static fn(array $m): bool => !$m['wynik']));
     $rozegrane   = array_values(array_filter($nasze, static fn(array $m): bool => (bool) $m['wynik']));
+
+    /* Do tej pory wystarczała kolejność z terminarza, bo kolejki idą po sobie.
+       Mecz przełożony na listopad łamie tę zasadę — bez sortowania kolejka 4
+       wyprzedzała w „nadchodzących" wszystko, co gramy wcześniej, i to na nią
+       szło odliczanie na stronie głównej. Terminy nieznane lądują na końcu. */
+    usort($nadchodzace, static function (array $a, array $b): int {
+        if ($a['data_iso'] === null || $b['data_iso'] === null) {
+            return ($a['data_iso'] === null) <=> ($b['data_iso'] === null);
+        }
+
+        return strcmp($a['data_iso'], $b['data_iso']);
+    });
 
     $dane = [
         'zrodlo'           => LIGA_URL,

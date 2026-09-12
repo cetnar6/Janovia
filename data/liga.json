@@ -2,127 +2,127 @@
   "zrodlo": "http://www.90minut.pl/liga/1/liga15094.html",
   "liga": "Klasa B 2026/2027, grupa: Rzeszów VI - Mielec",
   "klub": "Janovia Janowiec",
-  "zaktualizowano": "2026-08-31T04:06:15",
+  "zaktualizowano": "2026-09-12T12:19:21",
   "tabela": [
     {
       "poz": 1,
-      "klub": "Hetman Dąbrówka Wisłocka",
-      "m": 2,
-      "pkt": 6,
-      "z": 2,
+      "klub": "Sokół Pień",
+      "m": 3,
+      "pkt": 9,
+      "z": 3,
       "r": 0,
       "p": 0,
-      "bramki": "11-2"
+      "bramki": "12-1"
     },
     {
       "poz": 2,
       "klub": "Janovia Janowiec",
-      "m": 2,
-      "pkt": 6,
-      "z": 2,
+      "m": 3,
+      "pkt": 9,
+      "z": 3,
       "r": 0,
       "p": 0,
-      "bramki": "6-0"
+      "bramki": "9-1"
     },
     {
       "poz": 3,
-      "klub": "Sokół Pień",
-      "m": 2,
-      "pkt": 6,
+      "klub": "Atut II Podborze",
+      "m": 3,
+      "pkt": 7,
       "z": 2,
-      "r": 0,
+      "r": 1,
       "p": 0,
-      "bramki": "6-0"
+      "bramki": "8-6"
     },
     {
       "poz": 4,
-      "klub": "Atut II Podborze",
-      "m": 2,
-      "pkt": 4,
-      "z": 1,
-      "r": 1,
-      "p": 0,
-      "bramki": "5-4"
+      "klub": "Hetman Dąbrówka Wisłocka",
+      "m": 3,
+      "pkt": 6,
+      "z": 2,
+      "r": 0,
+      "p": 1,
+      "bramki": "13-5"
     },
     {
       "poz": 5,
-      "klub": "Piast II Wadowice Górne",
-      "m": 2,
-      "pkt": 3,
-      "z": 1,
+      "klub": "Madras Goleszów",
+      "m": 3,
+      "pkt": 6,
+      "z": 2,
       "r": 0,
       "p": 1,
-      "bramki": "10-3"
+      "bramki": "5-13"
     },
     {
       "poz": 6,
-      "klub": "KS SMP Tuszyma",
-      "m": 2,
-      "pkt": 3,
+      "klub": "Sprint Żarówka",
+      "m": 3,
+      "pkt": 4,
       "z": 1,
-      "r": 0,
-      "p": 1,
-      "bramki": "3-6"
-    },
-    {
-      "poz": 7,
-      "klub": "KS Zgórsko",
-      "m": 2,
-      "pkt": 3,
-      "z": 1,
-      "r": 0,
+      "r": 1,
       "p": 1,
       "bramki": "5-5"
     },
     {
-      "poz": 8,
-      "klub": "Madras Goleszów",
-      "m": 2,
+      "poz": 7,
+      "klub": "KS SMP Tuszyma",
+      "m": 3,
       "pkt": 3,
       "z": 1,
       "r": 0,
-      "p": 1,
-      "bramki": "3-12"
+      "p": 2,
+      "bramki": "4-8"
+    },
+    {
+      "poz": 8,
+      "klub": "Jamnica Dulcza Wielka",
+      "m": 3,
+      "pkt": 3,
+      "z": 1,
+      "r": 0,
+      "p": 2,
+      "bramki": "4-8"
     },
     {
       "poz": 9,
-      "klub": "Sprint Żarówka",
-      "m": 2,
-      "pkt": 1,
-      "z": 0,
-      "r": 1,
-      "p": 1,
-      "bramki": "1-4"
+      "klub": "Piast II Wadowice Górne",
+      "m": 3,
+      "pkt": 3,
+      "z": 1,
+      "r": 0,
+      "p": 2,
+      "bramki": "11-7"
     },
     {
       "poz": 10,
-      "klub": "LKS Wierzchowiny",
-      "m": 2,
-      "pkt": 0,
-      "z": 0,
+      "klub": "KS Zgórsko",
+      "m": 3,
+      "pkt": 3,
+      "z": 1,
       "r": 0,
       "p": 2,
-      "bramki": "4-6"
+      "bramki": "7-8"
     },
     {
       "poz": 11,
-      "klub": "Jamnica Dulcza Wielka",
-      "m": 2,
+      "klub": "LKS Wierzchowiny",
+      "m": 3,
       "pkt": 0,
       "z": 0,
       "r": 0,
-      "p": 2,
-      "bramki": "1-6"
+      "p": 3,
+      "bramki": "5-12"
     },
     {
       "poz": 12,
       "klub": "Apollo Dulcza Mała",
-      "m": 2,
+      "m": 3,
       "pkt": 0,
       "z": 0,
       "r": 0,
-      "p": 2,
-      "bramki": "4-11"
+      "p": 3,
+      "bramki": "5-14"
     }
   ],
   "forma": {
@@ -140,6 +140,13 @@
         "rezultat": "1-7",
         "kolejka": 2,
         "gdzie": "u siebie"
+      },
+      {
+        "wynik": "P",
+        "rywal": "Janovia Janowiec",
+        "rezultat": "1-3",
+        "kolejka": 3,
+        "gdzie": "na wyjeździe"
       }
     ],
     "Atut II Podborze": [
@@ -156,6 +163,13 @@
         "rezultat": "1-1",
         "kolejka": 2,
         "gdzie": "u siebie"
+      },
+      {
+        "wynik": "Z",
+        "rywal": "Hetman Dąbrówka Wisłocka",
+        "rezultat": "3-2",
+        "kolejka": 3,
+        "gdzie": "na wyjeździe"
       }
     ],
     "Hetman Dąbrówka Wisłocka": [
@@ -172,6 +186,13 @@
         "rezultat": "7-1",
         "kolejka": 2,
         "gdzie": "na wyjeździe"
+      },
+      {
+        "wynik": "P",
+        "rywal": "Atut II Podborze",
+        "rezultat": "2-3",
+        "kolejka": 3,
+        "gdzie": "u siebie"
       }
     ],
     "Jamnica Dulcza Wielka": [
@@ -188,6 +209,13 @@
         "rezultat": "0-2",
         "kolejka": 2,
         "gdzie": "u siebie"
+      },
+      {
+        "wynik": "Z",
+        "rywal": "KS Zgórsko",
+        "rezultat": "3-2",
+        "kolejka": 3,
+        "gdzie": "na wyjeździe"
       }
     ],
     "Janovia Janowiec": [
@@ -204,6 +232,13 @@
         "rezultat": "2-0",
         "kolejka": 2,
         "gdzie": "na wyjeździe"
+      },
+      {
+        "wynik": "Z",
+        "rywal": "Apollo Dulcza Mała",
+        "rezultat": "3-1",
+        "kolejka": 3,
+        "gdzie": "u siebie"
       }
     ],
     "KS SMP Tuszyma": [
@@ -220,6 +255,13 @@
         "rezultat": "3-2",
         "kolejka": 2,
         "gdzie": "u siebie"
+      },
+      {
+        "wynik": "P",
+        "rywal": "Madras Goleszów",
+        "rezultat": "1-2",
+        "kolejka": 3,
+        "gdzie": "na wyjeździe"
       }
     ],
     "KS Zgórsko": [
@@ -236,6 +278,13 @@
         "rezultat": "2-3",
         "kolejka": 2,
         "gdzie": "na wyjeździe"
+      },
+      {
+        "wynik": "P",
+        "rywal": "Jamnica Dulcza Wielka",
+        "rezultat": "2-3",
+        "kolejka": 3,
+        "gdzie": "u siebie"
       }
     ],
     "LKS Wierzchowiny": [
@@ -252,6 +301,13 @@
         "rezultat": "2-3",
         "kolejka": 2,
         "gdzie": "u siebie"
+      },
+      {
+        "wynik": "P",
+        "rywal": "Sokół Pień",
+        "rezultat": "1-6",
+        "kolejka": 3,
+        "gdzie": "na wyjeździe"
       }
     ],
     "Madras Goleszów": [
@@ -268,6 +324,13 @@
         "rezultat": "3-2",
         "kolejka": 2,
         "gdzie": "na wyjeździe"
+      },
+      {
+        "wynik": "Z",
+        "rywal": "KS SMP Tuszyma",
+        "rezultat": "2-1",
+        "kolejka": 3,
+        "gdzie": "u siebie"
       }
     ],
     "Piast II Wadowice Górne": [
@@ -284,6 +347,13 @@
         "rezultat": "0-3",
         "kolejka": 2,
         "gdzie": "u siebie"
+      },
+      {
+        "wynik": "P",
+        "rywal": "Sprint Żarówka",
+        "rezultat": "1-4",
+        "kolejka": 3,
+        "gdzie": "na wyjeździe"
       }
     ],
     "Sokół Pień": [
@@ -300,6 +370,13 @@
         "rezultat": "3-0",
         "kolejka": 2,
         "gdzie": "na wyjeździe"
+      },
+      {
+        "wynik": "Z",
+        "rywal": "LKS Wierzchowiny",
+        "rezultat": "6-1",
+        "kolejka": 3,
+        "gdzie": "u siebie"
       }
     ],
     "Sprint Żarówka": [
@@ -316,106 +393,114 @@
         "rezultat": "1-1",
         "kolejka": 2,
         "gdzie": "na wyjeździe"
+      },
+      {
+        "wynik": "Z",
+        "rywal": "Piast II Wadowice Górne",
+        "rezultat": "4-1",
+        "kolejka": 3,
+        "gdzie": "u siebie"
       }
     ]
   },
   "ostatnia_kolejka": {
-    "numer": 2,
-    "opis": "29-30 sierpnia",
+    "numer": 3,
+    "opis": "5-6 września",
     "rozegrana": true,
     "mecze": [
       {
-        "kolejka": 2,
-        "kolejka_opis": "29-30 sierpnia",
-        "gospodarz": "Atut II Podborze",
-        "gosc": "Sprint Żarówka",
-        "wynik": "1-1",
-        "termin": "30 sierpnia, 14:00",
-        "data_iso": "2026-08-30T14:00:00",
-        "data_przyblizona": false
-      },
-      {
-        "kolejka": 2,
-        "kolejka_opis": "29-30 sierpnia",
-        "gospodarz": "Piast II Wadowice Górne",
-        "gosc": "Sokół Pień",
-        "wynik": "0-3",
-        "termin": "29 sierpnia, 17:00",
-        "data_iso": "2026-08-29T17:00:00",
-        "data_przyblizona": false
-      },
-      {
-        "kolejka": 2,
-        "kolejka_opis": "29-30 sierpnia",
-        "gospodarz": "LKS Wierzchowiny",
-        "gosc": "Madras Goleszów",
+        "kolejka": 3,
+        "kolejka_opis": "5-6 września",
+        "gospodarz": "Hetman Dąbrówka Wisłocka",
+        "gosc": "Atut II Podborze",
         "wynik": "2-3",
-        "termin": "30 sierpnia, 14:00",
-        "data_iso": "2026-08-30T14:00:00",
-        "data_przyblizona": false
+        "termin": "5 września, 16:00",
+        "data_iso": "2026-09-05T16:00:00",
+        "data_przyblizona": false,
+        "uwaga": null,
+        "przelozony": false,
+        "termin_pierwotny": null
       },
       {
-        "kolejka": 2,
-        "kolejka_opis": "29-30 sierpnia",
-        "gospodarz": "KS SMP Tuszyma",
-        "gosc": "KS Zgórsko",
-        "wynik": "3-2",
-        "termin": "30 sierpnia, 14:00",
-        "data_iso": "2026-08-30T14:00:00",
-        "data_przyblizona": false
+        "kolejka": 3,
+        "kolejka_opis": "5-6 września",
+        "gospodarz": "Janovia Janowiec",
+        "gosc": "Apollo Dulcza Mała",
+        "wynik": "3-1",
+        "termin": "6 września, 13:00",
+        "data_iso": "2026-09-06T13:00:00",
+        "data_przyblizona": false,
+        "uwaga": null,
+        "przelozony": false,
+        "termin_pierwotny": null
       },
       {
-        "kolejka": 2,
-        "kolejka_opis": "29-30 sierpnia",
-        "gospodarz": "Jamnica Dulcza Wielka",
-        "gosc": "Janovia Janowiec",
-        "wynik": "0-2",
-        "termin": "30 sierpnia, 14:00",
-        "data_iso": "2026-08-30T14:00:00",
-        "data_przyblizona": false
+        "kolejka": 3,
+        "kolejka_opis": "5-6 września",
+        "gospodarz": "KS Zgórsko",
+        "gosc": "Jamnica Dulcza Wielka",
+        "wynik": "2-3",
+        "termin": "6 września, 12:30",
+        "data_iso": "2026-09-06T12:30:00",
+        "data_przyblizona": false,
+        "uwaga": null,
+        "przelozony": false,
+        "termin_pierwotny": null
       },
       {
-        "kolejka": 2,
-        "kolejka_opis": "29-30 sierpnia",
-        "gospodarz": "Apollo Dulcza Mała",
-        "gosc": "Hetman Dąbrówka Wisłocka",
-        "wynik": "1-7",
-        "termin": "30 sierpnia, 13:00",
-        "data_iso": "2026-08-30T13:00:00",
-        "data_przyblizona": false
+        "kolejka": 3,
+        "kolejka_opis": "5-6 września",
+        "gospodarz": "Madras Goleszów",
+        "gosc": "KS SMP Tuszyma",
+        "wynik": "2-1",
+        "termin": "6 września, 11:00",
+        "data_iso": "2026-09-06T11:00:00",
+        "data_przyblizona": false,
+        "uwaga": null,
+        "przelozony": false,
+        "termin_pierwotny": null
+      },
+      {
+        "kolejka": 3,
+        "kolejka_opis": "5-6 września",
+        "gospodarz": "Sokół Pień",
+        "gosc": "LKS Wierzchowiny",
+        "wynik": "6-1",
+        "termin": "5 września, 17:00",
+        "data_iso": "2026-09-05T17:00:00",
+        "data_przyblizona": false,
+        "uwaga": null,
+        "przelozony": false,
+        "termin_pierwotny": null
+      },
+      {
+        "kolejka": 3,
+        "kolejka_opis": "5-6 września",
+        "gospodarz": "Sprint Żarówka",
+        "gosc": "Piast II Wadowice Górne",
+        "wynik": "4-1",
+        "termin": "6 września, 14:00",
+        "data_iso": "2026-09-06T14:00:00",
+        "data_przyblizona": false,
+        "uwaga": null,
+        "przelozony": false,
+        "termin_pierwotny": null
       }
     ]
   },
   "nadchodzace": [
-    {
-      "kolejka": 3,
-      "kolejka_opis": "5-6 września",
-      "gospodarz": "Janovia Janowiec",
-      "gosc": "Apollo Dulcza Mała",
-      "wynik": null,
-      "termin": "6 września, 13:00",
-      "data_iso": "2026-09-06T13:00:00",
-      "data_przyblizona": false
-    },
-    {
-      "kolejka": 4,
-      "kolejka_opis": "12-13 września",
-      "gospodarz": "Hetman Dąbrówka Wisłocka",
-      "gosc": "Janovia Janowiec",
-      "wynik": null,
-      "termin": null,
-      "data_iso": "2026-09-12T00:00:00",
-      "data_przyblizona": true
-    },
     {
       "kolejka": 5,
       "kolejka_opis": "19-20 września",
       "gospodarz": "Janovia Janowiec",
       "gosc": "Atut II Podborze",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-09-19T00:00:00",
-      "data_przyblizona": true
+      "termin": "20 września, 13:00",
+      "data_iso": "2026-09-20T13:00:00",
+      "data_przyblizona": false,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 6,
@@ -425,7 +510,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-09-26T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 7,
@@ -435,7 +523,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-10-03T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 8,
@@ -445,7 +536,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-10-10T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 9,
@@ -455,7 +549,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-10-17T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 10,
@@ -465,18 +562,50 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-10-24T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
+    },
+    {
+      "kolejka": 11,
+      "kolejka_opis": "7-8 listopada",
+      "gospodarz": "LKS Wierzchowiny",
+      "gosc": "Janovia Janowiec",
+      "wynik": null,
+      "termin": null,
+      "data_iso": "2026-11-07T00:00:00",
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
+    },
+    {
+      "kolejka": 4,
+      "kolejka_opis": "12-13 września",
+      "gospodarz": "Hetman Dąbrówka Wisłocka",
+      "gosc": "Janovia Janowiec",
+      "wynik": null,
+      "termin": "11 listopada, 14:00",
+      "data_iso": "2026-11-11T14:00:00",
+      "data_przyblizona": false,
+      "uwaga": "w pierwotnym terminie (13 września, 11:00) odwołany",
+      "przelozony": true,
+      "termin_pierwotny": "13 września, 11:00"
     }
   ],
   "ostatni": {
-    "kolejka": 2,
-    "kolejka_opis": "29-30 sierpnia",
-    "gospodarz": "Jamnica Dulcza Wielka",
-    "gosc": "Janovia Janowiec",
-    "wynik": "0-2",
-    "termin": "30 sierpnia, 14:00",
-    "data_iso": "2026-08-30T14:00:00",
-    "data_przyblizona": false
+    "kolejka": 3,
+    "kolejka_opis": "5-6 września",
+    "gospodarz": "Janovia Janowiec",
+    "gosc": "Apollo Dulcza Mała",
+    "wynik": "3-1",
+    "termin": "6 września, 13:00",
+    "data_iso": "2026-09-06T13:00:00",
+    "data_przyblizona": false,
+    "uwaga": null,
+    "przelozony": false,
+    "termin_pierwotny": null
   },
   "wszystkie_mecze": [
     {
@@ -487,7 +616,10 @@
       "wynik": "3-4",
       "termin": "22 sierpnia, 17:00",
       "data_iso": "2026-08-22T17:00:00",
-      "data_przyblizona": false
+      "data_przyblizona": false,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 1,
@@ -497,7 +629,10 @@
       "wynik": "4-1",
       "termin": "23 sierpnia, 11:00",
       "data_iso": "2026-08-23T11:00:00",
-      "data_przyblizona": false
+      "data_przyblizona": false,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 1,
@@ -507,7 +642,10 @@
       "wynik": "4-0",
       "termin": "23 sierpnia, 13:00",
       "data_iso": "2026-08-23T13:00:00",
-      "data_przyblizona": false
+      "data_przyblizona": false,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 1,
@@ -517,7 +655,10 @@
       "wynik": "3-2",
       "termin": "23 sierpnia, 11:00",
       "data_iso": "2026-08-23T11:00:00",
-      "data_przyblizona": false
+      "data_przyblizona": false,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 1,
@@ -527,7 +668,10 @@
       "wynik": "0-10",
       "termin": "23 sierpnia, 11:00",
       "data_iso": "2026-08-23T11:00:00",
-      "data_przyblizona": false
+      "data_przyblizona": false,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 1,
@@ -537,7 +681,10 @@
       "wynik": "3-0",
       "termin": "22 sierpnia, 14:00",
       "data_iso": "2026-08-22T14:00:00",
-      "data_przyblizona": false
+      "data_przyblizona": false,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 2,
@@ -547,7 +694,10 @@
       "wynik": "1-1",
       "termin": "30 sierpnia, 14:00",
       "data_iso": "2026-08-30T14:00:00",
-      "data_przyblizona": false
+      "data_przyblizona": false,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 2,
@@ -557,7 +707,10 @@
       "wynik": "0-3",
       "termin": "29 sierpnia, 17:00",
       "data_iso": "2026-08-29T17:00:00",
-      "data_przyblizona": false
+      "data_przyblizona": false,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 2,
@@ -567,7 +720,10 @@
       "wynik": "2-3",
       "termin": "30 sierpnia, 14:00",
       "data_iso": "2026-08-30T14:00:00",
-      "data_przyblizona": false
+      "data_przyblizona": false,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 2,
@@ -577,7 +733,10 @@
       "wynik": "3-2",
       "termin": "30 sierpnia, 14:00",
       "data_iso": "2026-08-30T14:00:00",
-      "data_przyblizona": false
+      "data_przyblizona": false,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 2,
@@ -587,7 +746,10 @@
       "wynik": "0-2",
       "termin": "30 sierpnia, 14:00",
       "data_iso": "2026-08-30T14:00:00",
-      "data_przyblizona": false
+      "data_przyblizona": false,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 2,
@@ -597,67 +759,88 @@
       "wynik": "1-7",
       "termin": "30 sierpnia, 13:00",
       "data_iso": "2026-08-30T13:00:00",
-      "data_przyblizona": false
+      "data_przyblizona": false,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 3,
       "kolejka_opis": "5-6 września",
       "gospodarz": "Hetman Dąbrówka Wisłocka",
       "gosc": "Atut II Podborze",
-      "wynik": null,
+      "wynik": "2-3",
       "termin": "5 września, 16:00",
       "data_iso": "2026-09-05T16:00:00",
-      "data_przyblizona": false
+      "data_przyblizona": false,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 3,
       "kolejka_opis": "5-6 września",
       "gospodarz": "Janovia Janowiec",
       "gosc": "Apollo Dulcza Mała",
-      "wynik": null,
+      "wynik": "3-1",
       "termin": "6 września, 13:00",
       "data_iso": "2026-09-06T13:00:00",
-      "data_przyblizona": false
+      "data_przyblizona": false,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 3,
       "kolejka_opis": "5-6 września",
       "gospodarz": "KS Zgórsko",
       "gosc": "Jamnica Dulcza Wielka",
-      "wynik": null,
+      "wynik": "2-3",
       "termin": "6 września, 12:30",
       "data_iso": "2026-09-06T12:30:00",
-      "data_przyblizona": false
+      "data_przyblizona": false,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 3,
       "kolejka_opis": "5-6 września",
       "gospodarz": "Madras Goleszów",
       "gosc": "KS SMP Tuszyma",
-      "wynik": null,
+      "wynik": "2-1",
       "termin": "6 września, 11:00",
       "data_iso": "2026-09-06T11:00:00",
-      "data_przyblizona": false
+      "data_przyblizona": false,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 3,
       "kolejka_opis": "5-6 września",
       "gospodarz": "Sokół Pień",
       "gosc": "LKS Wierzchowiny",
-      "wynik": null,
+      "wynik": "6-1",
       "termin": "5 września, 17:00",
       "data_iso": "2026-09-05T17:00:00",
-      "data_przyblizona": false
+      "data_przyblizona": false,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 3,
       "kolejka_opis": "5-6 września",
       "gospodarz": "Sprint Żarówka",
       "gosc": "Piast II Wadowice Górne",
-      "wynik": null,
+      "wynik": "4-1",
       "termin": "6 września, 14:00",
       "data_iso": "2026-09-06T14:00:00",
-      "data_przyblizona": false
+      "data_przyblizona": false,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 4,
@@ -665,9 +848,12 @@
       "gospodarz": "Atut II Podborze",
       "gosc": "Piast II Wadowice Górne",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-09-12T00:00:00",
-      "data_przyblizona": true
+      "termin": "13 września, 14:00",
+      "data_iso": "2026-09-13T14:00:00",
+      "data_przyblizona": false,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 4,
@@ -675,9 +861,12 @@
       "gospodarz": "LKS Wierzchowiny",
       "gosc": "Sprint Żarówka",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-09-12T00:00:00",
-      "data_przyblizona": true
+      "termin": "13 września, 11:00",
+      "data_iso": "2026-09-13T11:00:00",
+      "data_przyblizona": false,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 4,
@@ -685,9 +874,12 @@
       "gospodarz": "KS SMP Tuszyma",
       "gosc": "Sokół Pień",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-09-12T00:00:00",
-      "data_przyblizona": true
+      "termin": "13 września, 14:00",
+      "data_iso": "2026-09-13T14:00:00",
+      "data_przyblizona": false,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 4,
@@ -695,9 +887,12 @@
       "gospodarz": "Jamnica Dulcza Wielka",
       "gosc": "Madras Goleszów",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-09-12T00:00:00",
-      "data_przyblizona": true
+      "termin": "13 września, 14:00",
+      "data_iso": "2026-09-13T14:00:00",
+      "data_przyblizona": false,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 4,
@@ -705,9 +900,12 @@
       "gospodarz": "Apollo Dulcza Mała",
       "gosc": "KS Zgórsko",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-09-12T00:00:00",
-      "data_przyblizona": true
+      "termin": "13 września, 13:00",
+      "data_iso": "2026-09-13T13:00:00",
+      "data_przyblizona": false,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 4,
@@ -715,9 +913,12 @@
       "gospodarz": "Hetman Dąbrówka Wisłocka",
       "gosc": "Janovia Janowiec",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-09-12T00:00:00",
-      "data_przyblizona": true
+      "termin": "11 listopada, 14:00",
+      "data_iso": "2026-11-11T14:00:00",
+      "data_przyblizona": false,
+      "uwaga": "w pierwotnym terminie (13 września, 11:00) odwołany",
+      "przelozony": true,
+      "termin_pierwotny": "13 września, 11:00"
     },
     {
       "kolejka": 5,
@@ -725,9 +926,12 @@
       "gospodarz": "Janovia Janowiec",
       "gosc": "Atut II Podborze",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-09-19T00:00:00",
-      "data_przyblizona": true
+      "termin": "20 września, 13:00",
+      "data_iso": "2026-09-20T13:00:00",
+      "data_przyblizona": false,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 5,
@@ -735,9 +939,12 @@
       "gospodarz": "KS Zgórsko",
       "gosc": "Hetman Dąbrówka Wisłocka",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-09-19T00:00:00",
-      "data_przyblizona": true
+      "termin": "20 września, 11:00",
+      "data_iso": "2026-09-20T11:00:00",
+      "data_przyblizona": false,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 5,
@@ -745,9 +952,12 @@
       "gospodarz": "Madras Goleszów",
       "gosc": "Apollo Dulcza Mała",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-09-19T00:00:00",
-      "data_przyblizona": true
+      "termin": "20 września, 11:00",
+      "data_iso": "2026-09-20T11:00:00",
+      "data_przyblizona": false,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 5,
@@ -755,9 +965,12 @@
       "gospodarz": "Sokół Pień",
       "gosc": "Jamnica Dulcza Wielka",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-09-19T00:00:00",
-      "data_przyblizona": true
+      "termin": "20 września, 17:00",
+      "data_iso": "2026-09-20T17:00:00",
+      "data_przyblizona": false,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 5,
@@ -765,9 +978,12 @@
       "gospodarz": "Sprint Żarówka",
       "gosc": "KS SMP Tuszyma",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-09-19T00:00:00",
-      "data_przyblizona": true
+      "termin": "20 września, 11:00",
+      "data_iso": "2026-09-20T11:00:00",
+      "data_przyblizona": false,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 5,
@@ -775,9 +991,12 @@
       "gospodarz": "Piast II Wadowice Górne",
       "gosc": "LKS Wierzchowiny",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-09-19T00:00:00",
-      "data_przyblizona": true
+      "termin": "20 września, 11:00",
+      "data_iso": "2026-09-20T11:00:00",
+      "data_przyblizona": false,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 6,
@@ -787,7 +1006,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-09-26T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 6,
@@ -797,7 +1019,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-09-26T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 6,
@@ -807,7 +1032,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-09-26T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 6,
@@ -817,7 +1045,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-09-26T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 6,
@@ -827,7 +1058,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-09-26T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 6,
@@ -837,7 +1071,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-09-26T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 7,
@@ -847,7 +1084,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-10-03T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 7,
@@ -857,7 +1097,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-10-03T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 7,
@@ -867,7 +1110,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-10-03T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 7,
@@ -877,7 +1123,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-10-03T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 7,
@@ -887,7 +1136,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-10-03T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 7,
@@ -897,7 +1149,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-10-03T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 8,
@@ -907,7 +1162,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-10-10T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 8,
@@ -917,7 +1175,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-10-10T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 8,
@@ -927,7 +1188,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-10-10T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 8,
@@ -937,7 +1201,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-10-10T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 8,
@@ -947,7 +1214,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-10-10T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 8,
@@ -957,7 +1227,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-10-10T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 9,
@@ -967,7 +1240,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-10-17T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 9,
@@ -977,7 +1253,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-10-17T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 9,
@@ -987,7 +1266,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-10-17T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 9,
@@ -997,7 +1279,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-10-17T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 9,
@@ -1007,7 +1292,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-10-17T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 9,
@@ -1017,7 +1305,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-10-17T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 10,
@@ -1027,7 +1318,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-10-24T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 10,
@@ -1037,7 +1331,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-10-24T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 10,
@@ -1047,7 +1344,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-10-24T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 10,
@@ -1057,7 +1357,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-10-24T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 10,
@@ -1067,7 +1370,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-10-24T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 10,
@@ -1077,7 +1383,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-10-24T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 11,
@@ -1087,7 +1396,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-11-07T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 11,
@@ -1097,7 +1409,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-11-07T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 11,
@@ -1107,7 +1422,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-11-07T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 11,
@@ -1117,7 +1435,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-11-07T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 11,
@@ -1127,7 +1448,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-11-07T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 11,
@@ -1137,7 +1461,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": "2026-11-07T00:00:00",
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 12,
@@ -1147,7 +1474,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 12,
@@ -1157,7 +1487,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 12,
@@ -1167,7 +1500,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 12,
@@ -1177,7 +1513,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 12,
@@ -1187,7 +1526,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 12,
@@ -1197,7 +1539,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 13,
@@ -1207,7 +1552,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 13,
@@ -1217,7 +1565,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 13,
@@ -1227,7 +1578,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 13,
@@ -1237,7 +1591,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 13,
@@ -1247,7 +1604,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 13,
@@ -1257,7 +1617,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 14,
@@ -1267,7 +1630,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 14,
@@ -1277,7 +1643,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 14,
@@ -1287,7 +1656,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 14,
@@ -1297,7 +1669,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 14,
@@ -1307,7 +1682,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 14,
@@ -1317,7 +1695,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 15,
@@ -1327,7 +1708,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 15,
@@ -1337,7 +1721,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 15,
@@ -1347,7 +1734,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 15,
@@ -1357,7 +1747,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 15,
@@ -1367,7 +1760,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 15,
@@ -1377,7 +1773,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 16,
@@ -1387,7 +1786,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 16,
@@ -1397,7 +1799,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 16,
@@ -1407,7 +1812,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 16,
@@ -1417,7 +1825,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 16,
@@ -1427,7 +1838,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 16,
@@ -1437,7 +1851,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 17,
@@ -1447,7 +1864,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 17,
@@ -1457,7 +1877,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 17,
@@ -1467,7 +1890,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 17,
@@ -1477,7 +1903,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 17,
@@ -1487,7 +1916,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 17,
@@ -1497,7 +1929,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 18,
@@ -1507,7 +1942,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 18,
@@ -1517,7 +1955,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 18,
@@ -1527,7 +1968,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 18,
@@ -1537,7 +1981,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 18,
@@ -1547,7 +1994,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 18,
@@ -1557,7 +2007,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 19,
@@ -1567,7 +2020,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 19,
@@ -1577,7 +2033,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 19,
@@ -1587,7 +2046,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 19,
@@ -1597,7 +2059,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 19,
@@ -1607,7 +2072,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 19,
@@ -1617,7 +2085,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 20,
@@ -1627,7 +2098,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 20,
@@ -1637,7 +2111,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 20,
@@ -1647,7 +2124,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 20,
@@ -1657,7 +2137,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 20,
@@ -1667,7 +2150,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 20,
@@ -1677,7 +2163,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 21,
@@ -1687,7 +2176,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 21,
@@ -1697,7 +2189,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 21,
@@ -1707,7 +2202,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 21,
@@ -1717,7 +2215,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 21,
@@ -1727,7 +2228,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 21,
@@ -1737,7 +2241,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 22,
@@ -1747,7 +2254,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 22,
@@ -1757,7 +2267,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 22,
@@ -1767,7 +2280,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 22,
@@ -1777,7 +2293,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 22,
@@ -1787,7 +2306,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     },
     {
       "kolejka": 22,
@@ -1797,7 +2319,10 @@
       "wynik": null,
       "termin": null,
       "data_iso": null,
-      "data_przyblizona": true
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     }
   ]
 }

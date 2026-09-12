@@ -658,6 +658,31 @@
         return isNaN(koniec) || koniec > Date.now();
     }
 
+    /* Dopisek spod meczu na 90minut („w pierwotnym terminie (13 września,
+       11:00) odwołany"). Bez niego przełożone spotkanie wygląda jak zwykły
+       termin w listopadzie i nic nie tłumaczy, czemu kolejka 4 gra się po
+       jedenastej. Gdy uwaga jest, ale nie umiemy jej odczytać, zostaje sama
+       treść od 90minut — zawsze mówi więcej niż nic. */
+    function uwagaMeczu(m, klasa, krotko) {
+        if (!m || !m.uwaga) { return ''; }
+
+        var tresc = m.uwaga;
+
+        /* Na kafelku w karuzeli cały dopisek łamie się na dwie linijki
+           i zbija herby w dół względem sąsiednich kart — tam wystarczy
+           sam pierwotny dzień, bez godziny. Pełne zdanie zostaje na
+           podstronie z terminarzem, gdzie jest na nie miejsce. */
+        if (krotko && m.przelozony) {
+            tresc = m.termin_pierwotny
+                ? 'przełożony z ' + m.termin_pierwotny.split(',')[0]
+                : 'termin przełożony';
+        }
+
+        return '<span class="' + klasa + (m.przelozony ? ' is-przelozony' : '') + '">' +
+                   esc(tresc) +
+               '</span>';
+    }
+
     /* Jedna karta meczu — używana i w karuzeli na stronie głównej,
        i w pełnej siatce na podstronie z terminarzem. */
     function kartaMeczu(m, i, dane) {
@@ -680,9 +705,11 @@
             liga = DNI_TYGODNIA[data.getDay()] + ' · ' + liga;
         }
 
-        return '<article class="fixture" data-reveal style="--d:' + (i * 80) + 'ms">' +
+        return '<article class="fixture' + (m.przelozony ? ' is-przelozony' : '') + '" ' +
+               'data-reveal style="--d:' + (i * 80) + 'ms">' +
                '<strong class="fixture__date">' + dzien + '</strong>' +
                '<span class="fixture__league">' + esc(liga) + '</span>' +
+               uwagaMeczu(m, 'fixture__uwaga', true) +
                '<div class="fixture__match">' +
                    '<div class="fixture__side">' +
                        herb(m.gospodarz, 'sm') +
@@ -759,7 +786,8 @@
             : (m.etykieta || 'mecz towarzyski');
 
         meta.textContent = skrot(m.gospodarz) + ' — ' + skrot(m.gosc) +
-                           ' · ' + opisKolejki + ' · ' + kiedy;
+                           ' · ' + opisKolejki + ' · ' + kiedy +
+                           (m.przelozony ? ' · termin przełożony' : '');
     }
 
     /* Wywoływane też z zegara, gdy termin minie przy otwartej stronie. */
@@ -1103,18 +1131,27 @@
        godziny nie ma co wypisywać — zostaje sam dzień, a okno („22-23 sierpnia")
        i tak widnieje w nagłówku kolejki. */
     function terminMeczu(m) {
-        if (!m.data_iso) { return '<span class="wynik__termin">—</span>'; }
+        /* Data przełożonego meczu niczym się nie różni od zwykłej, a to ona
+           rzuca się w oczy przy przeglądaniu terminarza — stąd znacznik nad
+           nią. Pełny dopisek z 90minut leci pod wierszem, ale bez prefiksu
+           łatwo go przeoczyć i wyjść na mecz w listopadzie zamiast we wrześniu. */
+        var prefiks = m.przelozony
+            ? '<em class="wynik__przelozony" title="' + esc(m.uwaga || '') + '">przeł.</em>'
+            : '';
+
+        if (!m.data_iso) { return '<span class="wynik__termin">' + prefiks + '—</span>'; }
 
         var d = new Date(m.data_iso);
-        if (isNaN(d.getTime())) { return '<span class="wynik__termin">—</span>'; }
+        if (isNaN(d.getTime())) { return '<span class="wynik__termin">' + prefiks + '—</span>'; }
 
         var dzien = DNI_SKROT[d.getDay()] + ' ' + pad(d.getDate()) + '.' + pad(d.getMonth() + 1);
 
         if (m.data_przyblizona) {
-            return '<span class="wynik__termin"><b>' + dzien + '</b></span>';
+            return '<span class="wynik__termin">' + prefiks + '<b>' + dzien + '</b></span>';
         }
 
         return '<span class="wynik__termin">' +
+                   prefiks +
                    '<b>' + dzien + '</b>' +
                    '<i>' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + '</i>' +
                '</span>';
@@ -1127,7 +1164,8 @@
             ? '<span class="wynik__rezultat">' + esc(m.wynik.replace('-', ' : ')) + '</span>'
             : '<span class="wynik__rezultat wynik__rezultat--brak">–</span>';
 
-        return '<li class="wynik' + (nasz ? ' is-us' : '') + '">' +
+        return '<li class="wynik' + (nasz ? ' is-us' : '') +
+                   (m.uwaga ? ' wynik--uwaga' : '') + '">' +
                    terminMeczu(m) +
                    '<span class="wynik__druzyna wynik__druzyna--gosp">' +
                        '<span>' + esc(skrot(m.gospodarz)) + '</span>' +
@@ -1138,6 +1176,7 @@
                        herb(m.gosc, 'xs') +
                        '<span>' + esc(skrot(m.gosc)) + '</span>' +
                    '</span>' +
+                   uwagaMeczu(m, 'wynik__uwaga') +
                '</li>';
     }
 
@@ -1544,10 +1583,18 @@
                 // terminarza obok ligowych — nierozegrane trafiają do
                 // "nadchodzące", posortowane razem z resztą po dacie
                 var doGrania = panel.mecze.filter(function (m) { return !m.wynik; });
-                dane.nadchodzace = (dane.nadchodzace || []).concat(doGrania).sort(function (a, b) {
-                    return new Date(a.data_iso) - new Date(b.data_iso);
-                });
+                dane.nadchodzace = (dane.nadchodzace || []).concat(doGrania);
             }
+
+            /* Sortujemy zawsze, nie tylko po doklejeniu meczów z panelu.
+               Z 90minut mecze przychodzą w kolejności kolejek, a spotkanie
+               przełożone na listopad stoi wtedy przed wrześniowymi i to na
+               nie szłoby odliczanie. Terminy nieznane lądują na końcu. */
+            dane.nadchodzace = (dane.nadchodzace || []).slice().sort(function (a, b) {
+                var ta = a.data_iso ? new Date(a.data_iso).getTime() : Infinity;
+                var tb = b.data_iso ? new Date(b.data_iso).getTime() : Infinity;
+                return ta - tb;
+            });
 
             /* Mecz bez wpisanego wyniku wisi w danych także po terminie —
                w panelu do czasu uzupełnienia wyniku, u 90minut do aktualizacji
