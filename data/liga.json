@@ -2,138 +2,131 @@
   "zrodlo": "http://www.90minut.pl/liga/1/liga15094.html",
   "liga": "Klasa B 2026/2027, grupa: Rzeszów VI - Mielec",
   "klub": "Janovia Janowiec",
-  "zaktualizowano": "2026-09-12T12:19:21",
+  "zaktualizowano": "2026-09-28T20:54:55",
   "tabela": [
     {
       "poz": 1,
       "klub": "Sokół Pień",
-      "m": 3,
-      "pkt": 9,
-      "z": 3,
+      "m": 6,
+      "pkt": 18,
+      "z": 6,
       "r": 0,
       "p": 0,
-      "bramki": "12-1"
+      "bramki": "22-5"
     },
     {
       "poz": 2,
       "klub": "Janovia Janowiec",
-      "m": 3,
-      "pkt": 9,
-      "z": 3,
-      "r": 0,
+      "m": 5,
+      "pkt": 13,
+      "z": 4,
+      "r": 1,
       "p": 0,
-      "bramki": "9-1"
+      "bramki": "23-3"
     },
     {
       "poz": 3,
-      "klub": "Atut II Podborze",
-      "m": 3,
-      "pkt": 7,
-      "z": 2,
-      "r": 1,
-      "p": 0,
-      "bramki": "8-6"
+      "klub": "Hetman Dąbrówka Wisłocka",
+      "m": 5,
+      "pkt": 12,
+      "z": 4,
+      "r": 0,
+      "p": 1,
+      "bramki": "29-7"
     },
     {
       "poz": 4,
-      "klub": "Hetman Dąbrówka Wisłocka",
-      "m": 3,
-      "pkt": 6,
-      "z": 2,
+      "klub": "Piast II Wadowice Górne",
+      "m": 6,
+      "pkt": 12,
+      "z": 4,
       "r": 0,
-      "p": 1,
-      "bramki": "13-5"
+      "p": 2,
+      "bramki": "26-14"
     },
     {
       "poz": 5,
-      "klub": "Madras Goleszów",
-      "m": 3,
-      "pkt": 6,
-      "z": 2,
-      "r": 0,
+      "klub": "Atut II Podborze",
+      "m": 6,
+      "pkt": 11,
+      "z": 3,
+      "r": 2,
       "p": 1,
-      "bramki": "5-13"
+      "bramki": "16-13"
     },
     {
       "poz": 6,
       "klub": "Sprint Żarówka",
-      "m": 3,
-      "pkt": 4,
-      "z": 1,
+      "m": 6,
+      "pkt": 10,
+      "z": 3,
       "r": 1,
-      "p": 1,
-      "bramki": "5-5"
+      "p": 2,
+      "bramki": "14-11"
     },
     {
       "poz": 7,
-      "klub": "KS SMP Tuszyma",
-      "m": 3,
-      "pkt": 3,
-      "z": 1,
+      "klub": "Jamnica Dulcza Wielka",
+      "m": 6,
+      "pkt": 9,
+      "z": 3,
       "r": 0,
-      "p": 2,
-      "bramki": "4-8"
+      "p": 3,
+      "bramki": "19-13"
     },
     {
       "poz": 8,
-      "klub": "Jamnica Dulcza Wielka",
-      "m": 3,
-      "pkt": 3,
-      "z": 1,
+      "klub": "Madras Goleszów",
+      "m": 6,
+      "pkt": 9,
+      "z": 3,
       "r": 0,
-      "p": 2,
-      "bramki": "4-8"
+      "p": 3,
+      "bramki": "10-31"
     },
     {
       "poz": 9,
-      "klub": "Piast II Wadowice Górne",
-      "m": 3,
-      "pkt": 3,
-      "z": 1,
+      "klub": "KS Zgórsko",
+      "m": 6,
+      "pkt": 6,
+      "z": 2,
       "r": 0,
-      "p": 2,
-      "bramki": "11-7"
+      "p": 4,
+      "bramki": "11-29"
     },
     {
       "poz": 10,
-      "klub": "KS Zgórsko",
-      "m": 3,
+      "klub": "KS SMP Tuszyma",
+      "m": 6,
       "pkt": 3,
       "z": 1,
       "r": 0,
-      "p": 2,
-      "bramki": "7-8"
+      "p": 5,
+      "bramki": "8-20"
     },
     {
       "poz": 11,
       "klub": "LKS Wierzchowiny",
-      "m": 3,
+      "m": 6,
       "pkt": 0,
       "z": 0,
       "r": 0,
-      "p": 3,
-      "bramki": "5-12"
+      "p": 6,
+      "bramki": "11-27"
     },
     {
       "poz": 12,
       "klub": "Apollo Dulcza Mała",
-      "m": 3,
+      "m": 6,
       "pkt": 0,
       "z": 0,
       "r": 0,
-      "p": 3,
-      "bramki": "5-14"
+      "p": 6,
+      "bramki": "8-24"
     }
   ],
   "forma": {
     "Apollo Dulcza Mała": [
-      {
-        "wynik": "P",
-        "rywal": "Atut II Podborze",
-        "rezultat": "3-4",
-        "kolejka": 1,
-        "gdzie": "u siebie"
-      },
       {
         "wynik": "P",
         "rywal": "Hetman Dąbrówka Wisłocka",
@@ -147,16 +140,30 @@
         "rezultat": "1-3",
         "kolejka": 3,
         "gdzie": "na wyjeździe"
+      },
+      {
+        "wynik": "P",
+        "rywal": "KS Zgórsko",
+        "rezultat": "1-2",
+        "kolejka": 4,
+        "gdzie": "u siebie"
+      },
+      {
+        "wynik": "P",
+        "rywal": "Madras Goleszów",
+        "rezultat": "0-5",
+        "kolejka": 5,
+        "gdzie": "na wyjeździe"
+      },
+      {
+        "wynik": "P",
+        "rywal": "Sokół Pień",
+        "rezultat": "2-3",
+        "kolejka": 6,
+        "gdzie": "u siebie"
       }
     ],
     "Atut II Podborze": [
-      {
-        "wynik": "Z",
-        "rywal": "Apollo Dulcza Mała",
-        "rezultat": "4-3",
-        "kolejka": 1,
-        "gdzie": "na wyjeździe"
-      },
       {
         "wynik": "R",
         "rywal": "Sprint Żarówka",
@@ -170,6 +177,27 @@
         "rezultat": "3-2",
         "kolejka": 3,
         "gdzie": "na wyjeździe"
+      },
+      {
+        "wynik": "P",
+        "rywal": "Piast II Wadowice Górne",
+        "rezultat": "2-3",
+        "kolejka": 4,
+        "gdzie": "u siebie"
+      },
+      {
+        "wynik": "R",
+        "rywal": "Janovia Janowiec",
+        "rezultat": "2-2",
+        "kolejka": 5,
+        "gdzie": "na wyjeździe"
+      },
+      {
+        "wynik": "Z",
+        "rywal": "LKS Wierzchowiny",
+        "rezultat": "4-2",
+        "kolejka": 6,
+        "gdzie": "u siebie"
       }
     ],
     "Hetman Dąbrówka Wisłocka": [
@@ -193,16 +221,23 @@
         "rezultat": "2-3",
         "kolejka": 3,
         "gdzie": "u siebie"
+      },
+      {
+        "wynik": "Z",
+        "rywal": "KS Zgórsko",
+        "rezultat": "8-2",
+        "kolejka": 5,
+        "gdzie": "na wyjeździe"
+      },
+      {
+        "wynik": "Z",
+        "rywal": "Madras Goleszów",
+        "rezultat": "8-0",
+        "kolejka": 6,
+        "gdzie": "u siebie"
       }
     ],
     "Jamnica Dulcza Wielka": [
-      {
-        "wynik": "P",
-        "rywal": "Hetman Dąbrówka Wisłocka",
-        "rezultat": "1-4",
-        "kolejka": 1,
-        "gdzie": "na wyjeździe"
-      },
       {
         "wynik": "P",
         "rywal": "Janovia Janowiec",
@@ -216,6 +251,27 @@
         "rezultat": "3-2",
         "kolejka": 3,
         "gdzie": "na wyjeździe"
+      },
+      {
+        "wynik": "Z",
+        "rywal": "Madras Goleszów",
+        "rezultat": "10-0",
+        "kolejka": 4,
+        "gdzie": "u siebie"
+      },
+      {
+        "wynik": "P",
+        "rywal": "Sokół Pień",
+        "rezultat": "2-4",
+        "kolejka": 5,
+        "gdzie": "na wyjeździe"
+      },
+      {
+        "wynik": "Z",
+        "rywal": "Sprint Żarówka",
+        "rezultat": "3-1",
+        "kolejka": 6,
+        "gdzie": "u siebie"
       }
     ],
     "Janovia Janowiec": [
@@ -239,16 +295,23 @@
         "rezultat": "3-1",
         "kolejka": 3,
         "gdzie": "u siebie"
+      },
+      {
+        "wynik": "R",
+        "rywal": "Atut II Podborze",
+        "rezultat": "2-2",
+        "kolejka": 5,
+        "gdzie": "u siebie"
+      },
+      {
+        "wynik": "Z",
+        "rywal": "KS Zgórsko",
+        "rezultat": "12-0",
+        "kolejka": 6,
+        "gdzie": "u siebie"
       }
     ],
     "KS SMP Tuszyma": [
-      {
-        "wynik": "P",
-        "rywal": "Janovia Janowiec",
-        "rezultat": "0-4",
-        "kolejka": 1,
-        "gdzie": "na wyjeździe"
-      },
       {
         "wynik": "Z",
         "rywal": "KS Zgórsko",
@@ -262,16 +325,30 @@
         "rezultat": "1-2",
         "kolejka": 3,
         "gdzie": "na wyjeździe"
+      },
+      {
+        "wynik": "P",
+        "rywal": "Sokół Pień",
+        "rezultat": "0-3",
+        "kolejka": 4,
+        "gdzie": "u siebie"
+      },
+      {
+        "wynik": "P",
+        "rywal": "Sprint Żarówka",
+        "rezultat": "1-4",
+        "kolejka": 5,
+        "gdzie": "na wyjeździe"
+      },
+      {
+        "wynik": "P",
+        "rywal": "Piast II Wadowice Górne",
+        "rezultat": "3-5",
+        "kolejka": 6,
+        "gdzie": "u siebie"
       }
     ],
     "KS Zgórsko": [
-      {
-        "wynik": "Z",
-        "rywal": "LKS Wierzchowiny",
-        "rezultat": "3-2",
-        "kolejka": 1,
-        "gdzie": "u siebie"
-      },
       {
         "wynik": "P",
         "rywal": "KS SMP Tuszyma",
@@ -285,16 +362,30 @@
         "rezultat": "2-3",
         "kolejka": 3,
         "gdzie": "u siebie"
+      },
+      {
+        "wynik": "Z",
+        "rywal": "Apollo Dulcza Mała",
+        "rezultat": "2-1",
+        "kolejka": 4,
+        "gdzie": "na wyjeździe"
+      },
+      {
+        "wynik": "P",
+        "rywal": "Hetman Dąbrówka Wisłocka",
+        "rezultat": "2-8",
+        "kolejka": 5,
+        "gdzie": "u siebie"
+      },
+      {
+        "wynik": "P",
+        "rywal": "Janovia Janowiec",
+        "rezultat": "0-12",
+        "kolejka": 6,
+        "gdzie": "na wyjeździe"
       }
     ],
     "LKS Wierzchowiny": [
-      {
-        "wynik": "P",
-        "rywal": "KS Zgórsko",
-        "rezultat": "2-3",
-        "kolejka": 1,
-        "gdzie": "na wyjeździe"
-      },
       {
         "wynik": "P",
         "rywal": "Madras Goleszów",
@@ -308,16 +399,30 @@
         "rezultat": "1-6",
         "kolejka": 3,
         "gdzie": "na wyjeździe"
-      }
-    ],
-    "Madras Goleszów": [
+      },
+      {
+        "wynik": "P",
+        "rywal": "Sprint Żarówka",
+        "rezultat": "2-4",
+        "kolejka": 4,
+        "gdzie": "u siebie"
+      },
       {
         "wynik": "P",
         "rywal": "Piast II Wadowice Górne",
-        "rezultat": "0-10",
-        "kolejka": 1,
-        "gdzie": "u siebie"
+        "rezultat": "2-7",
+        "kolejka": 5,
+        "gdzie": "na wyjeździe"
       },
+      {
+        "wynik": "P",
+        "rywal": "Atut II Podborze",
+        "rezultat": "2-4",
+        "kolejka": 6,
+        "gdzie": "na wyjeździe"
+      }
+    ],
+    "Madras Goleszów": [
       {
         "wynik": "Z",
         "rywal": "LKS Wierzchowiny",
@@ -331,16 +436,30 @@
         "rezultat": "2-1",
         "kolejka": 3,
         "gdzie": "u siebie"
+      },
+      {
+        "wynik": "P",
+        "rywal": "Jamnica Dulcza Wielka",
+        "rezultat": "0-10",
+        "kolejka": 4,
+        "gdzie": "na wyjeździe"
+      },
+      {
+        "wynik": "Z",
+        "rywal": "Apollo Dulcza Mała",
+        "rezultat": "5-0",
+        "kolejka": 5,
+        "gdzie": "u siebie"
+      },
+      {
+        "wynik": "P",
+        "rywal": "Hetman Dąbrówka Wisłocka",
+        "rezultat": "0-8",
+        "kolejka": 6,
+        "gdzie": "na wyjeździe"
       }
     ],
     "Piast II Wadowice Górne": [
-      {
-        "wynik": "Z",
-        "rywal": "Madras Goleszów",
-        "rezultat": "10-0",
-        "kolejka": 1,
-        "gdzie": "na wyjeździe"
-      },
       {
         "wynik": "P",
         "rywal": "Sokół Pień",
@@ -354,16 +473,30 @@
         "rezultat": "1-4",
         "kolejka": 3,
         "gdzie": "na wyjeździe"
+      },
+      {
+        "wynik": "Z",
+        "rywal": "Atut II Podborze",
+        "rezultat": "3-2",
+        "kolejka": 4,
+        "gdzie": "na wyjeździe"
+      },
+      {
+        "wynik": "Z",
+        "rywal": "LKS Wierzchowiny",
+        "rezultat": "7-2",
+        "kolejka": 5,
+        "gdzie": "u siebie"
+      },
+      {
+        "wynik": "Z",
+        "rywal": "KS SMP Tuszyma",
+        "rezultat": "5-3",
+        "kolejka": 6,
+        "gdzie": "na wyjeździe"
       }
     ],
     "Sokół Pień": [
-      {
-        "wynik": "Z",
-        "rywal": "Sprint Żarówka",
-        "rezultat": "3-0",
-        "kolejka": 1,
-        "gdzie": "u siebie"
-      },
       {
         "wynik": "Z",
         "rywal": "Piast II Wadowice Górne",
@@ -377,16 +510,30 @@
         "rezultat": "6-1",
         "kolejka": 3,
         "gdzie": "u siebie"
+      },
+      {
+        "wynik": "Z",
+        "rywal": "KS SMP Tuszyma",
+        "rezultat": "3-0",
+        "kolejka": 4,
+        "gdzie": "na wyjeździe"
+      },
+      {
+        "wynik": "Z",
+        "rywal": "Jamnica Dulcza Wielka",
+        "rezultat": "4-2",
+        "kolejka": 5,
+        "gdzie": "u siebie"
+      },
+      {
+        "wynik": "Z",
+        "rywal": "Apollo Dulcza Mała",
+        "rezultat": "3-2",
+        "kolejka": 6,
+        "gdzie": "na wyjeździe"
       }
     ],
     "Sprint Żarówka": [
-      {
-        "wynik": "P",
-        "rywal": "Sokół Pień",
-        "rezultat": "0-3",
-        "kolejka": 1,
-        "gdzie": "na wyjeździe"
-      },
       {
         "wynik": "R",
         "rywal": "Atut II Podborze",
@@ -400,87 +547,108 @@
         "rezultat": "4-1",
         "kolejka": 3,
         "gdzie": "u siebie"
+      },
+      {
+        "wynik": "Z",
+        "rywal": "LKS Wierzchowiny",
+        "rezultat": "4-2",
+        "kolejka": 4,
+        "gdzie": "na wyjeździe"
+      },
+      {
+        "wynik": "Z",
+        "rywal": "KS SMP Tuszyma",
+        "rezultat": "4-1",
+        "kolejka": 5,
+        "gdzie": "u siebie"
+      },
+      {
+        "wynik": "P",
+        "rywal": "Jamnica Dulcza Wielka",
+        "rezultat": "1-3",
+        "kolejka": 6,
+        "gdzie": "na wyjeździe"
       }
     ]
   },
   "ostatnia_kolejka": {
-    "numer": 3,
-    "opis": "5-6 września",
+    "numer": 6,
+    "opis": "26-27 września",
     "rozegrana": true,
     "mecze": [
       {
-        "kolejka": 3,
-        "kolejka_opis": "5-6 września",
-        "gospodarz": "Hetman Dąbrówka Wisłocka",
-        "gosc": "Atut II Podborze",
-        "wynik": "2-3",
-        "termin": "5 września, 16:00",
-        "data_iso": "2026-09-05T16:00:00",
-        "data_przyblizona": false,
-        "uwaga": null,
-        "przelozony": false,
-        "termin_pierwotny": null
-      },
-      {
-        "kolejka": 3,
-        "kolejka_opis": "5-6 września",
-        "gospodarz": "Janovia Janowiec",
-        "gosc": "Apollo Dulcza Mała",
-        "wynik": "3-1",
-        "termin": "6 września, 13:00",
-        "data_iso": "2026-09-06T13:00:00",
-        "data_przyblizona": false,
-        "uwaga": null,
-        "przelozony": false,
-        "termin_pierwotny": null
-      },
-      {
-        "kolejka": 3,
-        "kolejka_opis": "5-6 września",
-        "gospodarz": "KS Zgórsko",
-        "gosc": "Jamnica Dulcza Wielka",
-        "wynik": "2-3",
-        "termin": "6 września, 12:30",
-        "data_iso": "2026-09-06T12:30:00",
-        "data_przyblizona": false,
-        "uwaga": null,
-        "przelozony": false,
-        "termin_pierwotny": null
-      },
-      {
-        "kolejka": 3,
-        "kolejka_opis": "5-6 września",
-        "gospodarz": "Madras Goleszów",
-        "gosc": "KS SMP Tuszyma",
-        "wynik": "2-1",
-        "termin": "6 września, 11:00",
-        "data_iso": "2026-09-06T11:00:00",
-        "data_przyblizona": false,
-        "uwaga": null,
-        "przelozony": false,
-        "termin_pierwotny": null
-      },
-      {
-        "kolejka": 3,
-        "kolejka_opis": "5-6 września",
-        "gospodarz": "Sokół Pień",
+        "kolejka": 6,
+        "kolejka_opis": "26-27 września",
+        "gospodarz": "Atut II Podborze",
         "gosc": "LKS Wierzchowiny",
-        "wynik": "6-1",
-        "termin": "5 września, 17:00",
-        "data_iso": "2026-09-05T17:00:00",
+        "wynik": "4-2",
+        "termin": "27 września, 17:00",
+        "data_iso": "2026-09-27T17:00:00",
         "data_przyblizona": false,
         "uwaga": null,
         "przelozony": false,
         "termin_pierwotny": null
       },
       {
-        "kolejka": 3,
-        "kolejka_opis": "5-6 września",
-        "gospodarz": "Sprint Żarówka",
+        "kolejka": 6,
+        "kolejka_opis": "26-27 września",
+        "gospodarz": "KS SMP Tuszyma",
         "gosc": "Piast II Wadowice Górne",
-        "wynik": "4-1",
-        "termin": "6 września, 14:00",
-        "data_iso": "2026-09-06T14:00:00",
+        "wynik": "3-5",
+        "termin": "27 września, 17:00",
+        "data_iso": "2026-09-27T17:00:00",
+        "data_przyblizona": false,
+        "uwaga": null,
+        "przelozony": false,
+        "termin_pierwotny": null
+      },
+      {
+        "kolejka": 6,
+        "kolejka_opis": "26-27 września",
+        "gospodarz": "Jamnica Dulcza Wielka",
+        "gosc": "Sprint Żarówka",
+        "wynik": "3-1",
+        "termin": "27 września, 14:00",
+        "data_iso": "2026-09-27T14:00:00",
+        "data_przyblizona": false,
+        "uwaga": null,
+        "przelozony": false,
+        "termin_pierwotny": null
+      },
+      {
+        "kolejka": 6,
+        "kolejka_opis": "26-27 września",
+        "gospodarz": "Apollo Dulcza Mała",
+        "gosc": "Sokół Pień",
+        "wynik": "2-3",
+        "termin": "27 września, 13:00",
+        "data_iso": "2026-09-27T13:00:00",
+        "data_przyblizona": false,
+        "uwaga": null,
+        "przelozony": false,
+        "termin_pierwotny": null
+      },
+      {
+        "kolejka": 6,
+        "kolejka_opis": "26-27 września",
+        "gospodarz": "Hetman Dąbrówka Wisłocka",
+        "gosc": "Madras Goleszów",
+        "wynik": "8-0",
+        "termin": "27 września, 11:00",
+        "data_iso": "2026-09-27T11:00:00",
+        "data_przyblizona": false,
+        "uwaga": null,
+        "przelozony": false,
+        "termin_pierwotny": null
+      },
+      {
+        "kolejka": 6,
+        "kolejka_opis": "26-27 września",
+        "gospodarz": "Janovia Janowiec",
+        "gosc": "KS Zgórsko",
+        "wynik": "12-0",
+        "termin": "27 września, 13:00",
+        "data_iso": "2026-09-27T13:00:00",
         "data_przyblizona": false,
         "uwaga": null,
         "przelozony": false,
@@ -490,40 +658,14 @@
   },
   "nadchodzace": [
     {
-      "kolejka": 5,
-      "kolejka_opis": "19-20 września",
-      "gospodarz": "Janovia Janowiec",
-      "gosc": "Atut II Podborze",
-      "wynik": null,
-      "termin": "20 września, 13:00",
-      "data_iso": "2026-09-20T13:00:00",
-      "data_przyblizona": false,
-      "uwaga": null,
-      "przelozony": false,
-      "termin_pierwotny": null
-    },
-    {
-      "kolejka": 6,
-      "kolejka_opis": "26-27 września",
-      "gospodarz": "Janovia Janowiec",
-      "gosc": "KS Zgórsko",
-      "wynik": null,
-      "termin": null,
-      "data_iso": "2026-09-26T00:00:00",
-      "data_przyblizona": true,
-      "uwaga": null,
-      "przelozony": false,
-      "termin_pierwotny": null
-    },
-    {
       "kolejka": 7,
       "kolejka_opis": "3-4 października",
       "gospodarz": "Madras Goleszów",
       "gosc": "Janovia Janowiec",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-10-03T00:00:00",
-      "data_przyblizona": true,
+      "termin": "4 października, 11:00",
+      "data_iso": "2026-10-04T11:00:00",
+      "data_przyblizona": false,
       "uwaga": null,
       "przelozony": false,
       "termin_pierwotny": null
@@ -592,16 +734,42 @@
       "uwaga": "w pierwotnym terminie (13 września, 11:00) odwołany",
       "przelozony": true,
       "termin_pierwotny": "13 września, 11:00"
+    },
+    {
+      "kolejka": 12,
+      "kolejka_opis": "",
+      "gospodarz": "KS SMP Tuszyma",
+      "gosc": "Janovia Janowiec",
+      "wynik": null,
+      "termin": null,
+      "data_iso": null,
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
+    },
+    {
+      "kolejka": 13,
+      "kolejka_opis": "",
+      "gospodarz": "Janovia Janowiec",
+      "gosc": "Jamnica Dulcza Wielka",
+      "wynik": null,
+      "termin": null,
+      "data_iso": null,
+      "data_przyblizona": true,
+      "uwaga": null,
+      "przelozony": false,
+      "termin_pierwotny": null
     }
   ],
   "ostatni": {
-    "kolejka": 3,
-    "kolejka_opis": "5-6 września",
+    "kolejka": 6,
+    "kolejka_opis": "26-27 września",
     "gospodarz": "Janovia Janowiec",
-    "gosc": "Apollo Dulcza Mała",
-    "wynik": "3-1",
-    "termin": "6 września, 13:00",
-    "data_iso": "2026-09-06T13:00:00",
+    "gosc": "KS Zgórsko",
+    "wynik": "12-0",
+    "termin": "27 września, 13:00",
+    "data_iso": "2026-09-27T13:00:00",
     "data_przyblizona": false,
     "uwaga": null,
     "przelozony": false,
@@ -847,7 +1015,7 @@
       "kolejka_opis": "12-13 września",
       "gospodarz": "Atut II Podborze",
       "gosc": "Piast II Wadowice Górne",
-      "wynik": null,
+      "wynik": "2-3",
       "termin": "13 września, 14:00",
       "data_iso": "2026-09-13T14:00:00",
       "data_przyblizona": false,
@@ -860,7 +1028,7 @@
       "kolejka_opis": "12-13 września",
       "gospodarz": "LKS Wierzchowiny",
       "gosc": "Sprint Żarówka",
-      "wynik": null,
+      "wynik": "2-4",
       "termin": "13 września, 11:00",
       "data_iso": "2026-09-13T11:00:00",
       "data_przyblizona": false,
@@ -873,7 +1041,7 @@
       "kolejka_opis": "12-13 września",
       "gospodarz": "KS SMP Tuszyma",
       "gosc": "Sokół Pień",
-      "wynik": null,
+      "wynik": "0-3",
       "termin": "13 września, 14:00",
       "data_iso": "2026-09-13T14:00:00",
       "data_przyblizona": false,
@@ -886,7 +1054,7 @@
       "kolejka_opis": "12-13 września",
       "gospodarz": "Jamnica Dulcza Wielka",
       "gosc": "Madras Goleszów",
-      "wynik": null,
+      "wynik": "10-0",
       "termin": "13 września, 14:00",
       "data_iso": "2026-09-13T14:00:00",
       "data_przyblizona": false,
@@ -899,7 +1067,7 @@
       "kolejka_opis": "12-13 września",
       "gospodarz": "Apollo Dulcza Mała",
       "gosc": "KS Zgórsko",
-      "wynik": null,
+      "wynik": "1-2",
       "termin": "13 września, 13:00",
       "data_iso": "2026-09-13T13:00:00",
       "data_przyblizona": false,
@@ -925,9 +1093,9 @@
       "kolejka_opis": "19-20 września",
       "gospodarz": "Janovia Janowiec",
       "gosc": "Atut II Podborze",
-      "wynik": null,
-      "termin": "20 września, 13:00",
-      "data_iso": "2026-09-20T13:00:00",
+      "wynik": "2-2",
+      "termin": "19 września, 16:30",
+      "data_iso": "2026-09-19T16:30:00",
       "data_przyblizona": false,
       "uwaga": null,
       "przelozony": false,
@@ -938,7 +1106,7 @@
       "kolejka_opis": "19-20 września",
       "gospodarz": "KS Zgórsko",
       "gosc": "Hetman Dąbrówka Wisłocka",
-      "wynik": null,
+      "wynik": "2-8",
       "termin": "20 września, 11:00",
       "data_iso": "2026-09-20T11:00:00",
       "data_przyblizona": false,
@@ -951,7 +1119,7 @@
       "kolejka_opis": "19-20 września",
       "gospodarz": "Madras Goleszów",
       "gosc": "Apollo Dulcza Mała",
-      "wynik": null,
+      "wynik": "5-0",
       "termin": "20 września, 11:00",
       "data_iso": "2026-09-20T11:00:00",
       "data_przyblizona": false,
@@ -964,7 +1132,7 @@
       "kolejka_opis": "19-20 września",
       "gospodarz": "Sokół Pień",
       "gosc": "Jamnica Dulcza Wielka",
-      "wynik": null,
+      "wynik": "4-2",
       "termin": "20 września, 17:00",
       "data_iso": "2026-09-20T17:00:00",
       "data_przyblizona": false,
@@ -977,7 +1145,7 @@
       "kolejka_opis": "19-20 września",
       "gospodarz": "Sprint Żarówka",
       "gosc": "KS SMP Tuszyma",
-      "wynik": null,
+      "wynik": "4-1",
       "termin": "20 września, 11:00",
       "data_iso": "2026-09-20T11:00:00",
       "data_przyblizona": false,
@@ -990,7 +1158,7 @@
       "kolejka_opis": "19-20 września",
       "gospodarz": "Piast II Wadowice Górne",
       "gosc": "LKS Wierzchowiny",
-      "wynik": null,
+      "wynik": "7-2",
       "termin": "20 września, 11:00",
       "data_iso": "2026-09-20T11:00:00",
       "data_przyblizona": false,
@@ -1003,10 +1171,10 @@
       "kolejka_opis": "26-27 września",
       "gospodarz": "Atut II Podborze",
       "gosc": "LKS Wierzchowiny",
-      "wynik": null,
-      "termin": null,
-      "data_iso": "2026-09-26T00:00:00",
-      "data_przyblizona": true,
+      "wynik": "4-2",
+      "termin": "27 września, 17:00",
+      "data_iso": "2026-09-27T17:00:00",
+      "data_przyblizona": false,
       "uwaga": null,
       "przelozony": false,
       "termin_pierwotny": null
@@ -1016,10 +1184,10 @@
       "kolejka_opis": "26-27 września",
       "gospodarz": "KS SMP Tuszyma",
       "gosc": "Piast II Wadowice Górne",
-      "wynik": null,
-      "termin": null,
-      "data_iso": "2026-09-26T00:00:00",
-      "data_przyblizona": true,
+      "wynik": "3-5",
+      "termin": "27 września, 17:00",
+      "data_iso": "2026-09-27T17:00:00",
+      "data_przyblizona": false,
       "uwaga": null,
       "przelozony": false,
       "termin_pierwotny": null
@@ -1029,10 +1197,10 @@
       "kolejka_opis": "26-27 września",
       "gospodarz": "Jamnica Dulcza Wielka",
       "gosc": "Sprint Żarówka",
-      "wynik": null,
-      "termin": null,
-      "data_iso": "2026-09-26T00:00:00",
-      "data_przyblizona": true,
+      "wynik": "3-1",
+      "termin": "27 września, 14:00",
+      "data_iso": "2026-09-27T14:00:00",
+      "data_przyblizona": false,
       "uwaga": null,
       "przelozony": false,
       "termin_pierwotny": null
@@ -1042,10 +1210,10 @@
       "kolejka_opis": "26-27 września",
       "gospodarz": "Apollo Dulcza Mała",
       "gosc": "Sokół Pień",
-      "wynik": null,
-      "termin": null,
-      "data_iso": "2026-09-26T00:00:00",
-      "data_przyblizona": true,
+      "wynik": "2-3",
+      "termin": "27 września, 13:00",
+      "data_iso": "2026-09-27T13:00:00",
+      "data_przyblizona": false,
       "uwaga": null,
       "przelozony": false,
       "termin_pierwotny": null
@@ -1055,10 +1223,10 @@
       "kolejka_opis": "26-27 września",
       "gospodarz": "Hetman Dąbrówka Wisłocka",
       "gosc": "Madras Goleszów",
-      "wynik": null,
-      "termin": null,
-      "data_iso": "2026-09-26T00:00:00",
-      "data_przyblizona": true,
+      "wynik": "8-0",
+      "termin": "27 września, 11:00",
+      "data_iso": "2026-09-27T11:00:00",
+      "data_przyblizona": false,
       "uwaga": null,
       "przelozony": false,
       "termin_pierwotny": null
@@ -1068,10 +1236,10 @@
       "kolejka_opis": "26-27 września",
       "gospodarz": "Janovia Janowiec",
       "gosc": "KS Zgórsko",
-      "wynik": null,
-      "termin": null,
-      "data_iso": "2026-09-26T00:00:00",
-      "data_przyblizona": true,
+      "wynik": "12-0",
+      "termin": "27 września, 13:00",
+      "data_iso": "2026-09-27T13:00:00",
+      "data_przyblizona": false,
       "uwaga": null,
       "przelozony": false,
       "termin_pierwotny": null
@@ -1082,9 +1250,9 @@
       "gospodarz": "KS Zgórsko",
       "gosc": "Atut II Podborze",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-10-03T00:00:00",
-      "data_przyblizona": true,
+      "termin": "4 października, 11:00",
+      "data_iso": "2026-10-04T11:00:00",
+      "data_przyblizona": false,
       "uwaga": null,
       "przelozony": false,
       "termin_pierwotny": null
@@ -1095,9 +1263,9 @@
       "gospodarz": "Madras Goleszów",
       "gosc": "Janovia Janowiec",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-10-03T00:00:00",
-      "data_przyblizona": true,
+      "termin": "4 października, 11:00",
+      "data_iso": "2026-10-04T11:00:00",
+      "data_przyblizona": false,
       "uwaga": null,
       "przelozony": false,
       "termin_pierwotny": null
@@ -1108,9 +1276,9 @@
       "gospodarz": "Sokół Pień",
       "gosc": "Hetman Dąbrówka Wisłocka",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-10-03T00:00:00",
-      "data_przyblizona": true,
+      "termin": "3 października, 16:00",
+      "data_iso": "2026-10-03T16:00:00",
+      "data_przyblizona": false,
       "uwaga": null,
       "przelozony": false,
       "termin_pierwotny": null
@@ -1121,9 +1289,9 @@
       "gospodarz": "Sprint Żarówka",
       "gosc": "Apollo Dulcza Mała",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-10-03T00:00:00",
-      "data_przyblizona": true,
+      "termin": "4 października, 11:00",
+      "data_iso": "2026-10-04T11:00:00",
+      "data_przyblizona": false,
       "uwaga": null,
       "przelozony": false,
       "termin_pierwotny": null
@@ -1134,9 +1302,9 @@
       "gospodarz": "Piast II Wadowice Górne",
       "gosc": "Jamnica Dulcza Wielka",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-10-03T00:00:00",
-      "data_przyblizona": true,
+      "termin": "3 października, 16:00",
+      "data_iso": "2026-10-03T16:00:00",
+      "data_przyblizona": false,
       "uwaga": null,
       "przelozony": false,
       "termin_pierwotny": null
@@ -1147,9 +1315,9 @@
       "gospodarz": "LKS Wierzchowiny",
       "gosc": "KS SMP Tuszyma",
       "wynik": null,
-      "termin": null,
-      "data_iso": "2026-10-03T00:00:00",
-      "data_przyblizona": true,
+      "termin": "4 października, 11:00",
+      "data_iso": "2026-10-04T11:00:00",
+      "data_przyblizona": false,
       "uwaga": null,
       "przelozony": false,
       "termin_pierwotny": null
