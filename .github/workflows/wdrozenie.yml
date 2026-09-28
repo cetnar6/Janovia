@@ -38,6 +38,11 @@ jobs:
   wyslij:
     runs-on: ubuntu-latest
 
+    # Wysyłka mieści się w kilku minutach. Limit jest po to, żeby zawieszony
+    # transfer sam padł i zostawił czerwony ślad w historii, zamiast czekać
+    # na ręczne anulowanie.
+    timeout-minutes: 15
+
     steps:
       # ref: main jest tu konieczne. Gdy ten workflow jest wywoływany po
       # aktualizacji danych, domyślny checkout pobrałby commit, który
@@ -94,6 +99,14 @@ jobs:
       # zrobić tego sam — uruchamia zewnętrznego klienta ssh.
       # Osobny, głośny test logowania. Bez niego każda awaria wygląda tak samo
       # i nie wiadomo, czy zawiodło hasło, klucz hosta, czy dopiero transfer.
+      #
+      # net:max-retries 1 jest tu istotne. Domyślnie lftp ponawia logowanie
+      # w nieskończoność, z rosnącą przerwą — przy złym haśle przebieg wisiał
+      # kilkadziesiąt minut na powtarzanym "Permission denied", aż ktoś go
+      # ręcznie anulował. Anulowany przebieg nie wygląda w historii na awarię,
+      # więc łatwo przeoczyć, że wdrożenie nigdy nie doszło do serwera —
+      # tak właśnie commit z 12.09 został na GitHubie, a strona chodziła
+      # dalej na poprzedniej wersji skryptu.
       - name: Sprawdź połączenie
         env:
           HOST: ${{ secrets.FTP_HOST }}
@@ -101,7 +114,10 @@ jobs:
           SSHPASS: ${{ secrets.FTP_PASSWORD }}
         run: |
           echo "Host: [$HOST]  Użytkownik: [$UZYTKOWNIK]  Długość hasła: ${#SSHPASS}"
-          lftp -c "set sftp:connect-program 'sshpass -e ssh -a -x -o StrictHostKeyChecking=yes'; debug 3; open -u '$UZYTKOWNIK',dummy sftp://$HOST; pwd; ls"
+          if ! lftp -c "set cmd:fail-exit true; set net:max-retries 1; set net:timeout 20; set sftp:connect-program 'sshpass -e ssh -a -x -o StrictHostKeyChecking=yes'; debug 3; open -u '$UZYTKOWNIK',dummy sftp://$HOST; pwd; ls"; then
+            echo "::error::Serwer odrzucił logowanie SFTP. Sprawdź sekrety FTP_USER i FTP_PASSWORD (hasło konta OVH cluster121) — dopóki są złe, żadna zmiana nie trafia na janovia.pl."
+            exit 1
+          fi
 
       # Cała komenda mirror w JEDNEJ linii. lftp ma własny parser i nie łamie
       # poleceń odwrotnym ukośnikiem tak jak shell — rozbicie na wiele linii

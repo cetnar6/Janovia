@@ -651,6 +651,15 @@
         return m.data_przyblizona ? czas + 2 * 86400000 : czas + CZAS_MECZU_MS;
     }
 
+    /* Klucz do sortowania „nadchodzących". Mecz bez terminu (kolejki wiosenne,
+       których 90minut jeszcze nie rozpisało) i mecz z datą nie do odczytania
+       trafiają na koniec listy — inaczej pchałyby się przed najbliższe
+       spotkanie i to one wychodziłyby na karuzelę i odliczanie. */
+    function czasSortowania(m) {
+        var czas = m && m.data_iso ? new Date(m.data_iso).getTime() : NaN;
+        return isNaN(czas) ? Infinity : czas;
+    }
+
     /* Mecz bez czytelnej daty zostaje — lepiej pokazać go z „—" niż po cichu
        zgubić pozycję z terminarza. */
     function czyPrzyszly(m) {
@@ -1591,9 +1600,14 @@
                przełożone na listopad stoi wtedy przed wrześniowymi i to na
                nie szłoby odliczanie. Terminy nieznane lądują na końcu. */
             dane.nadchodzace = (dane.nadchodzace || []).slice().sort(function (a, b) {
-                var ta = a.data_iso ? new Date(a.data_iso).getTime() : Infinity;
-                var tb = b.data_iso ? new Date(b.data_iso).getTime() : Infinity;
-                return ta - tb;
+                var ta = czasSortowania(a);
+                var tb = czasSortowania(b);
+
+                /* Odejmowanie samo w sobie nie wystarczy: dwa nieznane terminy
+                   dają Infinity - Infinity, czyli NaN, a komparator zwracający
+                   NaN przestaje być spójny i sort układa listę byle jak. */
+                if (ta === tb) { return 0; }
+                return ta < tb ? -1 : 1;
             });
 
             /* Mecz bez wpisanego wyniku wisi w danych także po terminie —
