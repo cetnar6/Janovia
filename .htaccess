@@ -58,7 +58,7 @@ RedirectMatch 404 /node_modules/
 </FilesMatch>
 
 # pliki konfiguracyjne panelu — nigdy przez HTTP
-<FilesMatch "^config(\.przyklad)?\.php$">
+<FilesMatch "^(config(\.przyklad)?|fb-token)\.php$">
     Require all denied
 </FilesMatch>
 

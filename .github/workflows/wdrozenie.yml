@@ -90,6 +90,34 @@ jobs:
             --exclude '.gitignore'
           echo "Do wysłania: $(find wysylka -type f | wc -l) plików, $(du -sh wysylka | cut -f1)"
 
+      # Token Facebooka nie może leżeć w repozytorium, a config.php na serwerze
+      # jest wykluczony z wysyłki (trzyma hasło do MySQL), więc nie da się go
+      # podmienić wdrożeniem. Stąd osobny plik: powstaje tutaj, z sekretu,
+      # i jedzie z resztą. Rotacja tokenu to odtąd podmiana sekretu + wdrożenie,
+      # bez logowania się na SFTP.
+      #
+      # Pusty sekret przerywa przebieg zamiast wysłać stronę po cichu z martwym
+      # tokenem — inaczej objaw (brak nowych postów) wyszedłby dopiero po dobie,
+      # a wdrożenie świeciłoby na zielono.
+      - name: Dołóż token Facebooka z sekretu
+        env:
+          FB_TOKEN: ${{ secrets.FB_TOKEN }}
+        run: |
+          if [ -z "$FB_TOKEN" ]; then
+            echo "::error::Sekret FB_TOKEN jest pusty. Ustaw go w Settings → Secrets → Actions, inaczej cron na serwerze nie pobierze postów."
+            exit 1
+          fi
+          # token z Graph API to [A-Za-z0-9_-]; apostrof albo ukośnik rozwaliłby
+          # składnię zapisywanego PHP, więc odrzucamy je zamiast zgadywać
+          case "$FB_TOKEN" in
+            *\'*|*\\*) echo "::error::FB_TOKEN zawiera apostrof lub ukośnik wsteczny — to nie wygląda na token z Graph API."; exit 1 ;;
+          esac
+          mkdir -p wysylka/admin/inc
+          printf '<?php\n/* Zapisane przez wdrożenie z sekretu FB_TOKEN. Nie edytować ręcznie —\n   następne wdrożenie i tak nadpisze ten plik. */\nreturn %s;\n' \
+            "'$FB_TOKEN'" > wysylka/admin/inc/fb-token.php
+          php -l wysylka/admin/inc/fb-token.php
+          echo "Token zapisany, długość: ${#FB_TOKEN}"
+
       # UWAGA — ścieżki w -x nie należą do repozytorium, tylko do serwera.
       # Dwie grupy, obie z tego samego powodu: mirror --delete nadpisałby je
       # kopiami z gita, czyli cofnął do stanu z ostatniego commita.

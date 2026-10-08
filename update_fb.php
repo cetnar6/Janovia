@@ -8,8 +8,9 @@
  * PHP, ale nie Pythona.
  *
  * Token NIE jest zapisany w kodzie. Kolejność szukania:
- *   1. zmienna środowiskowa FB_TOKEN  (tak działa GitHub Actions)
- *   2. klucz 'fb_token' w admin/inc/config.php  (tak działa serwer i panel)
+ *   1. zmienna środowiskowa FB_TOKEN  (uruchomienie ręczne)
+ *   2. admin/inc/fb-token.php  (zapisuje workflow z sekretu FB_TOKEN — serwer)
+ *   3. klucz 'fb_token' w admin/inc/config.php  (zapas na maszynie lokalnej)
  *
  * Uruchomienie z crona:  php /sciezka/do/update_fb.php
  * Podgląd bez zapisu:    php update_fb.php --dry-run
@@ -30,11 +31,28 @@ const FB_POLA = 'id,message,created_time,permalink_url,full_picture,'
     // limitu Facebook ucina listę do swojej domyślnej strony wyników.
     . 'attachments{media_type,media,subattachments.limit(200){media}}';
 
-/** Token: najpierw ze środowiska, potem z konfiguracji panelu. */
+/**
+ * Token, w kolejności: środowisko, plik wdrożeniowy, konfiguracja panelu.
+ *
+ * fb-token.php jest ważniejszy od config.php i to jest celowe. config.php
+ * nigdy nie jedzie na serwer (trzyma hasło do MySQL i jest wykluczony z wysyłki),
+ * więc token wpisany tam kiedyś ręcznie zostaje na serwerze na zawsze — także
+ * wtedy, gdy dawno wygasł. Gdyby config wygrywał, podmiana sekretu na GitHubie
+ * nic by nie dawała: cron dalej sięgałby po martwy token.
+ *
+ * Sam plik zapisuje workflow wdrożenia z sekretu FB_TOKEN. Nie ma go
+ * w repozytorium (jest w .gitignore) i nie wychodzi przez HTTP (.htaccess).
+ */
 function fb_token(): string
 {
     $ze_srodowiska = trim((string) getenv('FB_TOKEN'));
     if ($ze_srodowiska !== '') { return $ze_srodowiska; }
+
+    $plik = __DIR__ . '/admin/inc/fb-token.php';
+    if (is_file($plik)) {
+        $z_pliku = trim((string) require $plik);
+        if ($z_pliku !== '') { return $z_pliku; }
+    }
 
     $config = __DIR__ . '/admin/inc/config.php';
     if (is_file($config)) {

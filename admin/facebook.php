@@ -6,8 +6,8 @@
  * wyłącznie na maszynie z Pythonem. Teraz woła aktualizuj_facebooka()
  * z update_fb.php — więc chodzi też na współdzielonym hostingu.
  *
- * Token bierze się z admin/inc/config.php (osobna kopia od sekretu na
- * GitHubie — ten sam token trzeba wkleić w oba miejsca).
+ * Token rozwiązuje fb_token() z update_fb.php — na serwerze przyjeżdża
+ * w admin/inc/fb-token.php z sekretu FB_TOKEN przy wdrożeniu.
  */
 
 declare(strict_types=1);
@@ -18,12 +18,14 @@ require_once katalog_strony() . '/update_fb.php';
 wymagaj_logowania();
 sprawdz_csrf();
 
-$config = konfiguracja();
-
-if (trim((string) ($config['fb_token'] ?? '')) === '') {
+/* Pytamy fb_token(), a nie samego configu: na serwerze token przyjeżdża
+   w admin/inc/fb-token.php z sekretu FB_TOKEN, a config.php bywa tam pusty
+   albo nieaktualny. Sprawdzanie wyłącznie configu dawało „brak tokenu"
+   mimo poprawnie wdrożonego tokenu. */
+if (fb_token() === '') {
     komunikat(
-        'Brak tokenu Facebooka. Dodaj "fb_token" (i opcjonalnie "fb_page_id") ' .
-        'w admin/inc/config.php — ten sam token, którego używasz w sekrecie FB_TOKEN na GitHubie.',
+        'Brak tokenu Facebooka. Ustaw sekret FB_TOKEN na GitHubie i uruchom ' .
+        'wdrożenie — token trafi na serwer jako admin/inc/fb-token.php.',
         'blad'
     );
     przekieruj('index.php');

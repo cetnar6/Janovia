@@ -13,6 +13,10 @@ node_modules/
 # dane dostępowe do bazy
 admin/inc/config.php
 
+# token Facebooka wygenerowany przy wdrożeniu z sekretu FB_TOKEN —
+# powstaje na runnerze i na serwerze, nigdy w repozytorium
+admin/inc/fb-token.php
+
 # baza SQLite — plik binarny z danymi lokalnymi
 dane/
 
