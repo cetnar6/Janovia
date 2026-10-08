@@ -362,6 +362,64 @@
         });
     });
 
+    /* Szerokość wygaszenia krawędzi pasa — mniej więcej krążek strzałki
+       plus oddech, żeby karta zdążyła zblednąć, zanim pod niego wjedzie. */
+    var WYGASZENIE = '86px';
+
+    /* Strzałka, która nic nie robi, wygląda na zepsutą. Na końcu pasa gaśnie,
+       a gdy karty mieszczą się w całości (szeroki ekran, mało kart) — znika
+       cała nawigacja. */
+    function odswiezStrzalki(rail) {
+        var nav = rail.parentElement && rail.parentElement.querySelector('.railnav');
+        if (!nav) { return; }
+
+        // 2 px zapasu na zaokrąglenia przy nietypowym powiększeniu strony
+        var zapas = 2;
+        var przewijalny = rail.scrollWidth - rail.clientWidth > zapas;
+
+        nav.hidden = !przewijalny;
+        if (!przewijalny) { return; }
+
+        var naPoczatku = rail.scrollLeft <= zapas;
+        var naKoncu = rail.scrollLeft + rail.clientWidth >= rail.scrollWidth - zapas;
+
+        var wstecz = nav.querySelector('[data-dir="-1"]');
+        var naprzod = nav.querySelector('[data-dir="1"]');
+
+        if (wstecz) { wstecz.disabled = naPoczatku; }
+        if (naprzod) { naprzod.disabled = naKoncu; }
+
+        /* Wygaszamy tę krawędź, zza której coś jeszcze wyjeżdża — tam stoi
+           aktywna strzałka i tam karta wchodzi pod krążek. Na początku i na
+           końcu pasa nie ma czego gasić. */
+        rail.style.setProperty('--fade-l', naPoczatku ? '0px' : WYGASZENIE);
+        rail.style.setProperty('--fade-r', naKoncu ? '0px' : WYGASZENIE);
+    }
+
+    document.querySelectorAll('.rail').forEach(function (rail) {
+        var klatka = 0;
+
+        function odswiezWKlatce() {
+            if (klatka) { return; }
+            klatka = requestAnimationFrame(function () {
+                klatka = 0;
+                odswiezStrzalki(rail);
+            });
+        }
+
+        rail.addEventListener('scroll', odswiezWKlatce, { passive: true });
+        window.addEventListener('resize', odswiezWKlatce);
+
+        /* Karty powstają dopiero po pobraniu JSON-a, a wtedy zmienia się
+           scrollWidth — bez tego strzałki zostałyby w stanie policzonym
+           na treści zapasowej z HTML-a. */
+        if (window.MutationObserver) {
+            new MutationObserver(odswiezWKlatce).observe(rail, { childList: true });
+        }
+
+        odswiezStrzalki(rail);
+    });
+
     /* ---------- autoprzewijanie karuzeli drużyny ----------
        Ruch jest schodkowy: co kilka sekund o dokładnie jednego zawodnika.
        Do równej krawędzi dociąga scroll-snap z CSS, więc karty nigdy nie
@@ -538,7 +596,7 @@
         var klasa = r.klub === NASZ_KLUB ? ' class="is-us"' : '';
         return '<tr' + klasa + '>' +
                '<td>' + r.poz + '</td>' +
-               '<td class="table__crest">' + herb(r.klub, 'xs') + '</td>' +
+               '<td class="table__crest">' + przyciskHerbu(r.klub, 'xs') + '</td>' +
                '<td>' + esc(r.klub) + '</td>' +
                '<td>' + r.m + '</td>' +
                '<td>' + r.bramki + '</td>' +
@@ -579,7 +637,17 @@
             var opis = slowo + ' ' + m.rezultat + ' z ' + m.rywal +
                        ' (' + m.gdzie + ', kolejka ' + m.kolejka + ')';
 
-            pola += '<i class="forma__box forma__box--' + klucz + '" title="' + esc(opis) + '"></i>';
+            /* Dane lecą w atrybutach, nie w title. Natywny dymek przeglądarki
+               wychodzi dopiero po sekundzie, zawsze przy kursorze i nie da się
+               go ostylować — własny (patrz pokazDymek) pokazuje to samo od razu
+               i w barwie wyniku. aria-label zostaje dla czytników ekranu. */
+            pola += '<i class="forma__box forma__box--' + klucz + '" tabindex="0"' +
+                    ' data-slowo="' + esc(slowo) + '"' +
+                    ' data-rezultat="' + esc(m.rezultat) + '"' +
+                    ' data-rywal="' + esc(m.rywal) + '"' +
+                    ' data-gdzie="' + esc(m.gdzie) + '"' +
+                    ' data-kolejka="' + esc(m.kolejka) + '"' +
+                    ' aria-label="' + esc(opis) + '"></i>';
         }
 
         var etykieta = lista.length
@@ -721,13 +789,13 @@
                uwagaMeczu(m, 'fixture__uwaga', true) +
                '<div class="fixture__match">' +
                    '<div class="fixture__side">' +
-                       herb(m.gospodarz, 'sm') +
+                       przyciskHerbu(m.gospodarz, 'sm') +
                        '<b class="fixture__team">' + esc(skrot(m.gospodarz)) + '</b>' +
                        rysujForme(m.gospodarz, dane.forma) +
                    '</div>' +
                    '<span class="fixture__vs">vs</span>' +
                    '<div class="fixture__side">' +
-                       herb(m.gosc, 'sm') +
+                       przyciskHerbu(m.gosc, 'sm') +
                        '<b class="fixture__team">' + esc(skrot(m.gosc)) + '</b>' +
                        rysujForme(m.gosc, dane.forma) +
                    '</div>' +
@@ -742,6 +810,368 @@
                '</span>' +
                '</article>';
     }
+
+    /* ---------- DYMEK Z WYNIKIEM NAD KWADRACIKIEM FORMY ---------- */
+
+    var dymek = null;
+
+    function zbudujDymek() {
+        if (dymek) { return dymek; }
+
+        dymek = document.createElement('div');
+        dymek.className = 'dymek';
+        dymek.hidden = true;
+        document.body.appendChild(dymek);
+
+        return dymek;
+    }
+
+    /* Kwadracik, nad którym aktualnie wisi dymek — trzymamy go, żeby przy
+       przewijaniu przeliczyć pozycję zamiast gasić. Lenis przewija płynnie
+       i sypie zdarzeniami scroll jeszcze długo po puszczeniu palca; gaszenie
+       na scroll kasowało dymek ułamek sekundy po stuknięciu w kwadracik. */
+    var dymekBox = null;
+    var dymekKlatka = 0;
+
+    function ustawDymek() {
+        if (!dymekBox || !dymek || dymek.hidden) { return; }
+
+        /* Wymiary mierzymy po odsłonięciu — element z hidden ma zerowe.
+           Liczymy w position: fixed, więc współrzędne z getBoundingClientRect
+           pasują wprost. To celowe: Lenis przesuwa stronę transformem, przez
+           co pageYOffset i tak nie zgadza się z tym, co widać na ekranie. */
+        var r = dymekBox.getBoundingClientRect();
+
+        // kwadracik wyjechał poza ekran — dymek nie ma już czego pilnować
+        if (r.bottom < 0 || r.top > window.innerHeight) {
+            schowajDymek();
+            return;
+        }
+
+        var lewo = r.left + r.width / 2 - dymek.offsetWidth / 2;
+        var gora = r.top - dymek.offsetHeight - 10;
+
+        // kwadraciki skrajnych kart stoją przy krawędzi okna — dosuwamy dymek,
+        // żeby nie wystawał poza ekran i nie rozciągał strony w poziomie
+        lewo = Math.max(8, Math.min(lewo, window.innerWidth - dymek.offsetWidth - 8));
+
+        // nad pierwszym rzędem kart bywa za mało miejsca — wtedy pod spodem
+        var pod = gora < 8;
+        dymek.classList.toggle('dymek--pod', pod);
+        if (pod) { gora = r.bottom + 10; }
+
+        dymek.style.left = lewo + 'px';
+        dymek.style.top = gora + 'px';
+
+        /* Strzałka musi celować w kwadracik, a nie w środek dymka: przy
+           krawędzi okna dymek jest dosunięty i te dwa punkty się rozjeżdżają.
+           Zostawiamy 12 px zapasu, żeby nie wyszła poza zaokrąglony róg. */
+        var srodek = r.left + r.width / 2;
+        var strzalka = Math.max(12, Math.min(srodek - lewo, dymek.offsetWidth - 12));
+        dymek.style.setProperty('--strzalka', strzalka + 'px');
+    }
+
+    function pokazDymek(box) {
+        var slowo = box.getAttribute('data-slowo');
+        if (!slowo) { return; }
+
+        var d = zbudujDymek();
+        var klucz = box.classList.contains('forma__box--z') ? 'z'
+                  : (box.classList.contains('forma__box--p') ? 'p' : 'r');
+
+        d.innerHTML =
+            '<span class="dymek__wynik dymek__wynik--' + klucz + '">' +
+                esc(slowo) + ' ' + esc(box.getAttribute('data-rezultat')) +
+            '</span>' +
+            '<span class="dymek__rywal">' + esc(box.getAttribute('data-rywal')) + '</span>' +
+            '<span class="dymek__meta">' + esc(box.getAttribute('data-gdzie')) +
+                ' · kolejka ' + esc(box.getAttribute('data-kolejka')) + '</span>';
+
+        d.hidden = false;
+        dymekBox = box;
+        ustawDymek();
+    }
+
+    function schowajDymek() {
+        dymekBox = null;
+        if (dymek) { dymek.hidden = true; }
+    }
+
+    /* Przeliczenie zbite do jednej klatki: przewijanie potrafi wystrzelić
+       kilkadziesiąt zdarzeń na sekundę, a pozycja i tak zmienia się raz
+       na odświeżenie ekranu. */
+    function przesunDymek() {
+        if (!dymekBox || dymekKlatka) { return; }
+
+        dymekKlatka = requestAnimationFrame(function () {
+            dymekKlatka = 0;
+            ustawDymek();
+        });
+    }
+
+    /* Delegacja, bo kwadraciki powstają dopiero po pobraniu danych.
+       mouseover/mouseout zamiast mouseenter/mouseleave — te drugie nie bąbelkują. */
+    document.addEventListener('mouseover', function (e) {
+        var box = e.target.closest ? e.target.closest('.forma__box') : null;
+        if (box) { pokazDymek(box); }
+    });
+
+    document.addEventListener('mouseout', function (e) {
+        var box = e.target.closest ? e.target.closest('.forma__box') : null;
+        if (box) { schowajDymek(); }
+    });
+
+    // ta sama podpowiedź dla klawiatury
+    document.addEventListener('focusin', function (e) {
+        var box = e.target.closest ? e.target.closest('.forma__box') : null;
+        if (box) { pokazDymek(box); }
+    });
+
+    document.addEventListener('focusout', schowajDymek);
+
+    window.addEventListener('scroll', przesunDymek, true);
+    window.addEventListener('resize', przesunDymek);
+
+    /* Na dotyku nie ma mouseout — stuknięcie w kwadracik pokazuje dymek przez
+       mouseover, ale nic go potem nie gasi. Gasimy przy stuknięciu obok. */
+    document.addEventListener('click', function (e) {
+        var box = e.target.closest ? e.target.closest('.forma__box') : null;
+        if (!box) { schowajDymek(); }
+    });
+
+    /* ---------- PANEL DRUŻYNY (klik w herb na karcie meczu) ---------- */
+
+    var DANE_LIGI = null;
+    var panelDruzyny = null;
+    var ostatniHerb = null;
+
+    /* Herb na karcie jest przyciskiem, nie samym obrazkiem: ma być dostępny
+       z klawiatury i czytelny dla czytnika ekranu jako „pokaż mecze”. */
+    function przyciskHerbu(nazwa, rozmiar) {
+        return '<button type="button" class="crest-btn" data-team="' + esc(nazwa) + '"' +
+               ' aria-label="Pokaż mecze drużyny ' + esc(nazwa) + '">' +
+               herb(nazwa, rozmiar) +
+               '</button>';
+    }
+
+    /* Wynik "3-4" (u 90minut bywa też "3:4") z perspektywy wskazanej drużyny. */
+    function wynikDla(m, nazwa) {
+        var bramki = String(m.wynik).split(/[-:]/);
+        var u = parseInt(bramki[0], 10);
+        var ich = parseInt(bramki[1], 10);
+
+        if (isNaN(u) || isNaN(ich)) { return null; }
+
+        var nasze = m.gospodarz === nazwa ? u : ich;
+        var obce = m.gospodarz === nazwa ? ich : u;
+
+        return nasze > obce ? 'z' : (nasze < obce ? 'p' : 'r');
+    }
+
+    /* Mecze jednej drużyny liczymy z wszystkie_mecze, a nie z forma[]:
+       tamta lista ma pięć pozycji bez dat i tylko dla rozegranych spotkań,
+       a tu potrzebny jest również najbliższy termin. */
+    function meczeDruzyny(nazwa) {
+        var wszystkie = (DANE_LIGI && DANE_LIGI.wszystkie_mecze) || [];
+
+        var swoje = wszystkie.filter(function (m) {
+            return m.gospodarz === nazwa || m.gosc === nazwa;
+        });
+
+        var rozegrane = swoje.filter(function (m) { return m.wynik; })
+            .sort(function (a, b) { return (b.kolejka || 0) - (a.kolejka || 0); });
+
+        /* Sam brak wyniku nie znaczy „przed nami": po kolejce mecz wisi bez
+           rezultatu do czasu, aż 90minut go uzupełni. czyPrzyszly odsiewa te
+           spotkania tak samo, jak robi to karuzela i odliczanie — inaczej
+           panel pokazywałby jako najbliższy mecz sprzed kilku dni. */
+        var przyszle = swoje.filter(function (m) { return !m.wynik && czyPrzyszly(m); })
+            .sort(function (a, b) {
+                var ta = czasSortowania(a);
+                var tb = czasSortowania(b);
+
+                // dwa nieznane terminy dają Infinity - Infinity, czyli NaN;
+                // komparator musi wtedy zwrócić coś spójnego, stąd kolejka
+                if (ta === tb) { return (a.kolejka || 0) - (b.kolejka || 0); }
+                return ta < tb ? -1 : 1;
+            });
+
+        /* „Runda" to połowa sezonu: przy 12 zespołach 22 kolejki, czyli 1-11
+           i 12-22. Liczymy ją z danych, a nie na sztywno — po zmianie liczby
+           drużyn (albo ligi) podział przestawi się sam. */
+        var ostatnia = 0;
+        for (var i = 0; i < wszystkie.length; i++) {
+            if (wszystkie[i].kolejka > ostatnia) { ostatnia = wszystkie[i].kolejka; }
+        }
+        var polowa = Math.ceil(ostatnia / 2);
+
+        function runda(m) {
+            return m.kolejka && m.kolejka > polowa ? 2 : 1;
+        }
+
+        /* Pokazujemy wszystko, co zostało do końca bieżącej rundy. Bieżąca
+           jest ta, w której wypada najbliższy mecz — więc gdy jesień się
+           skończy, panel sam przeskoczy na wiosnę, bez zmiany w kodzie. */
+        var teraz = przyszle.length ? runda(przyszle[0]) : 0;
+
+        return {
+            rozegrane: rozegrane.slice(0, 5),
+            nastepne: przyszle.filter(function (m) { return runda(m) === teraz; }),
+            runda: teraz,
+            rund: polowa ? 2 : 0
+        };
+    }
+
+    /* Nie "wierszMeczu" — ta nazwa jest już zajęta przez wiersz terminarza
+       niżej w pliku, a deklaracje funkcji się hoistują i wygrywa ostatnia.
+       Panel dostawał wtedy wiersz terminarza: dwa herby zamiast jednego,
+       drugi argument ignorowany i szerokość rozpychająca okno. */
+    function wierszPanelu(m, nazwa) {
+        var rywal = m.gospodarz === nazwa ? m.gosc : m.gospodarz;
+        var uSiebie = m.gospodarz === nazwa;
+        var data = m.data_iso ? new Date(m.data_iso) : null;
+
+        var kiedy = data
+            ? pad(data.getDate()) + '.' + pad(data.getMonth() + 1)
+            : '—';
+
+        var prawa = m.wynik
+            ? '<span class="druzyna__wynik druzyna__wynik--' + (wynikDla(m, nazwa) || 'r') + '">' +
+                  esc(m.wynik) +
+              '</span>'
+            : '<span class="druzyna__wynik druzyna__wynik--brak">' +
+                  /* Godzina, dopóki 90minut jej nie poda — wtedy numer kolejki.
+                     Kreska w tym miejscu nie mówiła nic, a kolejka pozwala
+                     odnieść mecz do terminarza. */
+                  (data && !m.data_przyblizona
+                      ? pad(data.getHours()) + ':' + pad(data.getMinutes())
+                      : (m.kolejka ? 'kol. ' + m.kolejka : '—')) +
+              '</span>';
+
+        return '<li class="druzyna__mecz">' +
+                   '<span class="druzyna__kiedy">' + esc(kiedy) + '</span>' +
+                   przyciskHerbu(rywal, 'xs') +
+                   '<span class="druzyna__rywal">' + esc(skrot(rywal)) +
+                       '<small>' + (uSiebie ? 'u siebie' : 'wyjazd') + '</small>' +
+                   '</span>' +
+                   prawa +
+               '</li>';
+    }
+
+    function zbudujPanelDruzyny() {
+        if (panelDruzyny) { return panelDruzyny; }
+
+        panelDruzyny = document.createElement('div');
+        panelDruzyny.className = 'druzyna';
+        panelDruzyny.hidden = true;
+        panelDruzyny.innerHTML =
+            '<div class="druzyna__tlo" data-zamknij-druzyne></div>' +
+            /* data-lenis-prevent jest konieczne: Lenis przewija stronę własnym
+               obsługiwaniem kółka i bez tego połyka gest, zanim dojdzie on do
+               panelu — lista meczów stała w miejscu mimo overflow-y: auto.
+               Ten sam atrybut nosi .modal__tresc przy postach. */
+            '<div class="druzyna__okno" data-lenis-prevent role="dialog" aria-modal="true" ' +
+                'aria-labelledby="druzyna-nazwa">' +
+                '<button type="button" class="druzyna__zamknij" data-zamknij-druzyne ' +
+                    'aria-label="Zamknij">&times;</button>' +
+                '<div class="druzyna__naglowek"></div>' +
+                '<div class="druzyna__tresc"></div>' +
+            '</div>';
+
+        panelDruzyny.addEventListener('click', function (e) {
+            if (e.target.hasAttribute('data-zamknij-druzyne')) { zamknijDruzyne(); }
+        });
+
+        document.body.appendChild(panelDruzyny);
+
+        return panelDruzyny;
+    }
+
+    function otworzDruzyne(nazwa) {
+        var p = zbudujPanelDruzyny();
+        var zestaw = meczeDruzyny(nazwa);
+
+        var wTabeli = ((DANE_LIGI && DANE_LIGI.tabela) || []).filter(function (r) {
+            return r.klub === nazwa;
+        })[0];
+
+        p.querySelector('.druzyna__naglowek').innerHTML =
+            herb(nazwa, 'md') +
+            '<div class="druzyna__kto">' +
+                '<h3 id="druzyna-nazwa">' + esc(nazwa) + '</h3>' +
+                (wTabeli
+                    ? '<p class="druzyna__pozycja">' +
+                          wTabeli.poz + '. miejsce · ' + wTabeli.pkt + ' pkt · ' +
+                          'bramki ' + esc(wTabeli.bramki) +
+                      '</p>'
+                    : '') +
+            '</div>';
+
+        var tresc = '<h4 class="druzyna__tytul">Ostatnie mecze</h4>';
+
+        tresc += zestaw.rozegrane.length
+            ? '<ul class="druzyna__lista">' +
+                  zestaw.rozegrane.map(function (m) { return wierszPanelu(m, nazwa); }).join('') +
+              '</ul>'
+            : '<p class="druzyna__pusto">Brak rozegranych meczów w tym sezonie.</p>';
+
+        var nazwaRundy = zestaw.runda === 2 ? 'rundy wiosennej' : 'rundy jesiennej';
+
+        tresc += '<h4 class="druzyna__tytul">' +
+                     (zestaw.nastepne.length
+                         ? 'Do końca ' + nazwaRundy
+                         : 'Następne mecze') +
+                 '</h4>';
+
+        tresc += zestaw.nastepne.length
+            ? '<ul class="druzyna__lista">' +
+                  zestaw.nastepne.map(function (m) { return wierszPanelu(m, nazwa); }).join('') +
+              '</ul>'
+            : '<p class="druzyna__pusto">Brak kolejnych spotkań w terminarzu.</p>';
+
+        p.querySelector('.druzyna__tresc').innerHTML = tresc;
+
+        p.hidden = false;
+        blokujPrzewijanie(true);
+        p.querySelector('.druzyna__zamknij').focus();
+    }
+
+    function zamknijDruzyne() {
+        if (!panelDruzyny || panelDruzyny.hidden) { return; }
+
+        panelDruzyny.hidden = true;
+        blokujPrzewijanie(false);
+
+        if (ostatniHerb) {
+            ostatniHerb.focus();
+            ostatniHerb = null;
+        }
+    }
+
+    // delegacja: karty powstają dopiero po pobraniu data/liga.json
+    document.addEventListener('click', function (e) {
+        var btn = e.target.closest ? e.target.closest('.crest-btn') : null;
+        if (!btn) { return; }
+
+        // karuzela nasłuchuje kliknięć na kafelku — bez tego panel otwierałby
+        // się razem z przewinięciem do sąsiedniej karty
+        e.preventDefault();
+        e.stopPropagation();
+
+        schowajDymek();
+
+        /* Herb rywala w otwartym panelu przerzuca na jego drużynę. Punktu
+           powrotu wtedy NIE nadpisujemy: Escape ma oddać fokus tam, skąd
+           panel w ogóle wyszedł, a nie na przycisk, który właśnie zniknął
+           przy przerysowaniu listy. */
+        if (!panelDruzyny || !panelDruzyny.contains(btn)) { ostatniHerb = btn; }
+
+        otworzDruzyne(btn.getAttribute('data-team'));
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') { zamknijDruzyne(); }
+    });
 
     function rysujMecze(dane) {
         var rail = document.querySelector('[data-rail-id="fix"]');
@@ -776,9 +1206,9 @@
         var teams = document.querySelector('.countdown__teams');
         if (teams) {
             teams.innerHTML =
-                herb(m.gospodarz, 'md') +
+                przyciskHerbu(m.gospodarz, 'md') +
                 '<span class="vs">vs</span>' +
-                herb(m.gosc, 'md');
+                przyciskHerbu(m.gosc, 'md');
         }
 
         var meta = document.querySelector('.countdown__meta');
@@ -1178,11 +1608,11 @@
                    terminMeczu(m) +
                    '<span class="wynik__druzyna wynik__druzyna--gosp">' +
                        '<span>' + esc(skrot(m.gospodarz)) + '</span>' +
-                       herb(m.gospodarz, 'xs') +
+                       przyciskHerbu(m.gospodarz, 'xs') +
                    '</span>' +
                    srodek +
                    '<span class="wynik__druzyna">' +
-                       herb(m.gosc, 'xs') +
+                       przyciskHerbu(m.gosc, 'xs') +
                        '<span>' + esc(skrot(m.gosc)) + '</span>' +
                    '</span>' +
                    uwagaMeczu(m, 'wynik__uwaga') +
@@ -1615,6 +2045,10 @@
                po kolejce. Odsiewamy je tutaj, żeby wszystkie sekcje niżej
                dostały już tylko to, co faktycznie przed nami. */
             dane.nadchodzace = (dane.nadchodzace || []).filter(czyPrzyszly);
+
+            /* Panel drużyny otwiera się długo po tym wywołaniu, z kliknięcia
+               w herb — musi mieć skąd wziąć terminarz i tabelę. */
+            DANE_LIGI = dane;
 
             rysujTabele(dane);
             rysujKolejke(dane);

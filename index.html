@@ -29,7 +29,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap">
-    <link rel="stylesheet" href="style.css?v=55">
+    <link rel="stylesheet" href="style.css?v=56">
 </head>
 <body>
 
@@ -109,68 +109,71 @@
                 <h2>Aktualności</h2>
                 <div class="head__tools">
                     <a href="aktualnosci.html" class="arrow-link arrow-link--sm">Zobacz wszystkie</a>
-                    <div class="railnav">
-                        <button class="railnav__btn" data-rail="news" data-dir="-1" aria-label="Poprzednie">&larr;</button>
-                        <button class="railnav__btn" data-rail="news" data-dir="1" aria-label="Następne">&rarr;</button>
-                    </div>
                 </div>
             </header>
         </div>
 
-        <div class="rail" data-rail-id="news">
-            <article class="post" data-reveal style="--d:0ms">
-                <div class="post__media post__media--1"></div>
-                <div class="post__body">
-                    <span class="tag tag--sm">Zapowiedź</span>
-                    <span class="post__time">6 godzin temu</span>
-                    <h3>Zapowiedź wyjazdowego starcia w Lublinie</h3>
-                </div>
-            </article>
+        <div class="railwrap">
+            <div class="rail" data-rail-id="news">
+                <article class="post" data-reveal style="--d:0ms">
+                    <div class="post__media post__media--1"></div>
+                    <div class="post__body">
+                        <span class="tag tag--sm">Zapowiedź</span>
+                        <span class="post__time">6 godzin temu</span>
+                        <h3>Zapowiedź wyjazdowego starcia w Lublinie</h3>
+                    </div>
+                </article>
 
-            <article class="post" data-reveal style="--d:80ms">
-                <div class="post__media post__media--2"></div>
-                <div class="post__body">
-                    <span class="tag tag--sm">Transfer</span>
-                    <span class="post__time">1 dzień temu</span>
-                    <h3>Kapitan przedłużył kontrakt o dwa sezony</h3>
-                </div>
-            </article>
+                <article class="post" data-reveal style="--d:80ms">
+                    <div class="post__media post__media--2"></div>
+                    <div class="post__body">
+                        <span class="tag tag--sm">Transfer</span>
+                        <span class="post__time">1 dzień temu</span>
+                        <h3>Kapitan przedłużył kontrakt o dwa sezony</h3>
+                    </div>
+                </article>
 
-            <article class="post" data-reveal style="--d:160ms">
-                <div class="post__media post__media--3"></div>
-                <div class="post__body">
-                    <span class="tag tag--sm">Klub</span>
-                    <span class="post__time">3 dni temu</span>
-                    <h3>Sztab szkoleniowy powiększony o analityka</h3>
-                </div>
-            </article>
+                <article class="post" data-reveal style="--d:160ms">
+                    <div class="post__media post__media--3"></div>
+                    <div class="post__body">
+                        <span class="tag tag--sm">Klub</span>
+                        <span class="post__time">3 dni temu</span>
+                        <h3>Sztab szkoleniowy powiększony o analityka</h3>
+                    </div>
+                </article>
 
-            <article class="post" data-reveal style="--d:240ms">
-                <div class="post__media post__media--4"></div>
-                <div class="post__body">
-                    <span class="tag tag--sm">Akademia</span>
-                    <span class="post__time">5 dni temu</span>
-                    <h3>Turniej młodzieżowy o Puchar Prezesa</h3>
-                </div>
-            </article>
+                <article class="post" data-reveal style="--d:240ms">
+                    <div class="post__media post__media--4"></div>
+                    <div class="post__body">
+                        <span class="tag tag--sm">Akademia</span>
+                        <span class="post__time">5 dni temu</span>
+                        <h3>Turniej młodzieżowy o Puchar Prezesa</h3>
+                    </div>
+                </article>
 
-            <article class="post" data-reveal style="--d:320ms">
-                <div class="post__media post__media--5"></div>
-                <div class="post__body">
-                    <span class="tag tag--sm">Klub</span>
-                    <span class="post__time">8 dni temu</span>
-                    <h3>Nowe stroje meczowe zaprezentowane</h3>
-                </div>
-            </article>
+                <article class="post" data-reveal style="--d:320ms">
+                    <div class="post__media post__media--5"></div>
+                    <div class="post__body">
+                        <span class="tag tag--sm">Klub</span>
+                        <span class="post__time">8 dni temu</span>
+                        <h3>Nowe stroje meczowe zaprezentowane</h3>
+                    </div>
+                </article>
 
-            <article class="post" data-reveal style="--d:400ms">
-                <div class="post__media post__media--6"></div>
-                <div class="post__body">
-                    <span class="tag tag--sm">Piłka nożna</span>
-                    <span class="post__time">11 dni temu</span>
-                    <h3>Podsumowanie okresu przygotowawczego</h3>
-                </div>
-            </article>
+                <article class="post" data-reveal style="--d:400ms">
+                    <div class="post__media post__media--6"></div>
+                    <div class="post__body">
+                        <span class="tag tag--sm">Piłka nożna</span>
+                        <span class="post__time">11 dni temu</span>
+                        <h3>Podsumowanie okresu przygotowawczego</h3>
+                    </div>
+                </article>
+            </div>
+
+            <div class="railnav">
+                <button class="railnav__btn railnav__btn--prev" data-rail="news" data-dir="-1" aria-label="Poprzednie">&larr;</button>
+                <button class="railnav__btn railnav__btn--next" data-rail="news" data-dir="1" aria-label="Następne">&rarr;</button>
+            </div>
         </div>
     </section>
 
@@ -210,90 +213,93 @@
                 <h2>Nadchodzące <em>mecze</em></h2>
                 <div class="head__tools">
                     <a href="terminarz.html" class="arrow-link arrow-link--sm">Zobacz wszystkie</a>
-                    <div class="railnav">
-                        <button class="railnav__btn" data-rail="fix" data-dir="-1" aria-label="Poprzednie">&larr;</button>
-                        <button class="railnav__btn" data-rail="fix" data-dir="1" aria-label="Następne">&rarr;</button>
-                    </div>
                 </div>
             </header>
         </div>
 
-        <div class="rail" data-rail-id="fix">
-            <article class="fixture" data-reveal style="--d:0ms">
-                <strong class="fixture__date">15.08</strong>
-                <span class="fixture__league">Klasa okręgowa · kolejka 13</span>
-                <div class="fixture__match">
-                    <div class="fixture__side">
-                        <span class="shield" data-letter="O"></span>
-                        <b class="fixture__team">Orzeł</b>
-                        <span class="forma" role="img" aria-label="Brak rozegranych meczów"><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i></span>
+        <div class="railwrap">
+            <div class="rail" data-rail-id="fix">
+                <article class="fixture" data-reveal style="--d:0ms">
+                    <strong class="fixture__date">15.08</strong>
+                    <span class="fixture__league">Klasa okręgowa · kolejka 13</span>
+                    <div class="fixture__match">
+                        <div class="fixture__side">
+                            <span class="shield" data-letter="O"></span>
+                            <b class="fixture__team">Orzeł</b>
+                            <span class="forma" role="img" aria-label="Brak rozegranych meczów"><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i></span>
+                        </div>
+                        <span class="fixture__vs">vs</span>
+                        <div class="fixture__side">
+                            <span class="crest-plate crest-plate--sm"><img src="png/JanoviaJanowiec.png" alt="Janovia"></span>
+                            <b class="fixture__team">Janovia</b>
+                            <span class="forma" role="img" aria-label="Brak rozegranych meczów"><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i></span>
+                        </div>
                     </div>
-                    <span class="fixture__vs">vs</span>
-                    <div class="fixture__side">
-                        <span class="crest-plate crest-plate--sm"><img src="png/JanoviaJanowiec.png" alt="Janovia"></span>
-                        <b class="fixture__team">Janovia</b>
-                        <span class="forma" role="img" aria-label="Brak rozegranych meczów"><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i></span>
-                    </div>
-                </div>
-                <span class="fixture__time">18:00 · wyjazd</span>
-            </article>
+                    <span class="fixture__time">18:00 · wyjazd</span>
+                </article>
 
-            <article class="fixture" data-reveal style="--d:80ms">
-                <strong class="fixture__date">22.08</strong>
-                <span class="fixture__league">Klasa okręgowa · kolejka 14</span>
-                <div class="fixture__match">
-                    <div class="fixture__side">
-                        <span class="crest-plate crest-plate--sm"><img src="png/JanoviaJanowiec.png" alt="Janovia"></span>
-                        <b class="fixture__team">Janovia</b>
-                        <span class="forma" role="img" aria-label="Brak rozegranych meczów"><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i></span>
+                <article class="fixture" data-reveal style="--d:80ms">
+                    <strong class="fixture__date">22.08</strong>
+                    <span class="fixture__league">Klasa okręgowa · kolejka 14</span>
+                    <div class="fixture__match">
+                        <div class="fixture__side">
+                            <span class="crest-plate crest-plate--sm"><img src="png/JanoviaJanowiec.png" alt="Janovia"></span>
+                            <b class="fixture__team">Janovia</b>
+                            <span class="forma" role="img" aria-label="Brak rozegranych meczów"><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i></span>
+                        </div>
+                        <span class="fixture__vs">vs</span>
+                        <div class="fixture__side">
+                            <span class="shield" data-letter="S"></span>
+                            <b class="fixture__team">Stal</b>
+                            <span class="forma" role="img" aria-label="Brak rozegranych meczów"><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i></span>
+                        </div>
                     </div>
-                    <span class="fixture__vs">vs</span>
-                    <div class="fixture__side">
-                        <span class="shield" data-letter="S"></span>
-                        <b class="fixture__team">Stal</b>
-                        <span class="forma" role="img" aria-label="Brak rozegranych meczów"><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i></span>
-                    </div>
-                </div>
-                <span class="fixture__time">17:00 · u siebie</span>
-            </article>
+                    <span class="fixture__time">17:00 · u siebie</span>
+                </article>
 
-            <article class="fixture" data-reveal style="--d:160ms">
-                <strong class="fixture__date">29.08</strong>
-                <span class="fixture__league">Klasa okręgowa · kolejka 15</span>
-                <div class="fixture__match">
-                    <div class="fixture__side">
-                        <span class="shield" data-letter="S"></span>
-                        <b class="fixture__team">Sparta</b>
-                        <span class="forma" role="img" aria-label="Brak rozegranych meczów"><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i></span>
+                <article class="fixture" data-reveal style="--d:160ms">
+                    <strong class="fixture__date">29.08</strong>
+                    <span class="fixture__league">Klasa okręgowa · kolejka 15</span>
+                    <div class="fixture__match">
+                        <div class="fixture__side">
+                            <span class="shield" data-letter="S"></span>
+                            <b class="fixture__team">Sparta</b>
+                            <span class="forma" role="img" aria-label="Brak rozegranych meczów"><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i></span>
+                        </div>
+                        <span class="fixture__vs">vs</span>
+                        <div class="fixture__side">
+                            <span class="crest-plate crest-plate--sm"><img src="png/JanoviaJanowiec.png" alt="Janovia"></span>
+                            <b class="fixture__team">Janovia</b>
+                            <span class="forma" role="img" aria-label="Brak rozegranych meczów"><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i></span>
+                        </div>
                     </div>
-                    <span class="fixture__vs">vs</span>
-                    <div class="fixture__side">
-                        <span class="crest-plate crest-plate--sm"><img src="png/JanoviaJanowiec.png" alt="Janovia"></span>
-                        <b class="fixture__team">Janovia</b>
-                        <span class="forma" role="img" aria-label="Brak rozegranych meczów"><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i></span>
-                    </div>
-                </div>
-                <span class="fixture__time">16:00 · wyjazd</span>
-            </article>
+                    <span class="fixture__time">16:00 · wyjazd</span>
+                </article>
 
-            <article class="fixture" data-reveal style="--d:240ms">
-                <strong class="fixture__date">05.09</strong>
-                <span class="fixture__league">Klasa okręgowa · kolejka 16</span>
-                <div class="fixture__match">
-                    <div class="fixture__side">
-                        <span class="crest-plate crest-plate--sm"><img src="png/JanoviaJanowiec.png" alt="Janovia"></span>
-                        <b class="fixture__team">Janovia</b>
-                        <span class="forma" role="img" aria-label="Brak rozegranych meczów"><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i></span>
+                <article class="fixture" data-reveal style="--d:240ms">
+                    <strong class="fixture__date">05.09</strong>
+                    <span class="fixture__league">Klasa okręgowa · kolejka 16</span>
+                    <div class="fixture__match">
+                        <div class="fixture__side">
+                            <span class="crest-plate crest-plate--sm"><img src="png/JanoviaJanowiec.png" alt="Janovia"></span>
+                            <b class="fixture__team">Janovia</b>
+                            <span class="forma" role="img" aria-label="Brak rozegranych meczów"><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i></span>
+                        </div>
+                        <span class="fixture__vs">vs</span>
+                        <div class="fixture__side">
+                            <span class="shield" data-letter="P"></span>
+                            <b class="fixture__team">Polonia</b>
+                            <span class="forma" role="img" aria-label="Brak rozegranych meczów"><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i></span>
+                        </div>
                     </div>
-                    <span class="fixture__vs">vs</span>
-                    <div class="fixture__side">
-                        <span class="shield" data-letter="P"></span>
-                        <b class="fixture__team">Polonia</b>
-                        <span class="forma" role="img" aria-label="Brak rozegranych meczów"><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i><i class="forma__box forma__box--brak"></i></span>
-                    </div>
-                </div>
-                <span class="fixture__time">17:00 · u siebie</span>
-            </article>
+                    <span class="fixture__time">17:00 · u siebie</span>
+                </article>
+            </div>
+
+            <div class="railnav">
+                <button class="railnav__btn railnav__btn--prev" data-rail="fix" data-dir="-1" aria-label="Poprzednie">&larr;</button>
+                <button class="railnav__btn railnav__btn--next" data-rail="fix" data-dir="1" aria-label="Następne">&rarr;</button>
+            </div>
         </div>
     </section>
 
@@ -347,54 +353,57 @@
                 <h2>Poznaj <em>drużynę</em></h2>
                 <div class="head__tools">
                     <a href="kadra.html" class="arrow-link arrow-link--sm">Poznaj wszystkich</a>
-                    <div class="railnav">
-                        <button class="railnav__btn" data-rail="team" data-dir="-1" aria-label="Poprzednie">&larr;</button>
-                        <button class="railnav__btn" data-rail="team" data-dir="1" aria-label="Następne">&rarr;</button>
-                    </div>
                 </div>
             </header>
         </div>
 
-        <div class="rail" data-rail-id="team">
-            <article class="player" data-reveal style="--d:0ms">
-                <div class="player__photo player__photo--gk"></div>
-                <div class="player__label">
-                    <span class="player__no">18</span>
-                    <span class="player__name"><small>Eryk</small><strong>Bajor</strong></span>
-                </div>
-            </article>
+        <div class="railwrap">
+            <div class="rail" data-rail-id="team">
+                <article class="player" data-reveal style="--d:0ms">
+                    <div class="player__photo player__photo--gk"></div>
+                    <div class="player__label">
+                        <span class="player__no">18</span>
+                        <span class="player__name"><small>Eryk</small><strong>Bajor</strong></span>
+                    </div>
+                </article>
 
-            <article class="player" data-reveal style="--d:80ms">
-                <div class="player__photo"></div>
-                <div class="player__label">
-                    <span class="player__no">5</span>
-                    <span class="player__name"><small>Jacek</small><strong>Skoworn</strong></span>
-                </div>
-            </article>
+                <article class="player" data-reveal style="--d:80ms">
+                    <div class="player__photo"></div>
+                    <div class="player__label">
+                        <span class="player__no">5</span>
+                        <span class="player__name"><small>Jacek</small><strong>Skoworn</strong></span>
+                    </div>
+                </article>
 
-            <article class="player player--featured" data-reveal style="--d:160ms">
-                <div class="player__photo"></div>
-                <div class="player__label">
-                    <span class="player__no">9</span>
-                    <span class="player__name"><small>Marek</small><strong>Pęczek</strong></span>
-                </div>
-            </article>
+                <article class="player player--featured" data-reveal style="--d:160ms">
+                    <div class="player__photo"></div>
+                    <div class="player__label">
+                        <span class="player__no">9</span>
+                        <span class="player__name"><small>Marek</small><strong>Pęczek</strong></span>
+                    </div>
+                </article>
 
-            <article class="player" data-reveal style="--d:240ms">
-                <div class="player__photo"></div>
-                <div class="player__label">
-                    <span class="player__no">10</span>
-                    <span class="player__name"><small>Seweryn</small><strong>Mrozowski</strong></span>
-                </div>
-            </article>
+                <article class="player" data-reveal style="--d:240ms">
+                    <div class="player__photo"></div>
+                    <div class="player__label">
+                        <span class="player__no">10</span>
+                        <span class="player__name"><small>Seweryn</small><strong>Mrozowski</strong></span>
+                    </div>
+                </article>
 
-            <article class="player" data-reveal style="--d:320ms">
-                <div class="player__photo"></div>
-                <div class="player__label">
-                    <span class="player__no">5</span>
-                    <span class="player__name"><small>Albert</small><strong>Mrozowski</strong></span>
-                </div>
-            </article>
+                <article class="player" data-reveal style="--d:320ms">
+                    <div class="player__photo"></div>
+                    <div class="player__label">
+                        <span class="player__no">5</span>
+                        <span class="player__name"><small>Albert</small><strong>Mrozowski</strong></span>
+                    </div>
+                </article>
+            </div>
+
+            <div class="railnav">
+                <button class="railnav__btn railnav__btn--prev" data-rail="team" data-dir="-1" aria-label="Poprzednie">&larr;</button>
+                <button class="railnav__btn railnav__btn--next" data-rail="team" data-dir="1" aria-label="Następne">&rarr;</button>
+            </div>
         </div>
     </section>
 
@@ -469,6 +478,6 @@
     </div>
 
     <script src="js/lenis.min.js?v=1"></script>
-    <script src="script.js?v=50"></script>
+    <script src="script.js?v=51"></script>
 </body>
 </html>

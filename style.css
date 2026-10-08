@@ -697,35 +697,121 @@ a.marquee__item {
     gap: 1.5rem;
 }
 
-.railnav {
-    display: flex;
-    gap: 0.5rem;
+/* Strzałki leżą na pasie, nie w nagłówku: ręka wędruje tam, gdzie patrzy oko,
+   czyli na karty. Sam .rail ma własne przewijanie, więc nawigacja nie może
+   w nim siedzieć — pojechałaby razem z kartami. Stąd .railwrap obok niego. */
+.railwrap {
+    position: relative;
 }
 
+.railnav {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 clamp(0.5rem, 1.5vw, 1.5rem);
+    /* 1rem to dolny padding .rail — bez odjęcia strzałki zeszłyby poniżej
+       osi kart i wyglądały na przypadkowo rzucone */
+    padding-bottom: 1rem;
+    /* warstwa przykrywa cały pas, więc musi przepuszczać kliknięcia i gesty
+       przewijania; łapią je tylko same przyciski */
+    pointer-events: none;
+}
+
+.railnav[hidden] {
+    display: none;
+}
+
+/* Krążek na przydymionym szkle: czytelny nad jasnym herbem i nad ciemnym
+   tłem karty, bez rysowania wokół siebie ramki, która ciełaby kompozycję. */
 .railnav__btn {
-    width: 42px;
-    height: 42px;
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
     border: 1px solid var(--line);
-    background-color: transparent;
+    border-radius: 50%;
+    background-color: rgba(14, 16, 21, 0.72);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5);
     color: #FFFFFF;
     font-size: 1rem;
     cursor: pointer;
-    transition: background-color 0.3s, border-color 0.3s, transform 0.3s var(--ease);
+    transition: background-color 0.3s, border-color 0.3s, opacity 0.3s,
+                transform 0.3s var(--ease);
 }
 
 .railnav__btn:hover {
     background-color: var(--blue);
     border-color: var(--blue);
-    transform: translateY(-2px);
+    transform: scale(1.08);
 }
 
 .railnav__btn:active {
-    transform: translateY(0) scale(0.94);
+    transform: scale(0.94);
+}
+
+.railnav__btn:focus-visible {
+    outline: 2px solid var(--blue-light);
+    outline-offset: 3px;
+}
+
+/* Koniec pasa: strzałka zostaje na swoim miejscu, ale gaśnie i przestaje
+   reagować. Znikanie przesuwałoby drugą strzałkę przy każdym dojechaniu
+   do krawędzi — ruch, którego nikt nie prosił. */
+.railnav__btn[disabled] {
+    opacity: 0.25;
+    pointer-events: none;
+    transform: none;
+}
+
+@media (max-width: 700px) {
+    .railnav__btn {
+        width: 38px;
+        height: 38px;
+        font-size: 0.85rem;
+    }
 }
 
 /* ---------- KARUZELE ---------- */
 
+/* Bez rejestracji przeglądarka traktuje zmienną jak zwykły tekst i nie umie
+   jej animować — wygaszenie krawędzi przeskakiwałoby skokowo. Tam, gdzie
+   @property nie działa, zostaje właśnie taki przeskok, bez innych skutków. */
+@property --fade-l {
+    syntax: '<length>';
+    inherits: false;
+    initial-value: 0px;
+}
+
+@property --fade-r {
+    syntax: '<length>';
+    inherits: false;
+    initial-value: 0px;
+}
+
 .rail {
+    /* Krawędzie pasa gasną pod strzałkami, inaczej karta wjeżdża wprost pod
+       krążek i herb wygląda na przypadkowo zasłonięty. Maską, a nie nakładką
+       w kolorze tła: karuzele jadą po trzech różnych tłach (gradient hero,
+       czerń sekcji, poświata), a maska nie musi żadnego z nich zgadywać.
+
+       Szerokość wygaszenia ustawia skrypt razem ze stanem strzałek — zero
+       na końcu pasa, żeby ostatnia karta nie bladła bez powodu. Przy obu
+       zerach rampa ma długość zero, czyli maska jest po prostu nieaktywna. */
+    --fade-l: 0px;
+    --fade-r: 0px;
+    -webkit-mask-image: linear-gradient(to right,
+        transparent 0, #000 var(--fade-l),
+        #000 calc(100% - var(--fade-r)), transparent 100%);
+    mask-image: linear-gradient(to right,
+        transparent 0, #000 var(--fade-l),
+        #000 calc(100% - var(--fade-r)), transparent 100%);
+    transition: --fade-l 0.3s, --fade-r 0.3s;
+
     display: flex;
     gap: 1.25rem;
     overflow-x: auto;
@@ -2020,8 +2106,14 @@ a.marquee__item {
 .kolejka__tresc {
     display: grid;
     grid-template-rows: 0fr;
-    transition: grid-template-rows 0.42s var(--ease-out), opacity 0.3s;
     opacity: 0;
+    /* Sama zerowa wysokość nie wyjmuje treści z kolejności tabulacji — herby
+       w zwiniętej kolejce są przyciskami, więc bez tego dałoby się wejść w nie
+       klawiszem Tab i otworzyć panel z niewidocznej sekcji. visibility to
+       załatwia, a zerowa zwłoka przy chowaniu pilnuje, żeby zdążyło zagasnąć. */
+    visibility: hidden;
+    transition: grid-template-rows 0.42s var(--ease-out), opacity 0.3s,
+                visibility 0s linear 0.42s;
 }
 
 .kolejka__tresc > * {
@@ -2032,6 +2124,9 @@ a.marquee__item {
 .kolejka.is-otwarta .kolejka__tresc {
     grid-template-rows: 1fr;
     opacity: 1;
+    visibility: visible;
+    transition: grid-template-rows 0.42s var(--ease-out), opacity 0.3s,
+                visibility 0s;
 }
 
 .kolejka__head:hover {
@@ -2470,6 +2565,338 @@ a.marquee__item {
         padding-left: 0.5rem;
         padding-right: 0.5rem;
     }
+}
+
+/* =========================================
+   DYMEK Z WYNIKIEM (kwadraciki formy)
+   ========================================= */
+
+/* Barwy wyników powtarzają te z .forma__box — jeden kolor na jeden wynik
+   w całym serwisie, żeby zielony dymek nie wyszedł z innej zieleni niż
+   kwadracik, z którego wyszedł. */
+:root {
+    --wynik-z: #2E9E5B;
+    --wynik-r: #4A5560;
+    --wynik-p: #CE3F3D;
+}
+
+.dymek[hidden] {
+    display: none;
+}
+
+.dymek {
+    position: fixed;
+    z-index: 400;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    max-width: 260px;
+    padding: 0.6rem 0.8rem;
+    background-color: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.6);
+    /* dymek jest tylko podpowiedzią — nie może przechwytywać kursora,
+       bo zasłoniłby kwadracik i mouseout gasiłby go w pętli */
+    pointer-events: none;
+    animation: dymekWejscie 0.18s var(--ease-out);
+}
+
+/* strzałka pod dymkiem, wskazująca kwadracik */
+.dymek::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    /* --strzalka ustawia skrypt na środek kwadracika; 50% to zapas na wypadek,
+       gdyby zmienna nie dojechała */
+    left: var(--strzalka, 50%);
+    width: 8px;
+    height: 8px;
+    margin-left: -4px;
+    margin-top: -4px;
+    background-color: var(--surface-2);
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    transform: rotate(45deg);
+}
+
+/* dymek pod kwadracikiem — strzałka przeskakuje na górną krawędź */
+.dymek--pod::after {
+    top: 0;
+    margin-top: -4px;
+    border-right: 0;
+    border-bottom: 0;
+    border-left: 1px solid var(--line);
+    border-top: 1px solid var(--line);
+}
+
+.dymek__wynik {
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+}
+
+.dymek__wynik--z { color: #5FD08C; }
+.dymek__wynik--r { color: #AAB4C0; }
+.dymek__wynik--p { color: #F0706E; }
+
+.dymek__rywal {
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.dymek__meta {
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+@keyframes dymekWejscie {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Kwadracik jest teraz interaktywny: kursor i obrys przy fokusie
+   z klawiatury, żeby było widać, że da się z niego coś wyciągnąć. */
+.forma__box {
+    cursor: help;
+}
+
+.forma__box:focus-visible {
+    outline: 2px solid var(--blue-light);
+    outline-offset: 2px;
+}
+
+/* =========================================
+   PANEL DRUŻYNY (klik w herb na karcie)
+   ========================================= */
+
+/* Herb jest przyciskiem — i na karcie meczu, i pod odliczaniem. Zdejmujemy
+   z niego cały wygląd przycisku, ma wyglądać dokładnie jak sam herb wcześniej. */
+.crest-btn {
+    display: inline-flex;
+    padding: 0;
+    background: none;
+    border: 0;
+    border-radius: 8px;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+}
+
+.crest-btn:focus-visible {
+    outline: 2px solid var(--blue-light);
+    outline-offset: 4px;
+}
+
+.crest-btn:hover .crest-plate {
+    transform: translateY(-5px) scale(1.04);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.7);
+}
+
+.druzyna[hidden] {
+    display: none;
+}
+
+.druzyna {
+    position: fixed;
+    inset: 0;
+    /* nad modalem postów (z-index 300), bo panel otwiera się z karty,
+       a nie z kafelka aktualności — nigdy nie są widoczne naraz */
+    z-index: 320;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(1rem, 4vw, 3rem);
+}
+
+.druzyna__tlo {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(4, 5, 7, 0.82);
+    backdrop-filter: blur(6px);
+    animation: modalTlo 0.35s var(--ease);
+}
+
+.druzyna__okno {
+    position: relative;
+    z-index: 1;
+    width: min(460px, 100%);
+    max-height: min(86vh, 720px);
+    padding: 1.75rem;
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+    box-shadow: 0 30px 90px rgba(0, 0, 0, 0.6);
+    overflow-y: auto;
+    animation: modalOkno 0.4s var(--ease);
+
+    /* Domyślny pasek systemowy jest tu gruby i jasny — rozcina okno na dwie
+       części. Własny jest wąski i gaśnie w tle, a lista i tak sama mówi,
+       że jest dłuższa, bo ostatni wiersz wchodzi pod krawędź. */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+}
+
+.druzyna__okno::-webkit-scrollbar {
+    width: 8px;
+}
+
+.druzyna__okno::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+.druzyna__okno::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.16);
+    border-radius: 4px;
+}
+
+.druzyna__okno::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Herb w tabeli i w terminarzu też jest przyciskiem — ale tam nie ma efektu
+   najechania na karcie, więc podnosimy sam herb, żeby było widać, że reaguje. */
+.table__crest .crest-btn:hover .crest-plate,
+.wynik__druzyna .crest-btn:hover .crest-plate,
+.druzyna__mecz .crest-btn:hover .crest-plate {
+    transform: translateY(-2px) scale(1.06);
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.65);
+}
+
+.druzyna__zamknij {
+    position: absolute;
+    top: 0.9rem;
+    right: 0.9rem;
+    width: 34px;
+    height: 34px;
+    background-color: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    color: var(--text);
+    font-size: 1.3rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.druzyna__zamknij:hover {
+    background-color: rgba(255, 255, 255, 0.12);
+    border-color: var(--blue);
+}
+
+.druzyna__naglowek {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-right: 2.5rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--line);
+}
+
+.druzyna__kto h3 {
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+.druzyna__pozycja {
+    margin-top: 0.3rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.druzyna__tytul {
+    margin: 1.5rem 0 0.75rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+}
+
+.druzyna__lista {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    list-style: none;
+}
+
+/* Stała kolumna na datę i na wynik, elastyczna w środku: dzięki temu
+   wyniki stoją w jednej osi niezależnie od długości nazwy rywala. */
+.druzyna__mecz {
+    display: grid;
+    grid-template-columns: 3.1rem auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.55rem 0.6rem;
+    background-color: var(--bg-2);
+    border-radius: 6px;
+}
+
+.druzyna__kiedy {
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: var(--muted);
+}
+
+.druzyna__rywal {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    min-width: 0;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.druzyna__rywal small {
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+/* Wspólna szerokość minimalna, a nie sama zawartość: w tym kroju „1" jest
+   wyraźnie węższa od pozostałych cyfr i bez tego kafelek „6-1" wychodził
+   chudszy niż „0-3”, przez co kolumna wyników falowała. Wynik dwucyfrowy
+   („12-0") po prostu przekracza min-width i rozpycha kafelek o tyle, ile
+   naprawdę potrzebuje. tabular-nums zostaje — jeśli font kiedyś dostanie
+   cyfry o równej szerokości, same się wyrównają też wewnątrz. */
+.druzyna__wynik {
+    /* 3.7rem obejmuje najszerszy wariant, jaki tu wpada — „kol. 10" (szersze
+       od „kol. 11", bo zero jest szersze od jedynki). Niżej kolumna falowała
+       o te kilka pikseli. */
+    min-width: 3.7rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 5px;
+    font-size: 0.78rem;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    color: #FFFFFF;
+}
+
+.druzyna__wynik--z { background-color: var(--wynik-z); }
+.druzyna__wynik--r { background-color: var(--wynik-r); }
+.druzyna__wynik--p { background-color: var(--wynik-p); }
+
+/* mecz jeszcze nierozegrany — sama godzina, bez koloru wyniku */
+.druzyna__wynik--brak {
+    background-color: transparent;
+    border: 1px dashed rgba(255, 255, 255, 0.16);
+    color: var(--muted);
+}
+
+.druzyna__pusto {
+    padding: 0.8rem 0.6rem;
+    background-color: var(--bg-2);
+    border-radius: 6px;
+    font-size: 0.8rem;
+    color: var(--muted);
 }
 
 /* =========================================
