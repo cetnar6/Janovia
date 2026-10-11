@@ -585,6 +585,17 @@
                ':' + (s < 10 ? '0' + s : s);
     }
 
+    /* Minuta tak, jak pisze ją tablica: „45+3" po regulaminowym końcu
+       połowy. Ten sam próg co w zegarze — kwadrans doliczonego czasu. */
+    function opisMinuty(minuta) {
+        var koniec = (DANE.polowa === 2 ? 90 : 45);
+        var doliczone = minuta - koniec;
+
+        return doliczone > 0 && doliczone <= 15
+            ? koniec + '+' + doliczone
+            : String(minuta);
+    }
+
     /* Zegarów jest dwa — w plakietce stanu i na tablicy wyniku — więc klasa,
        nie identyfikator. Oba pokazują to samo, bo liczą z tego samego gwizdka. */
     var zegary = document.querySelectorAll('.stoper');
@@ -653,7 +664,7 @@
             okno.style.pointerEvents = '';
         }, 400);
 
-        var minuta = okno.querySelector('input[type="number"]');
+        var minuta = okno.querySelector('.okno__minuta');
 
         if (minuta) {
             /* Podpowiadamy tylko wtedy, gdy zegar biegnie. W meczu
@@ -662,10 +673,14 @@
                świadomy wybór. Lepiej zostawić pole puste. */
             var teraz = DANE.trwa ? minutaMeczu() : null;
 
-            minuta.value = teraz !== null ? String(teraz) : (DANE.minuta ? String(DANE.minuta) : '');
+            /* Podpowiedź w tym samym zapisie, w jakim minutę widać na
+               tablicy — w doliczonym czasie „45+3", nie „48". */
+            minuta.value = teraz !== null
+                ? opisMinuty(teraz)
+                : (DANE.minuta ? opisMinuty(DANE.minuta) : '');
         }
 
-        var pierwsze = okno.querySelector('select, input[type="number"]');
+        var pierwsze = okno.querySelector('select, .okno__minuta');
 
         if (pierwsze) {
             pierwsze.focus();

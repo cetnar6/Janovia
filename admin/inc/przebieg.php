@@ -173,6 +173,51 @@ function opis_minuty(int $minuta, int $polowa): string
         : (string) $minuta;
 }
 
+/**
+ * Minuta wpisana ręcznie — liczba albo doliczony czas („45+3", „90+5").
+ *
+ * Zapis z plusem niesie więcej niż liczbę: mówi też, której połowy dotyczy.
+ * „45+3" to zawsze koniec pierwszej, nawet jeśli panel stoi już przy drugiej
+ * — bo tak właśnie poprawia się gola dopisanego po fakcie.
+ *
+ * Zwraca ['minuta' => int, 'polowa' => int] albo null, gdy wpisu nie da się
+ * odczytać.
+ */
+function minuta_z_wpisu($tekst, int $polowa_domyslna): ?array
+{
+    $tekst = preg_replace('/\s+/u', '', (string) $tekst);
+
+    if ($tekst === null || $tekst === '') {
+        return null;
+    }
+
+    if (!preg_match('/^(\d{1,3})(?:\+(\d{1,2}))?$/', $tekst, $t)) {
+        return null;
+    }
+
+    $podstawa = (int) $t[1];
+    $doliczone = isset($t[2]) ? (int) $t[2] : null;
+
+    if ($doliczone === null) {
+        $minuta = $podstawa;
+        $polowa = $polowa_domyslna;
+    } else {
+        /* Plus ma sens tylko po regulaminowym końcu połowy. Przy innej
+           liczbie („30+2") czytamy to jako zwykłą sumę i zostajemy przy
+           bieżącej połowie — żadna inna interpretacja nie byłaby pewniejsza. */
+        $polowa = $podstawa === 2 * POLOWA_MINUT ? 2
+                : ($podstawa === POLOWA_MINUT ? 1 : $polowa_domyslna);
+
+        $minuta = $podstawa + $doliczone;
+    }
+
+    if ($minuta < 0 || $minuta > MAKS_MINUTA) {
+        return null;
+    }
+
+    return ['minuta' => $minuta, 'polowa' => $polowa];
+}
+
 /** Która połowa trwa w zapisanym meczu. */
 function polowa_skladu(?array $sklad): int
 {

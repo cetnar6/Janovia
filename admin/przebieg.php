@@ -96,10 +96,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
     $akcja = (string) ($_POST['akcja'] ?? '');
 
     /* Minuta i zawodnicy z formularza przechodzą przez to samo sito co skład:
-       dalej idą wyłącznie wartości z list, które panel sam wystawił. */
-    $minuta = filter_var($_POST['minuta'] ?? null, FILTER_VALIDATE_INT, [
-        'options' => ['min_range' => 0, 'max_range' => MAKS_MINUTA],
-    ]);
+       dalej idą wyłącznie wartości z list, które panel sam wystawił.
+
+       Minuta przyjmuje też doliczony czas: „45+3" to minuta 48 w pierwszej
+       połowie, niezależnie od tego, przy której połowie stoi panel. Dzięki
+       temu gola dopisanego po meczu zapisuje się tak, jak się go pamięta. */
+    $wpis_minuty = minuta_z_wpisu($_POST['minuta'] ?? null, polowa_skladu($sklad));
+    $minuta = $wpis_minuty['minuta'] ?? null;
 
     /* Połowa idzie osobnym zapisem, bo kolumna może jeszcze nie istnieć:
        na hostingu migracje uruchamia administrator ręcznie, a panel ma
@@ -110,8 +113,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
         }
     };
 
-    /* Z której połowy jest wpisywane teraz zdarzenie. */
-    $polowa_teraz = polowa_skladu($sklad);
+    /* Z której połowy jest wpisywane teraz zdarzenie — z wpisu, jeśli niósł
+       doliczony czas, inaczej z tej, którą panel prowadzi. */
+    $polowa_teraz = $wpis_minuty['polowa'] ?? polowa_skladu($sklad);
 
     $z_listy = static function ($wartosc, array $dozwolone): ?int {
         $id = filter_var($wartosc, FILTER_VALIDATE_INT);
@@ -287,8 +291,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
         przekieruj($powrot);
     }
 
-    if ($minuta === false || $minuta === null) {
-        komunikat('Podaj minutę meczu — liczbę od 0 do ' . MAKS_MINUTA . '.', 'blad');
+    if ($minuta === null) {
+        komunikat('Podaj minutę meczu — liczbę od 0 do ' . MAKS_MINUTA
+                . ' albo doliczony czas, np. 45+3.', 'blad');
         przekieruj($powrot);
     }
 
@@ -309,7 +314,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
         dopisz_zdarzenie($db, $klucz_meczu, 'gol', $minuta, $strzelec, $asysta, $polowa_teraz);
 
         opublikuj_przebieg($db);
-        komunikat('Gol zapisany — ' . $minuta . ' minuta.');
+        komunikat('Gol zapisany — ' . opis_minuty($minuta, $polowa_teraz) . ' minuta.');
         przekieruj($powrot);
     }
 
@@ -330,7 +335,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
 
         opublikuj_przebieg($db);
         komunikat(($typ === 'kartka_czerwona' ? 'Czerwona' : 'Żółta')
-                . ' kartka zapisana — ' . $minuta . ' minuta.');
+                . ' kartka zapisana — ' . opis_minuty($minuta, $polowa_teraz) . ' minuta.');
         przekieruj($powrot);
     }
 
@@ -338,7 +343,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
         dopisz_zdarzenie($db, $klucz_meczu, 'gol_rywala', $minuta, null, null, $polowa_teraz);
 
         opublikuj_przebieg($db);
-        komunikat('Gol rywala zapisany — ' . $minuta . ' minuta.', 'blad');
+        komunikat('Gol rywala zapisany — ' . opis_minuty($minuta, $polowa_teraz)
+               . ' minuta.', 'blad');
         przekieruj($powrot);
     }
 
@@ -354,7 +360,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
         dopisz_zdarzenie($db, $klucz_meczu, 'zmiana', $minuta, $wchodzi, $schodzi, $polowa_teraz);
 
         opublikuj_przebieg($db);
-        komunikat('Zmiana zapisana — ' . $minuta . ' minuta.');
+        komunikat('Zmiana zapisana — ' . opis_minuty($minuta, $polowa_teraz) . ' minuta.');
         przekieruj($powrot);
     }
 
@@ -878,8 +884,15 @@ naglowek('Przebieg meczu');
 
             <label>
                 Minuta
-                <input type="number" name="minuta" required
-                       min="0" max="<?= MAKS_MINUTA ?>" inputmode="numeric">
+                <?php /* Pole tekstowe, nie liczbowe: w doliczonym czasie trener
+                         pisze „45+3" dokładnie tak, jak widzi na tablicy.
+                         inputmode="tel", bo klawiatura numeryczna na telefonie
+                         nie ma plusa, a telefoniczna ma — i dalej jest duża. */ ?>
+                <input type="text" class="okno__minuta" name="minuta" required
+                       inputmode="tel" autocomplete="off"
+                       pattern="\s*\d{1,3}\s*([+]\s*\d{1,2}\s*)?"
+                       placeholder="np. 62 albo 45+3"
+                       title="Minuta meczu — liczba albo doliczony czas, np. 45+3">
             </label>
 
             <div class="okno__przyciski">
@@ -905,8 +918,15 @@ naglowek('Przebieg meczu');
 
             <label>
                 Minuta
-                <input type="number" name="minuta" required
-                       min="0" max="<?= MAKS_MINUTA ?>" inputmode="numeric">
+                <?php /* Pole tekstowe, nie liczbowe: w doliczonym czasie trener
+                         pisze „45+3" dokładnie tak, jak widzi na tablicy.
+                         inputmode="tel", bo klawiatura numeryczna na telefonie
+                         nie ma plusa, a telefoniczna ma — i dalej jest duża. */ ?>
+                <input type="text" class="okno__minuta" name="minuta" required
+                       inputmode="tel" autocomplete="off"
+                       pattern="\s*\d{1,3}\s*([+]\s*\d{1,2}\s*)?"
+                       placeholder="np. 62 albo 45+3"
+                       title="Minuta meczu — liczba albo doliczony czas, np. 45+3">
             </label>
 
             <?php /* Kolor wybiera przycisk, nie osobne pole: i tak trzeba
@@ -937,8 +957,15 @@ naglowek('Przebieg meczu');
 
             <label>
                 Minuta
-                <input type="number" name="minuta" required
-                       min="0" max="<?= MAKS_MINUTA ?>" inputmode="numeric">
+                <?php /* Pole tekstowe, nie liczbowe: w doliczonym czasie trener
+                         pisze „45+3" dokładnie tak, jak widzi na tablicy.
+                         inputmode="tel", bo klawiatura numeryczna na telefonie
+                         nie ma plusa, a telefoniczna ma — i dalej jest duża. */ ?>
+                <input type="text" class="okno__minuta" name="minuta" required
+                       inputmode="tel" autocomplete="off"
+                       pattern="\s*\d{1,3}\s*([+]\s*\d{1,2}\s*)?"
+                       placeholder="np. 62 albo 45+3"
+                       title="Minuta meczu — liczba albo doliczony czas, np. 45+3">
             </label>
 
             <div class="okno__przyciski">
@@ -984,8 +1011,15 @@ naglowek('Przebieg meczu');
 
             <label>
                 Minuta
-                <input type="number" name="minuta" required
-                       min="0" max="<?= MAKS_MINUTA ?>" inputmode="numeric">
+                <?php /* Pole tekstowe, nie liczbowe: w doliczonym czasie trener
+                         pisze „45+3" dokładnie tak, jak widzi na tablicy.
+                         inputmode="tel", bo klawiatura numeryczna na telefonie
+                         nie ma plusa, a telefoniczna ma — i dalej jest duża. */ ?>
+                <input type="text" class="okno__minuta" name="minuta" required
+                       inputmode="tel" autocomplete="off"
+                       pattern="\s*\d{1,3}\s*([+]\s*\d{1,2}\s*)?"
+                       placeholder="np. 62 albo 45+3"
+                       title="Minuta meczu — liczba albo doliczony czas, np. 45+3">
             </label>
 
             <div class="okno__przyciski">
@@ -1048,7 +1082,7 @@ naglowek('Przebieg meczu');
         'zmiany'     => $zmiany,
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>
 </script>
-<script src="js/sklad.js?v=23"></script>
+<script src="js/sklad.js?v=24"></script>
 
 <?php endif; ?>
 
