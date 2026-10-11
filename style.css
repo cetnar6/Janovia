@@ -2859,9 +2859,11 @@ a.marquee__item {
 
 /* Stała kolumna na datę i na wynik, elastyczna w środku: dzięki temu
    wyniki stoją w jednej osi niezależnie od długości nazwy rywala. */
+/* Piąta kolumna na znak przebiegu — stała dla wszystkich wierszy, także
+   tych bez niego, żeby wyniki po prawej stały w jednej osi. */
 .druzyna__mecz {
     display: grid;
-    grid-template-columns: 3.1rem auto minmax(0, 1fr) auto;
+    grid-template-columns: 3.1rem auto minmax(0, 1fr) auto 1.5rem;
     align-items: center;
     gap: 0.7rem;
     padding: 0.55rem 0.6rem;
@@ -3240,6 +3242,32 @@ a.marquee__item {
     outline-offset: -2px;
 }
 
+/* Wiersz meczu w panelu drużyny — ta sama zasada co w terminarzu. */
+.druzyna__mecz.is-klikalny { cursor: pointer; }
+
+.druzyna__mecz.is-klikalny:hover .wynik__znak,
+.druzyna__mecz.is-klikalny:focus-visible .wynik__znak {
+    border-color: var(--gold);
+    color: var(--gold);
+}
+
+.druzyna__mecz.is-klikalny:focus-visible {
+    outline: 2px solid var(--blue-light);
+    outline-offset: -2px;
+}
+
+.druzyna__mecz .wynik__znak {
+    width: 1.5rem;
+    height: 1.5rem;
+    flex-shrink: 0;
+}
+
+.druzyna__tresc .wyniki__podpowiedz {
+    justify-content: flex-start;
+    margin-bottom: 1rem;
+    font-size: 0.72rem;
+}
+
 .wyniki__podpowiedz {
     display: flex;
     align-items: center;
@@ -3252,6 +3280,7 @@ a.marquee__item {
 
 .wyniki__podpowiedz .wynik__znak { flex-shrink: 0; }
 
+/* Nad panelem drużyny (320), bo okno meczu otwiera się także z niego. */
 .przebiegok {
     position: fixed;
     inset: 0;

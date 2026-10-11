@@ -1056,13 +1056,32 @@
                       : (m.kolejka ? 'kol. ' + m.kolejka : '—')) +
               '</span>';
 
-        return '<li class="druzyna__mecz">' +
+        /* Ten sam znak i ta sama zasada co w terminarzu: klika się cały
+           wiersz, ikona mówi tylko, że jest w co kliknąć. */
+        var szczegoly = szczegolyMeczu(m);
+
+        var klikalny = szczegoly
+            ? ' is-klikalny" data-mecz="' + esc(kluczMeczu(m)) + '"' +
+              ' role="button" tabindex="0"' +
+              ' aria-label="Skład i przebieg meczu z ' + esc(skrot(rywal)) + '"'
+            : '"';
+
+        return '<li class="druzyna__mecz' + klikalny + '>' +
                    '<span class="druzyna__kiedy">' + esc(kiedy) + '</span>' +
                    przyciskHerbu(rywal, 'xs') +
                    '<span class="druzyna__rywal">' + esc(skrot(rywal)) +
                        '<small>' + (uSiebie ? 'u siebie' : 'wyjazd') + '</small>' +
                    '</span>' +
                    prawa +
+                   (szczegoly
+                       ? '<span class="wynik__znak" aria-hidden="true">' +
+                             '<svg viewBox="0 0 24 24">' +
+                                 '<circle cx="5" cy="7" r="1.6"/><rect x="9" y="6" width="11" height="2" rx="1"/>' +
+                                 '<circle cx="5" cy="12" r="1.6"/><rect x="9" y="11" width="11" height="2" rx="1"/>' +
+                                 '<circle cx="5" cy="17" r="1.6"/><rect x="9" y="16" width="7" height="2" rx="1"/>' +
+                             '</svg>' +
+                         '</span>'
+                       : '<span aria-hidden="true"></span>') +
                '</li>';
     }
 
@@ -1115,7 +1134,9 @@
                     : '') +
             '</div>';
 
-        var tresc = '<h4 class="druzyna__tytul">Ostatnie mecze</h4>';
+        var tresc = podpowiedzOSzczegolach(zestaw.rozegrane);
+
+        tresc += '<h4 class="druzyna__tytul">Ostatnie mecze</h4>';
 
         tresc += zestaw.rozegrane.length
             ? '<ul class="druzyna__lista">' +
@@ -2394,7 +2415,13 @@
         if (!panelPrzebiegu || panelPrzebiegu.hidden) { return; }
 
         panelPrzebiegu.hidden = true;
-        blokujPrzewijanie(false);
+
+        /* Okno meczu bywa otwierane z panelu drużyny. Gdy ten został pod
+           spodem, strona ma zostać zablokowana — inaczej tło zaczyna się
+           przewijać pod wciąż otwartym panelem. */
+        if (!panelDruzyny || panelDruzyny.hidden) {
+            blokujPrzewijanie(false);
+        }
 
         if (ostatniaIkona) {
             ostatniaIkona.focus();
@@ -2422,7 +2449,7 @@
            w tarczę otwierałoby dwa okna naraz. */
         if (e.target.closest('.crest-btn')) { return; }
 
-        var wiersz = e.target.closest('.wynik[data-mecz]');
+        var wiersz = e.target.closest('[data-mecz].wynik, [data-mecz].druzyna__mecz');
 
         if (wiersz) { otworzZWiersza(wiersz); }
     });
@@ -2430,7 +2457,9 @@
     document.addEventListener('keydown', function (e) {
         if (e.key !== 'Enter' && e.key !== ' ') { return; }
 
-        var wiersz = e.target.closest ? e.target.closest('.wynik[data-mecz]') : null;
+        var wiersz = e.target.closest
+            ? e.target.closest('[data-mecz].wynik, [data-mecz].druzyna__mecz')
+            : null;
 
         if (!wiersz) { return; }
 
