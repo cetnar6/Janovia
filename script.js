@@ -1072,16 +1072,23 @@
                    '<span class="druzyna__rywal">' + esc(skrot(rywal)) +
                        '<small>' + (uSiebie ? 'u siebie' : 'wyjazd') + '</small>' +
                    '</span>' +
-                   prawa +
-                   (szczegoly
-                       ? '<span class="wynik__znak" aria-hidden="true">' +
-                             '<svg viewBox="0 0 24 24">' +
-                                 '<circle cx="5" cy="7" r="1.6"/><rect x="9" y="6" width="11" height="2" rx="1"/>' +
-                                 '<circle cx="5" cy="12" r="1.6"/><rect x="9" y="11" width="11" height="2" rx="1"/>' +
-                                 '<circle cx="5" cy="17" r="1.6"/><rect x="9" y="16" width="7" height="2" rx="1"/>' +
-                             '</svg>' +
-                         '</span>'
-                       : '<span aria-hidden="true"></span>') +
+                   /* Wynik i znak w jednej komórce, tak jak w terminarzu:
+                      znak należy do tego meczu, więc stoi tuż przy wyniku,
+                      a nie przyklejony do prawej krawędzi wiersza. Miejsce
+                      na niego jest zawsze, żeby wyniki stały w jednej osi. */
+                   '<span class="druzyna__prawa">' +
+                       prawa +
+                       '<span class="wynik__znak' + (szczegoly ? '' : ' is-pusty') + '"' +
+                           ' aria-hidden="true">' +
+                           (szczegoly
+                               ? '<svg viewBox="0 0 24 24">' +
+                                     '<circle cx="5" cy="7" r="1.6"/><rect x="9" y="6" width="11" height="2" rx="1"/>' +
+                                     '<circle cx="5" cy="12" r="1.6"/><rect x="9" y="11" width="11" height="2" rx="1"/>' +
+                                     '<circle cx="5" cy="17" r="1.6"/><rect x="9" y="16" width="7" height="2" rx="1"/>' +
+                                 '</svg>'
+                               : '') +
+                       '</span>' +
+                   '</span>' +
                '</li>';
     }
 
