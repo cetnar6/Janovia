@@ -2399,26 +2399,68 @@
         }
     }
 
-    /* Delegacja, bo wiersze meczów powstają dopiero po pobraniu terminarza. */
-    document.addEventListener('click', function (e) {
-        var btn = e.target.closest ? e.target.closest('.wynik__szczegoly') : null;
-
-        if (!btn) { return; }
-
-        var klucz = btn.getAttribute('data-mecz');
+    function otworzZWiersza(wiersz) {
+        var klucz = wiersz.getAttribute('data-mecz');
         var mecz = ((DANE_LIGI && DANE_LIGI.wszystkie_mecze) || []).filter(function (m) {
             return kluczMeczu(m) === klucz;
         })[0];
 
         if (!mecz) { return; }
 
-        ostatniaIkona = btn;
+        ostatniaIkona = wiersz;
         otworzPrzebieg(mecz);
+    }
+
+    /* Delegacja, bo wiersze meczów powstają dopiero po pobraniu terminarza. */
+    document.addEventListener('click', function (e) {
+        if (!e.target.closest) { return; }
+
+        /* Herb otwiera panel drużyny i ma pierwszeństwo — bez tego kliknięcie
+           w tarczę otwierałoby dwa okna naraz. */
+        if (e.target.closest('.crest-btn')) { return; }
+
+        var wiersz = e.target.closest('.wynik[data-mecz]');
+
+        if (wiersz) { otworzZWiersza(wiersz); }
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key !== 'Enter' && e.key !== ' ') { return; }
+
+        var wiersz = e.target.closest ? e.target.closest('.wynik[data-mecz]') : null;
+
+        if (!wiersz) { return; }
+
+        e.preventDefault();
+        otworzZWiersza(wiersz);
     });
 
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') { zamknijPrzebieg(); }
     });
+
+    /**
+     * Zdanie nad listą: „kliknij mecz z ikoną".
+     *
+     * Pokazujemy je tylko wtedy, gdy w tej liście naprawdę jest co otworzyć —
+     * podpowiedź do funkcji, której nie ma, jest gorsza niż jej brak.
+     */
+    function podpowiedzOSzczegolach(mecze) {
+        var ile = (mecze || []).filter(szczegolyMeczu).length;
+
+        if (!ile) { return ''; }
+
+        return '<p class="wyniki__podpowiedz">' +
+                   '<span class="wynik__znak" aria-hidden="true">' +
+                       '<svg viewBox="0 0 24 24">' +
+                           '<circle cx="5" cy="7" r="1.6"/><rect x="9" y="6" width="11" height="2" rx="1"/>' +
+                           '<circle cx="5" cy="12" r="1.6"/><rect x="9" y="11" width="11" height="2" rx="1"/>' +
+                           '<circle cx="5" cy="17" r="1.6"/><rect x="9" y="16" width="7" height="2" rx="1"/>' +
+                       '</svg>' +
+                   '</span>' +
+                   'Kliknij mecz z tym znakiem, żeby zobaczyć skład i przebieg spotkania.' +
+               '</p>';
+    }
 
     function rysujKolejke(dane) {
         var lista = document.getElementById('wyniki');
@@ -2433,6 +2475,7 @@
         }
 
         lista.innerHTML = k.mecze.map(wierszMeczu).join('');
+        lista.insertAdjacentHTML('beforebegin', podpowiedzOSzczegolach(k.mecze));
     }
 
     /* ---------- pełny terminarz (podstrona terminarz.html) ---------- */
@@ -2482,24 +2525,32 @@
             ? '<span class="wynik__rezultat">' + esc(m.wynik.replace('-', ' : ')) + '</span>'
             : '<span class="wynik__rezultat wynik__rezultat--brak">–</span>';
 
-        /* Ikona tylko przy meczach, które ktoś prowadził w panelu — przy
-           pozostałych nie byłoby czego pokazać, a sam znak obiecywałby
-           szczegóły, których nie ma. */
-        if (szczegolyMeczu(m)) {
-            srodek += '<button class="wynik__szczegoly" type="button"' +
-                          ' data-mecz="' + esc(kluczMeczu(m)) + '"' +
-                          ' title="Przebieg meczu" aria-label="Przebieg meczu:' +
-                          ' ' + esc(skrot(m.gospodarz)) + ' – ' + esc(skrot(m.gosc)) + '">' +
-                          '<svg viewBox="0 0 24 24" aria-hidden="true">' +
-                              '<circle cx="5" cy="7" r="1.6"/><rect x="9" y="6" width="11" height="2" rx="1"/>' +
-                              '<circle cx="5" cy="12" r="1.6"/><rect x="9" y="11" width="11" height="2" rx="1"/>' +
-                              '<circle cx="5" cy="17" r="1.6"/><rect x="9" y="16" width="7" height="2" rx="1"/>' +
-                          '</svg>' +
-                      '</button>';
-        }
+        /* Kolumna na ikonę jest w KAŻDYM wierszu, także pustym. Wcześniej
+           dokładaliśmy ją tylko tam, gdzie był przebieg — i taki wiersz
+           robił się węższy od sąsiadów, więc herby przestawały stać w jednej
+           osi. Widać to było gołym okiem na liście kolejki. */
+        var znak = szczegolyMeczu(m)
+            ? '<span class="wynik__znak" aria-hidden="true">' +
+                  '<svg viewBox="0 0 24 24">' +
+                      '<circle cx="5" cy="7" r="1.6"/><rect x="9" y="6" width="11" height="2" rx="1"/>' +
+                      '<circle cx="5" cy="12" r="1.6"/><rect x="9" y="11" width="11" height="2" rx="1"/>' +
+                      '<circle cx="5" cy="17" r="1.6"/><rect x="9" y="16" width="7" height="2" rx="1"/>' +
+                  '</svg>' +
+              '</span>'
+            : '';
+
+        /* Klikalny jest cały wiersz, nie sama ikona — w rzędzie wysokim na
+           62 px trafienie w kwadrat 27 px na telefonie to loteria. Ikona
+           zostaje jako znak, że jest w co kliknąć. */
+        var klikalny = szczegolyMeczu(m)
+            ? ' is-klikalny" data-mecz="' + esc(kluczMeczu(m)) + '"' +
+              ' role="button" tabindex="0"' +
+              ' aria-label="Skład i przebieg meczu ' + esc(skrot(m.gospodarz)) +
+              ' – ' + esc(skrot(m.gosc)) + '"'
+            : '"';
 
         return '<li class="wynik' + (nasz ? ' is-us' : '') +
-                   (m.uwaga ? ' wynik--uwaga' : '') + '">' +
+                   (m.uwaga ? ' wynik--uwaga' : '') + klikalny + '>' +
                    terminMeczu(m) +
                    '<span class="wynik__druzyna wynik__druzyna--gosp">' +
                        '<span>' + esc(skrot(m.gospodarz)) + '</span>' +
@@ -2510,6 +2561,7 @@
                        przyciskHerbu(m.gosc, 'xs') +
                        '<span>' + esc(skrot(m.gosc)) + '</span>' +
                    '</span>' +
+                   '<span class="wynik__akcje">' + znak + '</span>' +
                    uwagaMeczu(m, 'wynik__uwaga') +
                '</li>';
     }
@@ -2542,6 +2594,8 @@
         if (opis && dane.liga) {
             opis.textContent = dane.liga;
         }
+
+        var podpowiedz = podpowiedzOSzczegolach(mecze);
 
         // grupujemy mecze po numerze kolejki, zachowując porządek rosnący
         var numery = [];
@@ -2627,6 +2681,7 @@
         }
 
         box.innerHTML =
+            podpowiedz +
             runda('Runda <em>jesienna</em>', numery.slice(0, polowa), 0) +
             runda('Runda <em>wiosenna</em>', numery.slice(polowa), 0);
 

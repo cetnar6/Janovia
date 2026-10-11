@@ -1942,10 +1942,6 @@ a.marquee__item {
 }
 
 /* Uwaga od 90minut idzie pod meczem, przez całą szerokość wiersza. */
-/* Miejsce na ikonę przy prawej krawędzi — tylko w wierszach, które ją mają,
-   żeby dłuższa nazwa gościa nie wchodziła pod spód. */
-.wynik:has(.wynik__szczegoly) { padding-right: 2.8rem; }
-
 .wynik__uwaga {
     grid-column: 1 / -1;
     padding-top: 0.35rem;
@@ -1982,17 +1978,17 @@ a.marquee__item {
        Dlatego pełne 62 px osiągamy dopiero przy 868 px szerokości okna,
        a niżej odstęp płynnie maleje do zera — wynik dojeżdża na oś tam,
        gdzie jest na to miejsce, i nie odbiera go nazwom, gdy go brakuje. */
-    .wynik::after {
-        content: "";
+    .wynik__akcje {
         width: clamp(0px, (100vw - 620px) * 0.25, 62px);
-        /* Bez przypisania do pierwszego rzędu wyrównanie wjeżdżałoby pod
-           uwagę o meczu przełożonym i robiło pusty rząd na dole wiersza. */
-        grid-row: 1;
-        grid-column: 5;
     }
 }
 
 @media (max-width: 620px) {
+    .wynik__akcje {
+        grid-column: 1 / -1;
+        margin-top: 0.3rem;
+    }
+
     .wynik {
         /* czwarta kolumna nie zmieściłaby się obok nazw klubów, więc termin
            przenosimy do osobnego wiersza nad meczem, na całą szerokość */
@@ -3205,37 +3201,56 @@ a.marquee__item {
 
 /* ---------- ikona i okno z przebiegiem rozegranego meczu ---------- */
 
-/* Ikona stoi przy prawej krawędzi wiersza, poza siatką — wiersz ma sztywne
-   kolumny (termin, gospodarz, wynik, gość) i dołożenie piątego dziecka
-   spychało gościa do następnego rzędu. Pozycjonowanie bezwzględne trzyma
-   układ nietknięty na każdej szerokości ekranu. */
-.wynik__szczegoly {
-    position: absolute;
-    right: 0.6rem;
-    top: 50%;
-    transform: translateY(-50%);
+/* Kolumna na znak jest w każdym wierszu, także bez przebiegu — inaczej
+   wiersz ze znakiem byłby węższy od sąsiadów i herby straciłyby wspólną oś. */
+.wynik__akcje {
+    grid-row: 1;
+    grid-column: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.wynik__znak {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     width: 1.7rem;
     height: 1.7rem;
-    padding: 0;
-    background: none;
     border: 1px solid var(--line);
     border-radius: 6px;
     color: var(--muted);
-    cursor: pointer;
     transition: border-color 0.25s, color 0.25s;
 }
 
-.wynik__szczegoly svg { width: 0.95rem; height: 0.95rem; fill: currentColor; }
+.wynik__znak svg { width: 0.95rem; height: 0.95rem; fill: currentColor; }
 
-.wynik__szczegoly:hover { border-color: var(--gold); color: var(--gold); }
+/* Klika się cały wiersz — w rzędzie wysokim na 62 px trafienie palcem
+   w kwadracik 27 px byłoby loterią. */
+.wynik.is-klikalny { cursor: pointer; }
 
-.wynik__szczegoly:focus-visible {
-    outline: 2px solid var(--blue-light);
-    outline-offset: 2px;
+.wynik.is-klikalny:hover .wynik__znak,
+.wynik.is-klikalny:focus-visible .wynik__znak {
+    border-color: var(--gold);
+    color: var(--gold);
 }
+
+.wynik.is-klikalny:focus-visible {
+    outline: 2px solid var(--blue-light);
+    outline-offset: -2px;
+}
+
+.wyniki__podpowiedz {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.78rem;
+    color: var(--muted);
+}
+
+.wyniki__podpowiedz .wynik__znak { flex-shrink: 0; }
 
 .przebiegok {
     position: fixed;
