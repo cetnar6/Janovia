@@ -486,6 +486,41 @@ function opublikuj_przebieg(PDO $db): void
     opublikuj_wyniki($db);
 }
 
+/**
+ * Których plików dla strony jeszcze nie ma.
+ *
+ * Pliki powstają przy zapisie w panelu, więc po wdrożeniu, które dokłada
+ * nowy plik (tak było ze składami rozegranych meczów), strona pyta o coś,
+ * czego nikt jeszcze nie zapisał — i dostaje 404 aż do pierwszej akcji
+ * trenera albo nocnego crona. Stąd lista braków: panel uzupełnia je sam.
+ */
+function brakujace_pliki_strony(): array
+{
+    $braki = [];
+
+    foreach ([plik_przebiegu(), plik_wynikow(), plik_skladow()] as $plik) {
+        if (!is_file($plik)) {
+            $braki[] = basename($plik);
+        }
+    }
+
+    return $braki;
+}
+
+/**
+ * Przepisuje na stronę wszystko, co panel ma do powiedzenia.
+ *
+ * Skład najbliższego meczu, przebieg, wyniki i składy spotkań rozegranych —
+ * ten sam komplet, który odświeża nocny cron.
+ */
+function odswiez_pliki_strony(PDO $db): void
+{
+    require_once __DIR__ . '/sklad.php';
+
+    opublikuj_sklad_biezacy($db);
+    opublikuj_przebieg($db);
+}
+
 /* ---------- druga drużyna i herby ---------- */
 
 const NASZ_KLUB = 'Janovia Janowiec';

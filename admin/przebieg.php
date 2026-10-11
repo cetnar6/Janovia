@@ -52,6 +52,17 @@ $kadra = array_merge($xi, $lawka);
 
 /* ---------- zapis ---------- */
 
+/* Odświeżenie plików nie potrzebuje ani składu, ani trwającego meczu —
+   dlatego stoi przed bramką na $sklad niżej. */
+if ($_SERVER['REQUEST_METHOD'] === 'POST'
+    && (string) ($_POST['akcja'] ?? '') === 'odswiez' && $gotowa) {
+    sprawdz_csrf();
+
+    odswiez_pliki_strony($db);
+    komunikat('Strona klubu dostała świeże dane z panelu.');
+    przekieruj('przebieg.php');
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
     sprawdz_csrf();
 
@@ -275,6 +286,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
     przekieruj('przebieg.php');
 }
 
+/* Wdrożenie potrafi dołożyć nowy plik dla strony (tak przyszły składy
+   rozegranych meczów). Nikt nie będzie po nim wchodził do panelu tylko po
+   to, żeby kliknąć zapis, więc braki uzupełniamy przy pierwszym wejściu —
+   raz, bo potem pliki już są. */
+if ($gotowa && $_SERVER['REQUEST_METHOD'] === 'GET' && brakujace_pliki_strony()) {
+    odswiez_pliki_strony($db);
+}
+
 /* ---------- widok ---------- */
 
 $zdarzenia = $gotowa ? zdarzenia_meczu($db, $klucz_meczu) : [];
@@ -444,6 +463,15 @@ naglowek('Przebieg meczu');
             więc bez zapisanego składu nie ma z czego wybierać.
         </p>
         <a class="btn" href="sklad.php">Przejdź do składu</a>
+
+        <?php /* Także tutaj, bo odświeżenie dotyczy całej strony, nie tego
+                 jednego meczu — a bez składu na najbliższe spotkanie ekran
+                 kończy się w tym miejscu. */ ?>
+        <form method="post" class="przebieg__odswiez">
+            <?= pole_csrf() ?>
+            <input type="hidden" name="akcja" value="odswiez">
+            <button class="btn btn--pusty" type="submit">Odśwież dane na stronie</button>
+        </form>
     </section>
 <?php else: ?>
 
@@ -524,6 +552,12 @@ naglowek('Przebieg meczu');
             </button>
         </form>
     <?php endif; ?>
+
+    <form method="post">
+        <?= pole_csrf() ?>
+        <input type="hidden" name="akcja" value="odswiez">
+        <button class="btn btn--pusty" type="submit">Odśwież dane na stronie</button>
+    </form>
 
     <form method="post" onsubmit="return confirm('Skasować wszystkie gole i zmiany tego meczu?');">
         <?= pole_csrf() ?>

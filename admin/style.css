@@ -1659,3 +1659,9 @@ td.akcje { white-space: nowrap; font-size: 0; }
 
     .rezerwowy__kto strong { font-size: 0.78rem; }
 }
+
+/* Odświeżenie stoi pod przyciskiem składu, nie obok niego — to furtka
+   awaryjna, nie druga droga do celu tej karty. */
+.przebieg__odswiez {
+    margin-top: 0.9rem;
+}
