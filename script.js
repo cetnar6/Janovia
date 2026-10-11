@@ -1342,7 +1342,7 @@
         /* Dwie żółte i czerwona to jedno zdarzenie w oczach kibica, więc
            i jeden znak: żółto-czerwony. Czerwona pokazana od razu zostaje
            osobnym, całym prostokątem. */
-        var drugaZolta = czerwona && zolte >= 2;
+        var drugaZolta = zolte >= 2;
 
         if (!drugaZolta) {
             for (var i = 0; i < Math.min(zolte, 2); i++) {
@@ -1350,7 +1350,7 @@
             }
         }
 
-        if (czerwona) { znaki += kartka(true, drugaZolta); }
+        if (czerwona || drugaZolta) { znaki += kartka(true, drugaZolta); }
 
         return '<span class="kartki" title="' +
                    (zolte ? zolte + ' × żółta' : '') +
@@ -1642,33 +1642,55 @@
                '</svg>';
     }
 
+    /** Czy dwa zdarzenia dotyczą tego samego ukaranego. */
+    function tenSamUkarany(a, b) {
+        if (/rywala/.test(a.typ) !== /rywala/.test(b.typ)) { return false; }
+
+        return /rywala/.test(a.typ)
+            ? !!a.numer && a.numer === b.numer
+            : !!(a.kto && b.kto && a.kto.id && a.kto.id === b.kto.id);
+    }
+
     /**
-     * Czy ta czerwona to druga żółta.
+     * Która to żółta tego zawodnika w tym meczu.
      *
-     * Nie pytamy o to bazy: czerwona dopisana po drugiej żółtej to jedyny
-     * przypadek, w którym ukarany ma w meczu dwie żółte — więc wystarczy je
-     * policzyć. Czerwona pokazana od razu zostaje czerwona, nawet jeśli
-     * zawodnik miał wcześniej jedną żółtą.
+     * Druga oznacza, że sędzia pokazał po niej czerwoną — i tak ją rysujemy,
+     * bez czekania na osobny wpis. Dzięki temu działa to także dla kartek
+     * zapisanych wcześniej, gdy panel jeszcze czerwonej nie dopisywał.
      */
-    function czyDrugaZolta(z, zdarzenia) {
-        if (!zdarzenia) { return false; }
+    function ktoraZolta(z, zdarzenia) {
+        if (!zdarzenia) { return 1; }
 
-        var rywala = z.typ === 'kartka_czerwona_rywala';
-        var id = z.kto ? z.kto.id : null;
-        var numer = z.numer || null;
-        var zolte = 0;
+        var ile = 0;
 
-        zdarzenia.forEach(function (e) {
-            if (rywala) {
-                if (e.typ !== 'kartka_zolta_rywala' || e.numer !== numer) { return; }
-            } else {
-                if (e.typ !== 'kartka_zolta' || !e.kto || !id || e.kto.id !== id) { return; }
-            }
+        for (var i = 0; i < zdarzenia.length; i++) {
+            var e = zdarzenia[i];
 
-            zolte++;
+            if (!/kartka_zolta/.test(e.typ) || !tenSamUkarany(e, z)) { continue; }
+
+            ile++;
+
+            if (e === z) { return ile; }
+        }
+
+        return ile || 1;
+    }
+
+    /**
+     * Czerwona, która tylko powtarza drugą żółtą.
+     *
+     * Panel przez chwilę dopisywał ją osobnym zdarzeniem; teraz rysuje ją
+     * sama druga żółta, więc taki wpis byłby drugim wierszem o tym samym.
+     */
+    function czerwonaZDrugiejZoltej(z, zdarzenia) {
+        if (!zdarzenia || !/kartka_czerwona/.test(z.typ)) { return false; }
+
+        return zdarzenia.some(function (e) {
+            return /kartka_zolta/.test(e.typ)
+                && tenSamUkarany(e, z)
+                && e.minuta === z.minuta
+                && ktoraZolta(e, zdarzenia) >= 2;
         });
-
-        return zolte >= 2;
     }
 
     /**
@@ -1706,6 +1728,10 @@
         var byla = false;
 
         return zdarzenia.map(function (z) {
+            /* Czerwona dopisana kiedyś do drugiej żółtej nie dostaje
+               własnego wiersza — rysuje ją sama żółta. */
+            if (czerwonaZDrugiejZoltej(z, zdarzenia)) { return ''; }
+
             var wiersz = '';
 
             if (!byla && polowaZdarzenia(z) === 2) {
@@ -1748,10 +1774,11 @@
             dopisek = ktoZdarzenia(z.schodzi);
         }
 
+        var drugaZolta = /kartka_zolta/.test(z.typ) && ktoraZolta(z, zdarzenia) >= 2;
+
         var ikona = z.typ === 'zmiana' ? IKONA_ZMIANY
                   : /kartka/.test(z.typ)
-                        ? kartka(/czerwona/.test(z.typ),
-                                 /czerwona/.test(z.typ) && czyDrugaZolta(z, zdarzenia))
+                        ? kartka(/czerwona/.test(z.typ) || drugaZolta, drugaZolta)
                         : pilka();
 
         /* Wynik po bramce w kolejności z tablicy: gospodarz – gość. */

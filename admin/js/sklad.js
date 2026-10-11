@@ -194,15 +194,15 @@
 
         var tresc = '';
 
-        /* Dwie żółte i czerwona to jedno zdarzenie w oczach kibica, więc
-           i jeden znak: żółto-czerwony. */
-        var drugaZolta = czerwona && zolte >= 2;
+        /* Dwie żółte to czerwona, więc i jeden znak: żółto-czerwony. Nie
+           czekamy na osobny wpis czerwonej — same dwie żółte wystarczą. */
+        var drugaZolta = zolte >= 2;
 
         if (!drugaZolta) {
             for (var i = 0; i < Math.min(zolte, 2); i++) { tresc += znak(false, false); }
         }
 
-        if (czerwona) { tresc += znak(true, drugaZolta); }
+        if (czerwona || drugaZolta) { tresc += znak(true, drugaZolta); }
 
         return '<span class="kartki" title="' +
                    (zolte ? zolte + ' x żółta' : '') +

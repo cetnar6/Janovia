@@ -333,21 +333,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
            czerwonej i tak przechodzi normalną drogą. */
         dopisz_zdarzenie($db, $klucz_meczu, $typ, $minuta, $ukarany, null, $polowa_teraz);
 
-        /* Druga żółta to czerwona — sędzia pokazuje obie, więc panel też
-           zapisuje obie. Dopisujemy ją sami, bo przy linii bocznej nikt nie
-           będzie pamiętał, że ten zawodnik miał już jedną. */
+        /* Czerwonej za drugą żółtą nie zapisujemy osobno: to ta sama kartka,
+           tylko w innym kolorze. Panel i strona rysują drugą żółtą jako
+           żółto-czerwoną, więc osobny wpis byłby drugim zdarzeniem o tym
+           samym — i trzeba by go kasować razem z żółtą. */
         $miał = kartki_ukaranego($zdarzenia, $ukarany, null);
-        $wylecial = $typ === 'kartka_zolta' && $miał['zolte'] >= 1 && !$miał['czerwona'];
-
-        if ($wylecial) {
-            dopisz_zdarzenie($db, $klucz_meczu, 'kartka_czerwona', $minuta, $ukarany,
-                             null, $polowa_teraz);
-        }
+        $wylecial = $typ === 'kartka_zolta' && $miał['zolte'] >= 1;
 
         opublikuj_przebieg($db);
         komunikat($wylecial
             ? 'Druga żółta w ' . opis_minuty($minuta, $polowa_teraz)
-              . ' minucie — dopisana czerwona.'
+              . ' minucie — zawodnik schodzi z boiska.'
             : ($typ === 'kartka_czerwona' ? 'Czerwona' : 'Żółta')
               . ' kartka zapisana — ' . opis_minuty($minuta, $polowa_teraz) . ' minuta.');
         przekieruj($powrot);
@@ -376,17 +372,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
 
         /* To samo po stronie rywala — tam ukaranego poznajemy po numerze. */
         $miał = kartki_ukaranego($zdarzenia, null, $numer);
-        $wylecial = $typ === 'kartka_zolta_rywala' && $miał['zolte'] >= 1 && !$miał['czerwona'];
-
-        if ($wylecial) {
-            dopisz_zdarzenie($db, $klucz_meczu, 'kartka_czerwona_rywala', $minuta, null,
-                             null, $polowa_teraz, $numer);
-        }
+        $wylecial = $typ === 'kartka_zolta_rywala' && $miał['zolte'] >= 1;
 
         opublikuj_przebieg($db);
         komunikat($wylecial
             ? 'Druga żółta dla rywala (nr ' . $numer . ') w '
-              . opis_minuty($minuta, $polowa_teraz) . ' minucie — dopisana czerwona.'
+              . opis_minuty($minuta, $polowa_teraz) . ' minucie — schodzi z boiska.'
             : ($typ === 'kartka_czerwona_rywala' ? 'Czerwona' : 'Żółta')
               . ' kartka dla rywala (nr ' . $numer . ') — '
               . opis_minuty($minuta, $polowa_teraz) . ' minuta.');
@@ -903,7 +894,11 @@ naglowek('Przebieg meczu');
                         <?php elseif ($z['typ'] === 'gol_rywala'): ?>
                             <strong>Gol rywala</strong>
                         <?php elseif ($z['typ'] === 'kartka_zolta'): ?>
-                            <strong>Żółta kartka</strong> — <?= e(podpis_zawodnika($kto)) ?>
+                            <strong>
+                                <?= ktora_zolta($zdarzenia, $z) >= 2
+                                    ? 'Druga żółta — czerwona'
+                                    : 'Żółta kartka' ?>
+                            </strong> — <?= e(podpis_zawodnika($kto)) ?>
                         <?php elseif ($z['typ'] === 'kartka_czerwona'): ?>
                             <strong>
                                 <?= kartki_ukaranego($zdarzenia, (int) $z['zawodnik_id'], null)['zolte'] >= 2
@@ -912,8 +907,14 @@ naglowek('Przebieg meczu');
                             </strong> — <?= e(podpis_zawodnika($kto)) ?>
                         <?php elseif (in_array($z['typ'], KARTKI_RYWALA, true)): ?>
                             <strong>
-                                <?= $z['typ'] === 'kartka_czerwona_rywala' ? 'Czerwona' : 'Żółta' ?>
-                                kartka — <?= e($rywal) ?>
+                                <?php if ($z['typ'] === 'kartka_czerwona_rywala'): ?>
+                                    Czerwona kartka
+                                <?php else: ?>
+                                    <?= ktora_zolta($zdarzenia, $z) >= 2
+                                        ? 'Druga żółta — czerwona'
+                                        : 'Żółta kartka' ?>
+                                <?php endif; ?>
+                                — <?= e($rywal) ?>
                             </strong>
                             <small>numer <?= (int) ($z['numer_rywala'] ?? 0) ?: '—' ?></small>
                         <?php else: ?>
@@ -1205,7 +1206,7 @@ naglowek('Przebieg meczu');
         'zmiany'     => $zmiany,
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>
 </script>
-<script src="js/sklad.js?v=26"></script>
+<script src="js/sklad.js?v=27"></script>
 
 <?php endif; ?>
 

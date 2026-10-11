@@ -297,6 +297,39 @@ function kartki_ukaranego(array $zdarzenia, ?int $zawodnik, ?int $numer): array
     return ['zolte' => $zolte, 'czerwona' => $czerwona];
 }
 
+/**
+ * Która to żółta tego ukaranego w tym meczu.
+ *
+ * Druga oznacza, że sędzia pokazał po niej czerwoną — panel i strona rysują
+ * ją wtedy jako żółto-czerwoną, bez osobnego wpisu. Liczymy po kolejności
+ * zdarzeń, bo ta sama minuta potrafi nieść dwie kartki.
+ */
+function ktora_zolta(array $zdarzenia, array $kartka): int
+{
+    $rywala = in_array($kartka['typ'], KARTKI_RYWALA, true);
+    $ile = 0;
+
+    foreach ($zdarzenia as $z) {
+        if ($rywala) {
+            if ($z['typ'] !== 'kartka_zolta_rywala'
+                || (int) ($z['numer_rywala'] ?? 0) !== (int) ($kartka['numer_rywala'] ?? -1)) {
+                continue;
+            }
+        } elseif ($z['typ'] !== 'kartka_zolta'
+                  || (int) $z['zawodnik_id'] !== (int) $kartka['zawodnik_id']) {
+            continue;
+        }
+
+        $ile++;
+
+        if ((int) $z['id'] === (int) $kartka['id']) {
+            return $ile;
+        }
+    }
+
+    return $ile ?: 1;
+}
+
 /** Która połowa trwa w zapisanym meczu. */
 function polowa_skladu(?array $sklad): int
 {
