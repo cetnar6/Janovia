@@ -143,6 +143,8 @@ CREATE TABLE IF NOT EXISTS sklady (
 -- wymazywać historii meczu.
 CREATE TABLE IF NOT EXISTS zdarzenia (
     id           INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    -- spotkanie, którego dotyczy (klucz jak w tabeli sklady)
+    mecz_klucz   VARCHAR(120) NULL,
     -- gol | gol_rywala | zmiana
     typ          VARCHAR(16) NOT NULL,
     minuta       INT         NOT NULL,

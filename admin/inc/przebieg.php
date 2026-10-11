@@ -69,17 +69,51 @@ function id_ze_skladu($json): array
     return $ids;
 }
 
-function zdarzenia_meczu(PDO $db): array
+/**
+ * Zdarzenia jednego spotkania.
+ *
+ * Klucz meczu jest tu konieczny, a nie dla porządku: bez niego gole
+ * poprzedniej kolejki zostawały w tabeli i doklejały się do następnego
+ * meczu w chwili, gdy terminarz przeskakiwał dalej. Wynik 6:4 z meczu
+ * z Pniem pokazał się tak przy spotkaniu ze Sprintem.
+ */
+function zdarzenia_meczu(PDO $db, ?string $klucz): array
 {
-    return $db->query('SELECT * FROM zdarzenia ORDER BY minuta, id')->fetchAll();
+    if (!kolumna_istnieje('zdarzenia', 'mecz_klucz')) {
+        return $db->query('SELECT * FROM zdarzenia ORDER BY minuta, id')->fetchAll();
+    }
+
+    if ($klucz === null || $klucz === '') {
+        return [];
+    }
+
+    $stmt = $db->prepare('SELECT * FROM zdarzenia WHERE mecz_klucz = ? ORDER BY minuta, id');
+    $stmt->execute([$klucz]);
+
+    return $stmt->fetchAll();
 }
 
-function dopisz_zdarzenie(PDO $db, string $typ, int $minuta, ?int $zawodnik, ?int $drugi): void
-{
+function dopisz_zdarzenie(
+    PDO $db,
+    ?string $klucz,
+    string $typ,
+    int $minuta,
+    ?int $zawodnik,
+    ?int $drugi
+): void {
+    if (!kolumna_istnieje('zdarzenia', 'mecz_klucz')) {
+        $db->prepare(
+            'INSERT INTO zdarzenia (typ, minuta, zawodnik_id, zawodnik2_id, utworzono)
+                  VALUES (?, ?, ?, ?, ?)'
+        )->execute([$typ, $minuta, $zawodnik, $drugi, date('Y-m-d H:i:s')]);
+
+        return;
+    }
+
     $db->prepare(
-        'INSERT INTO zdarzenia (typ, minuta, zawodnik_id, zawodnik2_id, utworzono)
-              VALUES (?, ?, ?, ?, ?)'
-    )->execute([$typ, $minuta, $zawodnik, $drugi, date('Y-m-d H:i:s')]);
+        'INSERT INTO zdarzenia (mecz_klucz, typ, minuta, zawodnik_id, zawodnik2_id, utworzono)
+              VALUES (?, ?, ?, ?, ?, ?)'
+    )->execute([$klucz, $typ, $minuta, $zawodnik, $drugi, date('Y-m-d H:i:s')]);
 }
 
 /**
@@ -192,8 +226,9 @@ function plik_przebiegu(): string
  */
 function opublikuj_przebieg(PDO $db): void
 {
+    $mecz = mecz_biezacy();
     $sklad = sklad_biezacy($db);
-    $zdarzenia = zdarzenia_meczu($db);
+    $zdarzenia = zdarzenia_meczu($db, $mecz['klucz'] ?? null);
 
     $ids = [];
 
@@ -268,6 +303,11 @@ function opublikuj_przebieg(PDO $db): void
 
     $json = json_encode([
         'zaktualizowano' => date('c'),
+        /* Czyj to przebieg. Strona porównuje ten klucz ze spotkaniem, które
+           właśnie pokazuje — inaczej wynik poprzedniej kolejki wyświetliłby
+           się przy następnym meczu. */
+        'mecz'           => $mecz['klucz'] ?? null,
+        'opis_meczu'     => $mecz['opis'] ?? null,
         'stan'           => (string) ($sklad['stan'] ?? 'przed'),
         'start'          => $start ? date('c', (int) strtotime((string) $start)) : null,
         /* Chwila zatrzymania zegara — strona zamraża na niej stoper

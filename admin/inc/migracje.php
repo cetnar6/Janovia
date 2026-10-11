@@ -383,6 +383,41 @@ function migracje(): array
         ],
 
         [
+            'id'    => 'przebieg-na-mecz',
+            'nazwa' => 'Przebieg przypisany do spotkania',
+            'opis'  => 'Bez tego gole i zmiany leżą w tabeli bez meczu — i po '
+                     . 'przeskoku terminarza doklejają się do następnej kolejki.',
+
+            'potrzebna' => static function (): bool {
+                return tabela_istnieje('zdarzenia')
+                    && !kolumna_istnieje('zdarzenia', 'mecz_klucz');
+            },
+
+            'zastosuj' => static function (PDO $db): void {
+                $db->exec(
+                    sterownik_bazy() === 'mysql'
+                        ? 'ALTER TABLE zdarzenia ADD COLUMN mecz_klucz VARCHAR(120) NULL'
+                        : 'ALTER TABLE zdarzenia ADD COLUMN mecz_klucz TEXT'
+                );
+
+                /* Zdarzenia, które już są, należą do ostatnio prowadzonego
+                   meczu — czyli do składu, przy którym stoi godzina pierwszego
+                   gwizdka. Bez tego zostałyby bez przypisania i zniknęłyby
+                   z panelu, choć mecz się odbył. */
+                $sklad = $db->query(
+                    "SELECT mecz_klucz FROM sklady
+                      WHERE mecz_klucz IS NOT NULL AND start_meczu IS NOT NULL
+                      ORDER BY start_meczu DESC LIMIT 1"
+                )->fetchColumn();
+
+                if ($sklad) {
+                    $db->prepare('UPDATE zdarzenia SET mecz_klucz = ? WHERE mecz_klucz IS NULL')
+                       ->execute([$sklad]);
+                }
+            },
+        ],
+
+        [
             'id'    => 'rola-wynik',
             'nazwa' => 'Konta do obsługi wyniku',
             'opis'  => 'Bez tego baza nie przyjmie roli „wynik", więc nie da się '

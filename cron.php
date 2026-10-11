@@ -53,7 +53,7 @@ $zadania = [
        i wtedy na stronę ma trafić dopiero, gdy to spotkanie stanie się tym
        najbliższym. Zadanie idzie PO terminarzu, bo to on decyduje, który
        mecz jest teraz pierwszy w kolejce. */
-    'skład na najbliższy mecz' => static function (): string {
+    'skład i przebieg najbliższego meczu' => static function (): string {
         /* Jedyne zadanie, które sięga do bazy — a ten skrypt bywa uruchamiany
            także tam, gdzie bazy nie ma (runner GitHuba pobiera dane i nie zna
            hasła do MySQL). Ładujemy je więc dopiero tutaj i tylko wtedy, gdy
@@ -71,9 +71,17 @@ $zadania = [
             return 'brak nadchodzących meczów';
         }
 
-        return opublikuj_sklad_biezacy(baza())
-            ? 'opublikowany — ' . $mecz['opis']
-            : 'brak zatwierdzonego składu na ' . $mecz['opis'];
+        $sklad = opublikuj_sklad_biezacy(baza());
+
+        /* Przebieg przepisujemy przy każdym przebiegu crona, nie tylko po
+           zmianie w panelu. Gdy terminarz przeskoczy na kolejną kolejkę,
+           plik musi przestać opowiadać o poprzednim meczu sam z siebie —
+           nikt nie będzie po meczu wchodził do panelu tylko po to, żeby
+           sprzątnąć wynik ze strony głównej. */
+        opublikuj_przebieg(baza());
+
+        return ($sklad ? 'skład opublikowany' : 'brak zatwierdzonego składu')
+             . ' — ' . $mecz['opis'];
     },
 ];
 

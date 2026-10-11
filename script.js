@@ -1187,6 +1187,24 @@
     var PRZEBIEG = null;
     var MAMY = { liga: false, sklad: false, przebieg: false };
 
+    /**
+     * Klucz spotkania — ten sam, który panel zapisuje w przebiegu meczu.
+     *
+     * Po nim sprawdzamy, czy wynik w data/przebieg.json dotyczy meczu, który
+     * właśnie pokazujemy. Bez tego rezultat poprzedniej kolejki przyklejał się
+     * do następnego spotkania w chwili, gdy terminarz przeskakiwał dalej.
+     */
+    function kluczMeczu(m) {
+        if (!m) { return null; }
+
+        return (m.kolejka === undefined || m.kolejka === null ? '-' : m.kolejka) +
+               '|' + m.gospodarz + '|' + m.gosc;
+    }
+
+    function przebiegTegoMeczu(m) {
+        return !!PRZEBIEG && !!PRZEBIEG.mecz && PRZEBIEG.mecz === kluczMeczu(m);
+    }
+
     var SKROT_POZYCJI = {
         'bramkarz':  'BR',
         'obrońca':   'OB',
@@ -1394,8 +1412,9 @@
      * już na drugie pytanie — jak do tego wyniku doszło.
      */
     function srodekKarty(m) {
-        var trwa = !!PRZEBIEG && PRZEBIEG.stan === 'trwa';
-        var poMeczu = !!PRZEBIEG && PRZEBIEG.stan === 'koniec';
+        var nasz = przebiegTegoMeczu(m);
+        var trwa = nasz && PRZEBIEG.stan === 'trwa';
+        var poMeczu = nasz && PRZEBIEG.stan === 'koniec';
 
         if (!trwa && !poMeczu) {
             return '<span class="spotkanie__vs">vs</span>';
@@ -1572,6 +1591,7 @@
     function sekundyMeczu() {
         if (!PRZEBIEG || PRZEBIEG.stan !== 'trwa' || !PRZEBIEG.start) { return null; }
 
+
         var start = new Date(PRZEBIEG.start).getTime();
 
         if (isNaN(start)) { return null; }
@@ -1626,8 +1646,9 @@
             ? (mecz.gospodarz === NASZ_KLUB ? mecz.gosc : mecz.gospodarz)
             : 'Rywal';
 
+        var nasz = przebiegTegoMeczu(mecz);
         var znacznik = document.getElementById('znacznik-zywo');
-        var trwa = !!PRZEBIEG && PRZEBIEG.stan === 'trwa';
+        var trwa = nasz && PRZEBIEG.stan === 'trwa';
         var pauza = trwa && !!PRZEBIEG.pauza;
 
         if (znacznik) {
@@ -1636,9 +1657,9 @@
             znacznik.classList.toggle('is-pauza', pauza);
         }
 
-        var zdarzenia = (PRZEBIEG && PRZEBIEG.zdarzenia) || [];
+        var zdarzenia = (nasz && PRZEBIEG.zdarzenia) || [];
 
-        if (!PRZEBIEG || (PRZEBIEG.stan === 'przed' && !zdarzenia.length)) {
+        if (!nasz || (PRZEBIEG.stan === 'przed' && !zdarzenia.length)) {
             box.innerHTML = '<p class="sklad__brak">' +
                 'Mecz jeszcze się nie zaczął. Bramki, ich strzelcy i zmiany ' +
                 'pojawią się tutaj na żywo, gdy tylko sędzia odgwiżdże początek.</p>';
@@ -1828,14 +1849,14 @@
     function odliczanieNaZywo() {
         if (!clock || !PRZEBIEG) { return false; }
 
+        var mecz = meczeDoOdliczania[0];
+
+        if (!mecz || !przebiegTegoMeczu(mecz)) { return false; }
+
         var trwa = PRZEBIEG.stan === 'trwa';
         var poMeczu = PRZEBIEG.stan === 'koniec';
 
         if (!trwa && !poMeczu) { return false; }
-
-        var mecz = meczeDoOdliczania[0];
-
-        if (!mecz) { return false; }
 
         var uSiebie = mecz.gospodarz === NASZ_KLUB;
         var my = PRZEBIEG.wynik ? PRZEBIEG.wynik.my : 0;

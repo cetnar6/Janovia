@@ -34,6 +34,9 @@ $gotowa = tabela_istnieje('sklady')
 /* Przebieg prowadzi się dla spotkania, które jest najbliższe — i to jego
    skład tu wczytujemy. Ustawienia przygotowane na dalsze kolejki czekają
    w zakładce „Skład" i nie mają tu czego szukać. */
+$mecz_biezacy = $gotowa ? mecz_biezacy() : null;
+$klucz_meczu = $mecz_biezacy['klucz'] ?? null;
+
 $sklad = $gotowa ? sklad_biezacy($db) : null;
 
 $xi = $sklad ? id_ze_skladu($sklad['ustawienie']) : [];
@@ -66,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
         return $id !== false && in_array($id, $dozwolone, true) ? $id : null;
     };
 
-    $zdarzenia = zdarzenia_meczu($db);
+    $zdarzenia = zdarzenia_meczu($db, $klucz_meczu);
     [$na_boisku, $wolni] = po_zmianach($xi, $lawka, $zdarzenia);
 
     if ($akcja === 'stan') {
@@ -190,7 +193,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
     if ($akcja === 'nowy') {
         /* Przed kolejnym meczem przebieg trzeba wyzerować, bo tabela zna
            tylko jedno spotkanie — to samo założenie, co przy składzie. */
-        $db->exec('DELETE FROM zdarzenia');
+        if (kolumna_istnieje('zdarzenia', 'mecz_klucz') && $klucz_meczu !== null) {
+            $db->prepare('DELETE FROM zdarzenia WHERE mecz_klucz = ?')->execute([$klucz_meczu]);
+        } else {
+            $db->exec('DELETE FROM zdarzenia');
+        }
         /* Także przerwa: zostawiona z poprzedniego meczu zamroziłaby stoper
            następnego, zanim ktokolwiek zdążyłby zauważyć, skąd to się wzięło. */
         $db->prepare("UPDATE sklady SET stan = 'przed', start_meczu = NULL, przerwa_od = NULL
@@ -207,6 +214,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
 
         if ($id) {
             $db->prepare('DELETE FROM zdarzenia WHERE id = ?')->execute([$id]);
+
             opublikuj_przebieg($db);
             komunikat('Zdarzenie usunięte.');
         }
@@ -233,7 +241,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
             $asysta = null;
         }
 
-        dopisz_zdarzenie($db, 'gol', $minuta, $strzelec, $asysta);
+        dopisz_zdarzenie($db, $klucz_meczu, 'gol', $minuta, $strzelec, $asysta);
 
         opublikuj_przebieg($db);
         komunikat('Gol zapisany — ' . $minuta . ' minuta.');
@@ -241,7 +249,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
     }
 
     if ($akcja === 'gol_rywala') {
-        dopisz_zdarzenie($db, 'gol_rywala', $minuta, null, null);
+        dopisz_zdarzenie($db, $klucz_meczu, 'gol_rywala', $minuta, null, null);
 
         opublikuj_przebieg($db);
         komunikat('Gol rywala zapisany — ' . $minuta . ' minuta.', 'blad');
@@ -257,7 +265,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
             przekieruj('przebieg.php');
         }
 
-        dopisz_zdarzenie($db, 'zmiana', $minuta, $wchodzi, $schodzi);
+        dopisz_zdarzenie($db, $klucz_meczu, 'zmiana', $minuta, $wchodzi, $schodzi);
 
         opublikuj_przebieg($db);
         komunikat('Zmiana zapisana — ' . $minuta . ' minuta.');
@@ -269,7 +277,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
 
 /* ---------- widok ---------- */
 
-$zdarzenia = $gotowa ? zdarzenia_meczu($db) : [];
+$zdarzenia = $gotowa ? zdarzenia_meczu($db, $klucz_meczu) : [];
 [$na_boisku, $wolni] = po_zmianach($xi, $lawka, $zdarzenia);
 
 $wg_id = zawodnicy_po_id($db, $kadra);
