@@ -98,15 +98,24 @@ function id_ze_skladu($json): array
  */
 function zdarzenia_meczu(PDO $db, ?string $klucz): array
 {
+    /* Najpierw połowa, dopiero potem minuta: gol z doliczonego czasu
+       pierwszej połowy ma minutę 48, więc sama minuta wypychała go za
+       zdarzenia z 46 minuty drugiej połowy — czyli za przerwę, choć padł
+       przed nią. Wpisy bez zapisanej połowy czytamy tą samą regułą, co
+       reszta panelu: ponad 45 to druga połowa. */
+    $kolejnosc = kolumna_istnieje('zdarzenia', 'polowa')
+        ? 'COALESCE(polowa, CASE WHEN minuta > ' . POLOWA_MINUT . ' THEN 2 ELSE 1 END), minuta, id'
+        : 'minuta, id';
+
     if (!kolumna_istnieje('zdarzenia', 'mecz_klucz')) {
-        return $db->query('SELECT * FROM zdarzenia ORDER BY minuta, id')->fetchAll();
+        return $db->query('SELECT * FROM zdarzenia ORDER BY ' . $kolejnosc)->fetchAll();
     }
 
     if ($klucz === null || $klucz === '') {
         return [];
     }
 
-    $stmt = $db->prepare('SELECT * FROM zdarzenia WHERE mecz_klucz = ? ORDER BY minuta, id');
+    $stmt = $db->prepare('SELECT * FROM zdarzenia WHERE mecz_klucz = ? ORDER BY ' . $kolejnosc);
     $stmt->execute([$klucz]);
 
     return $stmt->fetchAll();
