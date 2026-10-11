@@ -1628,7 +1628,9 @@
     }
 
     function wierszZdarzenia(z, rywal, uSiebie) {
-        var nasze = z.typ !== 'gol_rywala';
+        var nasze = z.typ !== 'gol_rywala'
+                 && z.typ !== 'kartka_zolta_rywala'
+                 && z.typ !== 'kartka_czerwona_rywala';
         var poLewej = uSiebie ? nasze : !nasze;
 
         var kto;
@@ -1641,14 +1643,19 @@
             kto = rywal;
         } else if (z.typ === 'kartka_zolta' || z.typ === 'kartka_czerwona') {
             kto = ktoZdarzenia(z.kto);
+        } else if (z.typ === 'kartka_zolta_rywala' || z.typ === 'kartka_czerwona_rywala') {
+            /* Z cudzej drużyny znamy tylko numer, więc nazwą jest klub,
+               a numer idzie dopiskiem — jak przy golu rywala. */
+            kto = rywal;
+            dopisek = z.numer ? 'nr ' + z.numer : '';
         } else {
             kto = ktoZdarzenia(z.wchodzi);
             dopisek = ktoZdarzenia(z.schodzi);
         }
 
         var ikona = z.typ === 'zmiana' ? IKONA_ZMIANY
-                  : (z.typ === 'kartka_zolta' || z.typ === 'kartka_czerwona')
-                        ? kartka(z.typ === 'kartka_czerwona')
+                  : /kartka/.test(z.typ)
+                        ? kartka(/czerwona/.test(z.typ))
                         : pilka();
 
         /* Wynik po bramce w kolejności z tablicy: gospodarz – gość. */

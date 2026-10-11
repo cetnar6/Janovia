@@ -23,6 +23,10 @@ const STANY_MECZU = ['przed', 'trwa', 'koniec'];
    wpis, nie zmiana stanu. */
 const KARTKI = ['kartka_zolta', 'kartka_czerwona'];
 
+/* Kartki rywala to osobne typy, bo niosą co innego: nie zawodnika z naszej
+   kadry, tylko numer na cudzej koszulce. */
+const KARTKI_RYWALA = ['kartka_zolta_rywala', 'kartka_czerwona_rywala'];
+
 /* Od której minuty zatrzymanie stopera traktujemy jako przerwę między
    połowami — a więc takie, po którym zegar wraca na równe 45:00. Zatrzymanie
    wcześniejsze to kontuzja albo przerwana gra i wtedy czas rusza z miejsca,
@@ -115,7 +119,8 @@ function dopisz_zdarzenie(
     int $minuta,
     ?int $zawodnik,
     ?int $drugi,
-    int $polowa = 1
+    int $polowa = 1,
+    ?int $numer_rywala = null
 ): void {
     if (!kolumna_istnieje('zdarzenia', 'mecz_klucz')) {
         $db->prepare(
@@ -130,6 +135,17 @@ function dopisz_zdarzenie(
        doliczony czas pierwszej połowy, co początek drugiej — po przerwie
        stoper wraca na 45:00 i obie wyglądają tak samo. */
     if (kolumna_istnieje('zdarzenia', 'polowa')) {
+        if (kolumna_istnieje('zdarzenia', 'numer_rywala')) {
+            $db->prepare(
+                'INSERT INTO zdarzenia (mecz_klucz, typ, minuta, polowa, zawodnik_id,
+                                        zawodnik2_id, numer_rywala, utworzono)
+                      VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+            )->execute([$klucz, $typ, $minuta, $polowa, $zawodnik, $drugi,
+                        $numer_rywala, date('Y-m-d H:i:s')]);
+
+            return;
+        }
+
         $db->prepare(
             'INSERT INTO zdarzenia (mecz_klucz, typ, minuta, polowa, zawodnik_id, zawodnik2_id, utworzono)
                   VALUES (?, ?, ?, ?, ?, ?, ?)'
@@ -545,6 +561,21 @@ function zdarzenia_do_publikacji(PDO $db, ?string $klucz): array
                 'polowa' => $polowa,
                 'minuta_opis' => $opis_minuty,
                 'kto'    => $kto($z['zawodnik_id']),
+            ];
+
+            continue;
+        }
+
+        if (in_array($z['typ'], KARTKI_RYWALA, true)) {
+            $lista[] = [
+                'typ'    => $z['typ'],
+                'minuta' => $minuta,
+                'polowa' => $polowa,
+                'minuta_opis' => $opis_minuty,
+                /* Zamiast nazwiska sam numer — tyle o cudzej kadrze wiemy. */
+                'numer'  => isset($z['numer_rywala']) && $z['numer_rywala'] !== null
+                                ? (int) $z['numer_rywala']
+                                : null,
             ];
 
             continue;

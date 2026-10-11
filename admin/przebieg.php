@@ -339,6 +339,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
         przekieruj($powrot);
     }
 
+    if ($akcja === 'kartka_rywala') {
+        $numer = filter_var($_POST['numer'] ?? null, FILTER_VALIDATE_INT, [
+            'options' => ['min_range' => 1, 'max_range' => 99],
+        ]);
+
+        $kolor = (string) ($_POST['kolor'] ?? '');
+        $typ = $kolor === 'czerwona' ? 'kartka_czerwona_rywala' : 'kartka_zolta_rywala';
+
+        if ($numer === false || $numer === null) {
+            komunikat('Podaj numer na koszulce — liczbę od 1 do 99.', 'blad');
+            przekieruj($powrot);
+        }
+
+        if (!kolumna_istnieje('zdarzenia', 'numer_rywala')) {
+            komunikat('Baza nie ma jeszcze kolumny na numer rywala — uruchom '
+                    . 'aktualizację bazy w zakładce Baza.', 'blad');
+            przekieruj($powrot);
+        }
+
+        dopisz_zdarzenie($db, $klucz_meczu, $typ, $minuta, null, null, $polowa_teraz, $numer);
+
+        opublikuj_przebieg($db);
+        komunikat(($typ === 'kartka_czerwona_rywala' ? 'Czerwona' : 'Żółta')
+                . ' kartka dla rywala (nr ' . $numer . ') — '
+                . opis_minuty($minuta, $polowa_teraz) . ' minuta.');
+        przekieruj($powrot);
+    }
+
     if ($akcja === 'gol_rywala') {
         dopisz_zdarzenie($db, $klucz_meczu, 'gol_rywala', $minuta, null, null, $polowa_teraz);
 
@@ -476,13 +504,17 @@ function kafelek_herbu(string $klub): string
 }
 
 /**
- * Przycisk kartki — stoi pod plusem przy naszym herbie i działa tak samo:
- * otwiera okno, w którym wybiera się zawodnika, minutę i kolor.
+ * Przycisk kartki — stoi pod plusem i działa tak samo: otwiera okno, w którym
+ * wybiera się ukaranego, minutę i kolor.
+ *
+ * Po naszej stronie ukarany to zawodnik z kadry, po stronie rywala sam numer
+ * na koszulce — nazwisk cudzej drużyny panel jeszcze nie zna.
  */
-function przycisk_kartki(): string
+function przycisk_kartki(bool $nasza): string
 {
-    return '<button type="button" class="tablica__kartka" data-okno="okno-kartki"'
-         . ' aria-label="Dodaj kartkę">'
+    return '<button type="button" class="tablica__kartka"'
+         . ' data-okno="' . ($nasza ? 'okno-kartki' : 'okno-kartki-rywala') . '"'
+         . ' aria-label="Dodaj kartkę' . ($nasza ? '' : ' dla rywala') . '">'
          . '<svg viewBox="0 0 20 26" aria-hidden="true">'
          . '<rect class="tablica__kartka-zolta" x="1" y="4" width="13" height="18" rx="2"'
          . ' transform="rotate(-8 7.5 13)"/>'
@@ -656,11 +688,7 @@ naglowek('Przebieg meczu');
                     data-gol="<?= $u_siebie ? 'my' : 'oni' ?>"
                     aria-label="Dodaj gola: <?= e($u_siebie ? 'Janovia' : $rywal) ?>">+</button>
 
-            <?php /* Kartka tylko pod naszym herbem: panel zna wyłącznie własną
-                     kadrę, więc ukaranego rywala nie miałby jak nazwać. */ ?>
-            <?php if ($u_siebie): ?>
-                <?= przycisk_kartki() ?>
-            <?php endif; ?>
+            <?= przycisk_kartki($u_siebie) ?>
         <?php endif; ?>
     </div>
 
@@ -691,9 +719,7 @@ naglowek('Przebieg meczu');
                     data-gol="<?= $u_siebie ? 'oni' : 'my' ?>"
                     aria-label="Dodaj gola: <?= e($u_siebie ? $rywal : 'Janovia') ?>">+</button>
 
-            <?php if (!$u_siebie): ?>
-                <?= przycisk_kartki() ?>
-            <?php endif; ?>
+            <?= przycisk_kartki(!$u_siebie) ?>
         <?php endif; ?>
     </div>
 </section>
@@ -836,6 +862,12 @@ naglowek('Przebieg meczu');
                             <strong>Żółta kartka</strong> — <?= e(podpis_zawodnika($kto)) ?>
                         <?php elseif ($z['typ'] === 'kartka_czerwona'): ?>
                             <strong>Czerwona kartka</strong> — <?= e(podpis_zawodnika($kto)) ?>
+                        <?php elseif (in_array($z['typ'], KARTKI_RYWALA, true)): ?>
+                            <strong>
+                                <?= $z['typ'] === 'kartka_czerwona_rywala' ? 'Czerwona' : 'Żółta' ?>
+                                kartka — <?= e($rywal) ?>
+                            </strong>
+                            <small>numer <?= (int) ($z['numer_rywala'] ?? 0) ?: '—' ?></small>
                         <?php else: ?>
                             <strong>Zmiana</strong>
                             <small>
@@ -931,6 +963,45 @@ naglowek('Przebieg meczu');
 
             <?php /* Kolor wybiera przycisk, nie osobne pole: i tak trzeba
                      kliknąć „zapisz", więc jedno kliknięcie wystarczy. */ ?>
+            <div class="okno__przyciski">
+                <button class="btn btn--zolta" type="submit" name="kolor" value="zolta">
+                    Żółta
+                </button>
+                <button class="btn btn--czerwona" type="submit" name="kolor" value="czerwona">
+                    Czerwona
+                </button>
+                <button class="btn btn--pusty okno__anuluj" type="button">Anuluj</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="okno" id="okno-kartki-rywala" hidden>
+        <form class="okno__karta" method="post">
+            <?= pole_csrf() ?>
+            <input type="hidden" name="akcja" value="kartka_rywala">
+
+            <h2>Kartka — <?= e($rywal) ?></h2>
+
+            <p class="okno__kto">
+                Kadry rywala panel jeszcze nie zna, więc zapisujemy numer
+                z koszulki — tyle widać z linii bocznej.
+            </p>
+
+            <label>
+                Numer na koszulce
+                <input type="number" name="numer" required
+                       min="1" max="99" inputmode="numeric" autocomplete="off">
+            </label>
+
+            <label>
+                Minuta
+                <input type="text" class="okno__minuta" name="minuta" required
+                       inputmode="tel" autocomplete="off"
+                       pattern="\s*\d{1,3}\s*([+]\s*\d{1,2}\s*)?"
+                       placeholder="np. 62 albo 45+3"
+                       title="Minuta meczu — liczba albo doliczony czas, np. 45+3">
+            </label>
+
             <div class="okno__przyciski">
                 <button class="btn btn--zolta" type="submit" name="kolor" value="zolta">
                     Żółta
@@ -1082,7 +1153,7 @@ naglowek('Przebieg meczu');
         'zmiany'     => $zmiany,
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>
 </script>
-<script src="js/sklad.js?v=24"></script>
+<script src="js/sklad.js?v=25"></script>
 
 <?php endif; ?>
 

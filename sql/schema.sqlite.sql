@@ -146,9 +146,11 @@ CREATE TABLE IF NOT EXISTS zdarzenia (
     id           INTEGER PRIMARY KEY AUTOINCREMENT,
     -- spotkanie, którego dotyczy (klucz jak w tabeli sklady)
     mecz_klucz   TEXT,
-    -- gol | gol_rywala | zmiana | kartka_zolta | kartka_czerwona
+    -- gol | gol_rywala | zmiana | kartki nasze i rywala
     typ          TEXT    NOT NULL CHECK (typ IN ('gol','gol_rywala','zmiana',
-                                                 'kartka_zolta','kartka_czerwona')),
+                                                 'kartka_zolta','kartka_czerwona',
+                                                 'kartka_zolta_rywala',
+                                                 'kartka_czerwona_rywala')),
     minuta       INTEGER NOT NULL,
     -- 1 albo 2; NULL w zapisach sprzed tej kolumny. Bez niej „46" z doliczonego
     -- czasu pierwszej połowy wygląda identycznie jak początek drugiej
@@ -157,5 +159,8 @@ CREATE TABLE IF NOT EXISTS zdarzenia (
     zawodnik_id  INTEGER,
     -- gol: asystujący; zmiana: schodzący
     zawodnik2_id INTEGER,
+    -- kartka rywala: numer na koszulce. Nazwisk cudzej kadry panel nie zna,
+    -- a numer wystarczy, żeby kibic wiedział, kogo sędzia ukarał
+    numer_rywala INTEGER CHECK (numer_rywala IS NULL OR numer_rywala BETWEEN 1 AND 99),
     utworzono    TEXT    NOT NULL
 );

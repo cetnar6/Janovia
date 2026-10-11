@@ -148,7 +148,8 @@ CREATE TABLE IF NOT EXISTS zdarzenia (
     -- spotkanie, którego dotyczy (klucz jak w tabeli sklady)
     mecz_klucz   VARCHAR(120) NULL,
     -- gol | gol_rywala | zmiana | kartka_zolta | kartka_czerwona
-    typ          VARCHAR(16) NOT NULL,
+    -- | kartka_zolta_rywala | kartka_czerwona_rywala
+    typ          VARCHAR(24) NOT NULL,
     minuta       INT         NOT NULL,
     -- 1 albo 2; NULL w zapisach sprzed tej kolumny. Bez niej „46" z doliczonego
     -- czasu pierwszej połowy wygląda identycznie jak początek drugiej
@@ -157,5 +158,8 @@ CREATE TABLE IF NOT EXISTS zdarzenia (
     zawodnik_id  INT         NULL,
     -- gol: asystujący; zmiana: schodzący
     zawodnik2_id INT         NULL,
+    -- kartka rywala: numer na koszulce. Nazwisk cudzej kadry panel nie zna,
+    -- a numer wystarczy, żeby kibic wiedział, kogo sędzia ukarał
+    numer_rywala TINYINT UNSIGNED NULL,
     utworzono    DATETIME    NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_polish_ci;

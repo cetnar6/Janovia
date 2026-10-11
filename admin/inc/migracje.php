@@ -455,6 +455,35 @@ function migracje(): array
         ],
 
         [
+            'id'    => 'kartki-rywala',
+            'nazwa' => 'Kartki dla drużyny przeciwnej',
+            'opis'  => 'Bez tego panel nie ma gdzie zapisać numeru ukaranego '
+                     . 'zawodnika rywala — a nazwisk jego kadry jeszcze nie znamy.',
+
+            'potrzebna' => static function (): bool {
+                return tabela_istnieje('zdarzenia')
+                    && !kolumna_istnieje('zdarzenia', 'numer_rywala');
+            },
+
+            'zastosuj' => static function (PDO $db): void {
+                /* Sam numer na koszulce, bo tyle o rywalu wiemy na pewno.
+                   Kiedy panel dostanie kadry przeciwników, nazwisko dojdzie
+                   obok — numer i tak zostanie, bo to on jest na boisku. */
+                $db->exec(
+                    sterownik_bazy() === 'mysql'
+                        ? 'ALTER TABLE zdarzenia ADD COLUMN numer_rywala TINYINT UNSIGNED NULL'
+                        : 'ALTER TABLE zdarzenia ADD COLUMN numer_rywala INTEGER'
+                );
+
+                /* Nazwy typów kartek rywala nie mieszczą się w szesnastu
+                   znakach, na które kolumna była skrojona przy golach. */
+                if (sterownik_bazy() === 'mysql') {
+                    $db->exec('ALTER TABLE zdarzenia MODIFY typ VARCHAR(24) NOT NULL');
+                }
+            },
+        ],
+
+        [
             'id'    => 'rola-wynik',
             'nazwa' => 'Konta do obsługi wyniku',
             'opis'  => 'Bez tego baza nie przyjmie roli „wynik", więc nie da się '
@@ -528,7 +557,7 @@ function migracje(): array
                         sterownik_bazy() === 'mysql'
                             ? "CREATE TABLE zdarzenia (
                                    id           INT AUTO_INCREMENT PRIMARY KEY,
-                                   typ          VARCHAR(16) NOT NULL,
+                                   typ          VARCHAR(24) NOT NULL,
                                    minuta       INT         NOT NULL,
                                    polowa       TINYINT     NULL,
                                    zawodnik_id  INT         NULL,
