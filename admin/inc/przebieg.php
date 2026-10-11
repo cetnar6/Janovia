@@ -248,17 +248,17 @@ function opublikuj_wyniki(PDO $db): void
         $klucz = (string) $klucz;
         [, $gospodarz] = array_pad(explode('|', $klucz, 3), 3, '');
 
-        $my = 0;
-        $oni = 0;
-
-        foreach (zdarzenia_meczu($db, $klucz) as $z) {
-            if ($z['typ'] === 'gol') { $my++; }
-            if ($z['typ'] === 'gol_rywala') { $oni++; }
-        }
-
+        $przebieg = zdarzenia_do_publikacji($db, $klucz);
         $u_siebie = $gospodarz === NASZ_KLUB;
 
-        $mecze[$klucz] = ($u_siebie ? $my : $oni) . '-' . ($u_siebie ? $oni : $my);
+        $mecze[$klucz] = [
+            'wynik' => ($u_siebie ? $przebieg['my'] : $przebieg['oni']) . '-'
+                     . ($u_siebie ? $przebieg['oni'] : $przebieg['my']),
+            /* Oś czasu jedzie razem z wynikiem: strona pokazuje ją pod ikoną
+               przy meczu, więc nie ma po co ciągnąć osobnego pliku na kliknięcie
+               — cały sezon to kilkaset wierszy. */
+            'zdarzenia' => $przebieg['zdarzenia'],
+        ];
     }
 
     $json = json_encode([
@@ -276,17 +276,15 @@ function opublikuj_wyniki(PDO $db): void
 }
 
 /**
- * Zapisuje przebieg do data/przebieg.json.
+ * Zdarzenia meczu w kształcie dla strony: z nazwiskami i wynikiem po bramce.
  *
- * Plik niesie gotowe nazwiska, a nie identyfikatory: strona klubu nie ma
- * dostępu do bazy, a wynik po każdej bramce liczymy tutaj, żeby kolejność
- * w osi czasu i cyfry na tablicy nie mogły się rozjechać.
+ * Ten sam kształt trafia do przebiegu trwającego meczu i do wyników spotkań
+ * rozegranych — strona rysuje oś czasu jednym kodem, bez pytania, skąd dane
+ * pochodzą.
  */
-function opublikuj_przebieg(PDO $db): void
+function zdarzenia_do_publikacji(PDO $db, ?string $klucz): array
 {
-    $mecz = mecz_biezacy();
-    $sklad = sklad_biezacy($db);
-    $zdarzenia = zdarzenia_meczu($db, $mecz['klucz'] ?? null);
+    $zdarzenia = zdarzenia_meczu($db, $klucz);
 
     $ids = [];
 
@@ -352,6 +350,27 @@ function opublikuj_przebieg(PDO $db): void
             'schodzi' => $kto($z['zawodnik2_id']),
         ];
     }
+
+    return ['zdarzenia' => $lista, 'my' => $my, 'oni' => $oni];
+}
+
+/**
+ * Zapisuje przebieg do data/przebieg.json.
+ *
+ * Plik niesie gotowe nazwiska, a nie identyfikatory: strona klubu nie ma
+ * dostępu do bazy, a wynik po każdej bramce liczymy tutaj, żeby kolejność
+ * w osi czasu i cyfry na tablicy nie mogły się rozjechać.
+ */
+function opublikuj_przebieg(PDO $db): void
+{
+    $mecz = mecz_biezacy();
+    $sklad = sklad_biezacy($db);
+
+    $przebieg = zdarzenia_do_publikacji($db, $mecz['klucz'] ?? null);
+
+    $lista = $przebieg['zdarzenia'];
+    $my = $przebieg['my'];
+    $oni = $przebieg['oni'];
 
     /* Godzina pierwszego gwizdka jedzie do pliku, żeby strona mogła sama
        policzyć minutę meczu — inaczej musiałaby ją dostawać w każdym zapisie

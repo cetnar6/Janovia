@@ -3198,6 +3198,115 @@ a.marquee__item {
     font-variant-numeric: tabular-nums;
 }
 
+/* ---------- ikona i okno z przebiegiem rozegranego meczu ---------- */
+
+.wynik__szczegoly {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.7rem;
+    height: 1.7rem;
+    margin-left: 0.5rem;
+    padding: 0;
+    background: none;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: border-color 0.25s, color 0.25s;
+}
+
+.wynik__szczegoly svg { width: 0.95rem; height: 0.95rem; fill: currentColor; }
+
+.wynik__szczegoly:hover { border-color: var(--gold); color: var(--gold); }
+
+.wynik__szczegoly:focus-visible {
+    outline: 2px solid var(--blue-light);
+    outline-offset: 2px;
+}
+
+.przebiegok {
+    position: fixed;
+    inset: 0;
+    z-index: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(1rem, 4vw, 3rem);
+}
+
+.przebiegok[hidden] { display: none; }
+
+.przebiegok__tlo {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(8, 9, 12, 0.82);
+}
+
+.przebiegok__karta {
+    position: relative;
+    width: min(34rem, 100%);
+    max-height: 85vh;
+    padding: clamp(1.25rem, 3vw, 2rem);
+    overflow-y: auto;
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+}
+
+.przebiegok__zamknij {
+    position: absolute;
+    right: 0.6rem;
+    top: 0.5rem;
+    width: 2.2rem;
+    height: 2.2rem;
+    background: none;
+    border: 0;
+    color: var(--muted);
+    font-size: 1.6rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.przebiegok__zamknij:hover { color: var(--text); }
+
+.przebiegok__naglowek {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: clamp(0.5rem, 3vw, 1.5rem);
+    margin-bottom: 0.3rem;
+}
+
+.przebiegok__klub {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.przebiegok__wynik {
+    font-size: clamp(1.8rem, 6vw, 2.4rem);
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    color: var(--gold);
+}
+
+.przebiegok__kiedy {
+    margin-bottom: 0.5rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-align: center;
+    color: var(--muted);
+}
+
 /* ---------- oś czasu meczu ---------- */
 
 /* Dwie strony, jak na tablicy nad nią: gospodarz z lewej, gość z prawej.

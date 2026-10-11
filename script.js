@@ -1185,6 +1185,7 @@
 
     var SKLAD = null;
     var PRZEBIEG = null;
+    var WYNIKI = null;
     var MAMY = { liga: false, sklad: false, przebieg: false };
 
     /**
@@ -1828,8 +1829,8 @@
 
                 var nasz = wyniki.mecze[kluczMeczu(m)];
 
-                if (nasz) {
-                    m.wynik = nasz;
+                if (nasz && nasz.wynik) {
+                    m.wynik = nasz.wynik;
                     m.wynik_z_panelu = true;
                 }
             });
@@ -2245,6 +2246,106 @@
 
     /* ---------- komplet wyników ostatniej kolejki ---------- */
 
+    /* ---------- przebieg rozegranego meczu ---------- */
+
+    var panelPrzebiegu = null;
+    var ostatniaIkona = null;
+
+    function zbudujPanelPrzebiegu() {
+        if (panelPrzebiegu) { return panelPrzebiegu; }
+
+        panelPrzebiegu = document.createElement('div');
+        panelPrzebiegu.className = 'przebiegok';
+        panelPrzebiegu.hidden = true;
+        panelPrzebiegu.setAttribute('role', 'dialog');
+        panelPrzebiegu.setAttribute('aria-modal', 'true');
+        panelPrzebiegu.setAttribute('aria-label', 'Przebieg meczu');
+
+        panelPrzebiegu.innerHTML =
+            '<div class="przebiegok__tlo" data-zamknij-przebieg></div>' +
+            '<div class="przebiegok__karta">' +
+                '<button class="przebiegok__zamknij" type="button"' +
+                    ' data-zamknij-przebieg aria-label="Zamknij">&times;</button>' +
+                '<div class="przebiegok__tresc"></div>' +
+            '</div>';
+
+        panelPrzebiegu.addEventListener('click', function (e) {
+            if (e.target.hasAttribute('data-zamknij-przebieg')) { zamknijPrzebieg(); }
+        });
+
+        document.body.appendChild(panelPrzebiegu);
+
+        return panelPrzebiegu;
+    }
+
+    function otworzPrzebieg(m) {
+        var wpis = szczegolyMeczu(m);
+
+        if (!wpis) { return; }
+
+        var p = zbudujPanelPrzebiegu();
+        var uSiebie = m.gospodarz === NASZ_KLUB;
+        var rywal = uSiebie ? m.gosc : m.gospodarz;
+        var wynik = (m.wynik || '0-0').split('-');
+
+        p.querySelector('.przebiegok__tresc').innerHTML =
+            '<div class="przebiegok__naglowek">' +
+                '<span class="przebiegok__klub">' + herb(m.gospodarz, 'sm') +
+                    '<b>' + esc(skrot(m.gospodarz)) + '</b></span>' +
+                '<strong class="przebiegok__wynik">' +
+                    esc(wynik[0]) + ':' + esc(wynik[1] || '0') +
+                '</strong>' +
+                '<span class="przebiegok__klub">' + herb(m.gosc, 'sm') +
+                    '<b>' + esc(skrot(m.gosc)) + '</b></span>' +
+            '</div>' +
+            '<p class="przebiegok__kiedy">' +
+                (m.kolejka ? 'Kolejka ' + m.kolejka + ' · ' : '') +
+                esc(m.termin || m.kolejka_opis || '') +
+            '</p>' +
+            '<ol class="oczas">' +
+                wpis.zdarzenia.map(function (z) {
+                    return wierszZdarzenia(z, rywal, uSiebie);
+                }).join('') +
+            '</ol>';
+
+        p.hidden = false;
+        blokujPrzewijanie(true);
+        p.querySelector('.przebiegok__zamknij').focus();
+    }
+
+    function zamknijPrzebieg() {
+        if (!panelPrzebiegu || panelPrzebiegu.hidden) { return; }
+
+        panelPrzebiegu.hidden = true;
+        blokujPrzewijanie(false);
+
+        if (ostatniaIkona) {
+            ostatniaIkona.focus();
+            ostatniaIkona = null;
+        }
+    }
+
+    /* Delegacja, bo wiersze meczów powstają dopiero po pobraniu terminarza. */
+    document.addEventListener('click', function (e) {
+        var btn = e.target.closest ? e.target.closest('.wynik__szczegoly') : null;
+
+        if (!btn) { return; }
+
+        var klucz = btn.getAttribute('data-mecz');
+        var mecz = ((DANE_LIGI && DANE_LIGI.wszystkie_mecze) || []).filter(function (m) {
+            return kluczMeczu(m) === klucz;
+        })[0];
+
+        if (!mecz) { return; }
+
+        ostatniaIkona = btn;
+        otworzPrzebieg(mecz);
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') { zamknijPrzebieg(); }
+    });
+
     function rysujKolejke(dane) {
         var lista = document.getElementById('wyniki');
         var opis = document.getElementById('kolejka-opis');
@@ -2293,12 +2394,35 @@
                '</span>';
     }
 
+    /** Przebieg spotkania zapisany w panelu — albo null, gdy go nie prowadzono. */
+    function szczegolyMeczu(m) {
+        var wpis = WYNIKI && WYNIKI.mecze ? WYNIKI.mecze[kluczMeczu(m)] : null;
+
+        return wpis && wpis.zdarzenia && wpis.zdarzenia.length ? wpis : null;
+    }
+
     function wierszMeczu(m) {
         var nasz = m.gospodarz === NASZ_KLUB || m.gosc === NASZ_KLUB;
 
         var srodek = m.wynik
             ? '<span class="wynik__rezultat">' + esc(m.wynik.replace('-', ' : ')) + '</span>'
             : '<span class="wynik__rezultat wynik__rezultat--brak">–</span>';
+
+        /* Ikona tylko przy meczach, które ktoś prowadził w panelu — przy
+           pozostałych nie byłoby czego pokazać, a sam znak obiecywałby
+           szczegóły, których nie ma. */
+        if (szczegolyMeczu(m)) {
+            srodek += '<button class="wynik__szczegoly" type="button"' +
+                          ' data-mecz="' + esc(kluczMeczu(m)) + '"' +
+                          ' title="Przebieg meczu" aria-label="Przebieg meczu:' +
+                          ' ' + esc(skrot(m.gospodarz)) + ' – ' + esc(skrot(m.gosc)) + '">' +
+                          '<svg viewBox="0 0 24 24" aria-hidden="true">' +
+                              '<circle cx="5" cy="7" r="1.6"/><rect x="9" y="6" width="11" height="2" rx="1"/>' +
+                              '<circle cx="5" cy="12" r="1.6"/><rect x="9" y="11" width="11" height="2" rx="1"/>' +
+                              '<circle cx="5" cy="17" r="1.6"/><rect x="9" y="16" width="7" height="2" rx="1"/>' +
+                          '</svg>' +
+                      '</button>';
+        }
 
         return '<li class="wynik' + (nasz ? ' is-us' : '') +
                    (m.uwaga ? ' wynik--uwaga' : '') + '">' +
@@ -2711,7 +2835,8 @@
                albo gospodarz, czasem dopiero w poniedziałek, a my wiemy swoje
                w chwili końcowego gwizdka. Uzupełniamy tylko kreski — wpisanego
                już wyniku nie ruszamy, bo tabela i tak liczy się z 90minut. */
-            uzupelnijWynikiZPanelu(dane, wyniki[2]);
+            WYNIKI = wyniki[2];
+            uzupelnijWynikiZPanelu(dane, WYNIKI);
 
             if (panel && panel.mecze && panel.mecze.length) {
                 // herb wgrany w panelu dla przeciwnika spoza listy klubów ligowych —
