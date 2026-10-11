@@ -18,6 +18,11 @@ const MAKS_MINUTA = 130;
 
 const STANY_MECZU = ['przed', 'trwa', 'koniec'];
 
+/* Kartki zapisujemy jako zwykłe zdarzenia, nie jako kolumnę przy zawodniku:
+   liczy się minuta i kolejność, a druga żółta w tym samym meczu to osobny
+   wpis, nie zmiana stanu. */
+const KARTKI = ['kartka_zolta', 'kartka_czerwona'];
+
 /* Od której minuty zatrzymanie stopera traktujemy jako przerwę między
    połowami — a więc takie, po którym zegar wraca na równe 45:00. Zatrzymanie
    wcześniejsze to kontuzja albo przerwana gra i wtedy czas rusza z miejsca,
@@ -27,6 +32,12 @@ const PRZERWA_OD_MINUTY = 40;
 /* Regulaminowa długość połowy. Wszystko ponad nią to czas doliczony, więc
    zamiast „48" piszemy „45+3" — tak jak tablica na stadionie. */
 const POLOWA_MINUT = 45;
+
+/* Ile minut doliczonego czasu jeszcze w to wierzymy. Sędzia dolicza kilka,
+   wyjątkowo kilkanaście; „45+43" nie znaczy doliczonego czasu, tylko że
+   nikt nie przełączył połowy w panelu. Wtedy uczciwiej pokazać samą
+   minutę, niż podać liczbę, która na pewno jest nieprawdziwa. */
+const MAKS_DOLICZONY = 15;
 
 /** Zawodnicy po identyfikatorach, w mapie id => wiersz. */
 function zawodnicy_po_id(PDO $db, array $ids): array
@@ -155,9 +166,10 @@ function polowa_zdarzenia(array $z): int
 function opis_minuty(int $minuta, int $polowa): string
 {
     $podstawa = $polowa === 2 ? 2 * POLOWA_MINUT : POLOWA_MINUT;
+    $doliczone = $minuta - $podstawa;
 
-    return $minuta > $podstawa
-        ? $podstawa . '+' . ($minuta - $podstawa)
+    return $doliczone > 0 && $doliczone <= MAKS_DOLICZONY
+        ? $podstawa . '+' . $doliczone
         : (string) $minuta;
 }
 
@@ -481,6 +493,18 @@ function zdarzenia_do_publikacji(PDO $db, ?string $klucz): array
             continue;
         }
 
+        if (in_array($z['typ'], KARTKI, true)) {
+            $lista[] = [
+                'typ'    => $z['typ'],
+                'minuta' => $minuta,
+                'polowa' => $polowa,
+                'minuta_opis' => $opis_minuty,
+                'kto'    => $kto($z['zawodnik_id']),
+            ];
+
+            continue;
+        }
+
         $lista[] = [
             'typ'     => 'zmiana',
             'minuta'  => $minuta,
@@ -736,6 +760,31 @@ function sklad_biezacy(PDO $db): ?array
     $mecz = mecz_biezacy();
 
     return sklad_meczu($db, $mecz['klucz'] ?? null, true);
+}
+
+/**
+ * Spotkania, które panel ma zapisane — od najnowszego.
+ *
+ * Źródłem są składy, a nie terminarz: ten pokazuje wyłącznie mecze
+ * nadchodzące, a przebieg trzeba móc poprawić także tydzień po meczu.
+ */
+function mecze_z_przebiegiem(PDO $db): array
+{
+    if (!tabela_istnieje('sklady') || !kolumna_istnieje('sklady', 'mecz_klucz')) {
+        return [];
+    }
+
+    $ile = kolumna_istnieje('zdarzenia', 'mecz_klucz')
+        ? '(SELECT COUNT(*) FROM zdarzenia z WHERE z.mecz_klucz = s.mecz_klucz)'
+        : '0';
+
+    return $db->query(
+        "SELECT s.mecz_klucz, s.mecz_opis, s.mecz_data, s.nazwa, s.stan,
+                $ile AS zdarzen
+           FROM sklady s
+          WHERE s.mecz_klucz IS NOT NULL
+          ORDER BY s.mecz_data IS NULL, s.mecz_data DESC, s.id DESC"
+    )->fetchAll();
 }
 
 /**

@@ -530,6 +530,7 @@ function migracje(): array
                                    id           INT AUTO_INCREMENT PRIMARY KEY,
                                    typ          VARCHAR(16) NOT NULL,
                                    minuta       INT         NOT NULL,
+                                   polowa       TINYINT     NULL,
                                    zawodnik_id  INT         NULL,
                                    zawodnik2_id INT         NULL,
                                    utworzono    DATETIME    NOT NULL
@@ -538,6 +539,7 @@ function migracje(): array
                                    id           INTEGER PRIMARY KEY AUTOINCREMENT,
                                    typ          TEXT    NOT NULL,
                                    minuta       INTEGER NOT NULL,
+                                   polowa       INTEGER,
                                    zawodnik_id  INTEGER,
                                    zawodnik2_id INTEGER,
                                    utworzono    TEXT    NOT NULL

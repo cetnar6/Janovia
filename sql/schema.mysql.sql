@@ -147,7 +147,7 @@ CREATE TABLE IF NOT EXISTS zdarzenia (
     id           INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     -- spotkanie, którego dotyczy (klucz jak w tabeli sklady)
     mecz_klucz   VARCHAR(120) NULL,
-    -- gol | gol_rywala | zmiana
+    -- gol | gol_rywala | zmiana | kartka_zolta | kartka_czerwona
     typ          VARCHAR(16) NOT NULL,
     minuta       INT         NOT NULL,
     -- 1 albo 2; NULL w zapisach sprzed tej kolumny. Bez niej „46" z doliczonego

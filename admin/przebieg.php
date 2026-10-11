@@ -31,13 +31,40 @@ $gotowa = tabela_istnieje('sklady')
 
 /* ---------- stan wejściowy ---------- */
 
-/* Przebieg prowadzi się dla spotkania, które jest najbliższe — i to jego
-   skład tu wczytujemy. Ustawienia przygotowane na dalsze kolejki czekają
-   w zakładce „Skład" i nie mają tu czego szukać. */
+/* Domyślnie prowadzi się przebieg najbliższego spotkania, ale wpis z
+   wcześniejszej kolejki też musi dać się poprawić — pomyłka w minucie
+   albo zapomniana kartka wychodzą zwykle po meczu. Stąd wybór z listy
+   po lewej, a nie sztywne „tylko bieżący". */
 $mecz_biezacy = $gotowa ? mecz_biezacy() : null;
-$klucz_meczu = $mecz_biezacy['klucz'] ?? null;
 
-$sklad = $gotowa ? sklad_biezacy($db) : null;
+$archiwum = $gotowa ? mecze_z_przebiegiem($db) : [];
+$wybrany_klucz = null;
+
+if ($gotowa && isset($_GET['mecz'])) {
+    $szukany = (string) $_GET['mecz'];
+
+    foreach ($archiwum as $m) {
+        if ((string) $m['mecz_klucz'] === $szukany) {
+            $wybrany_klucz = $szukany;
+            break;
+        }
+    }
+}
+
+$klucz_meczu = $wybrany_klucz ?? ($mecz_biezacy['klucz'] ?? null);
+
+/* Dokąd wracają wszystkie zapisy — razem z wybranym meczem, żeby panel
+   nie przeskakiwał na bieżące spotkanie po każdym kliknięciu. */
+$powrot = 'przebieg.php'
+        . ($wybrany_klucz !== null ? '?mecz=' . rawurlencode($wybrany_klucz) : '');
+
+/* Czy oglądamy spotkanie inne niż to, które panel prowadzi na żywo. */
+$archiwalny = $wybrany_klucz !== null
+           && $wybrany_klucz !== ($mecz_biezacy['klucz'] ?? null);
+
+$sklad = $gotowa
+    ? ($wybrany_klucz !== null ? sklad_meczu($db, $wybrany_klucz) : sklad_biezacy($db))
+    : null;
 
 $xi = $sklad ? id_ze_skladu($sklad['ustawienie']) : [];
 $lawka = [];
@@ -60,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
 
     odswiez_pliki_strony($db);
     komunikat('Strona klubu dostała świeże dane z panelu.');
-    przekieruj('przebieg.php');
+    przekieruj($powrot);
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
@@ -101,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
 
         if (!in_array($nowy, STANY_MECZU, true)) {
             komunikat('Nieznany stan meczu.', 'blad');
-            przekieruj('przebieg.php');
+            przekieruj($powrot);
         }
 
         /* Godzina pierwszego gwizdka służy tylko do podpowiadania minuty
@@ -134,7 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
             'koniec' => 'Mecz zakończony. Przebieg zostaje na stronie jako podsumowanie.',
         ][$nowy]);
 
-        przekieruj('przebieg.php');
+        przekieruj($powrot);
     }
 
     /* Przerwa zatrzymuje zegar, nie mecz: stan zostaje „trwa", bo spotkanie
@@ -144,7 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
 
         if (!$wiersz || $wiersz['stan'] !== 'trwa') {
             komunikat('Stoper można zatrzymać tylko w trakcie meczu.', 'blad');
-            przekieruj('przebieg.php');
+            przekieruj($powrot);
         }
 
         if ($akcja === 'przerwa') {
@@ -155,7 +182,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
 
             opublikuj_przebieg($db);
             komunikat('Przerwa — stoper stoi. Wznów go po drugim gwizdku.');
-            przekieruj('przebieg.php');
+            przekieruj($powrot);
         }
 
         /* Wznowienie przesuwa pierwszy gwizdek tak, żeby zegar ruszył
@@ -188,12 +215,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
                 ? 'Druga połowa — stoper rusza od 45:00.'
                 : 'Gramy dalej — stoper ruszył z miejsca, w którym stanął.');
 
-            przekieruj('przebieg.php');
+            przekieruj($powrot);
         }
 
         opublikuj_przebieg($db);
         komunikat('Gramy dalej.');
-        przekieruj('przebieg.php');
+        przekieruj($powrot);
     }
 
     /* Stoper liczy od zapisanego pierwszego gwizdka, więc poprawia się go
@@ -207,7 +234,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
 
         if ($biezaca === false || $biezaca === null) {
             komunikat('Podaj minutę meczu — liczbę od 0 do ' . MAKS_MINUTA . '.', 'blad');
-            przekieruj('przebieg.php');
+            przekieruj($powrot);
         }
 
         /* Minus jedna minuta, bo w chwili pierwszego gwizdka gra się „pierwszą
@@ -224,7 +251,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
         opublikuj_przebieg($db);
 
         komunikat('Stoper przestawiony — mecz jest w ' . $biezaca . ' minucie.');
-        przekieruj('przebieg.php');
+        przekieruj($powrot);
     }
 
     if ($akcja === 'nowy') {
@@ -244,7 +271,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
         opublikuj_przebieg($db);
 
         komunikat('Przebieg wyczyszczony — można wpisywać następny mecz.');
-        przekieruj('przebieg.php');
+        przekieruj($powrot);
     }
 
     if ($akcja === 'usun') {
@@ -257,12 +284,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
             komunikat('Zdarzenie usunięte.');
         }
 
-        przekieruj('przebieg.php');
+        przekieruj($powrot);
     }
 
     if ($minuta === false || $minuta === null) {
         komunikat('Podaj minutę meczu — liczbę od 0 do ' . MAKS_MINUTA . '.', 'blad');
-        przekieruj('przebieg.php');
+        przekieruj($powrot);
     }
 
     if ($akcja === 'gol') {
@@ -271,7 +298,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
 
         if ($strzelec === null) {
             komunikat('Wybierz strzelca z listy.', 'blad');
-            przekieruj('przebieg.php');
+            przekieruj($powrot);
         }
 
         // sam sobie nie asystuje — to zawsze pomyłka w wyborze
@@ -283,7 +310,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
 
         opublikuj_przebieg($db);
         komunikat('Gol zapisany — ' . $minuta . ' minuta.');
-        przekieruj('przebieg.php');
+        przekieruj($powrot);
+    }
+
+    if ($akcja === 'kartka') {
+        $ukarany = $z_listy($_POST['zawodnik'] ?? null, $kadra);
+        $kolor = (string) ($_POST['kolor'] ?? '');
+        $typ = $kolor === 'czerwona' ? 'kartka_czerwona' : 'kartka_zolta';
+
+        if ($ukarany === null) {
+            komunikat('Wybierz zawodnika z listy.', 'blad');
+            przekieruj($powrot);
+        }
+
+        /* Czerwona nie zdejmuje nikogo z boiska: skład w panelu pokazuje, kogo
+           trener ustawił, a nie kto akurat gra w dziesiątkę. Zmiana po
+           czerwonej i tak przechodzi normalną drogą. */
+        dopisz_zdarzenie($db, $klucz_meczu, $typ, $minuta, $ukarany, null, $polowa_teraz);
+
+        opublikuj_przebieg($db);
+        komunikat(($typ === 'kartka_czerwona' ? 'Czerwona' : 'Żółta')
+                . ' kartka zapisana — ' . $minuta . ' minuta.');
+        przekieruj($powrot);
     }
 
     if ($akcja === 'gol_rywala') {
@@ -291,7 +339,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
 
         opublikuj_przebieg($db);
         komunikat('Gol rywala zapisany — ' . $minuta . ' minuta.', 'blad');
-        przekieruj('przebieg.php');
+        przekieruj($powrot);
     }
 
     if ($akcja === 'zmiana') {
@@ -300,17 +348,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
 
         if ($schodzi === null || $wchodzi === null) {
             komunikat('Zmiana wymaga zawodnika z boiska i zawodnika z ławki.', 'blad');
-            przekieruj('przebieg.php');
+            przekieruj($powrot);
         }
 
         dopisz_zdarzenie($db, $klucz_meczu, 'zmiana', $minuta, $wchodzi, $schodzi, $polowa_teraz);
 
         opublikuj_przebieg($db);
         komunikat('Zmiana zapisana — ' . $minuta . ' minuta.');
-        przekieruj('przebieg.php');
+        przekieruj($powrot);
     }
 
-    przekieruj('przebieg.php');
+    przekieruj($powrot);
 }
 
 /* Wdrożenie potrafi dołożyć nowy plik dla strony (tak przyszły składy
@@ -392,8 +440,20 @@ foreach ($zdarzenia as $z) {
 
 /* Drużyny bierzemy z terminarza, nie z opisu składu: opis to wolny tekst,
    a tablica wyniku ma pokazać herby i stronę boiska zgodnie z tym, co widzi
-   kibic na stronie klubu. */
-$mecz = mecz_biezacy();
+   kibic na stronie klubu.
+
+   Mecz rozegrany wypada już z terminarza, więc wtedy czytamy drużyny
+   z klucza spotkania („kolejka|gospodarz|gość") — to ten sam zapis, który
+   zrobił terminarz w dniu meczu. */
+$mecz = mecz_po_kluczu($klucz_meczu) ?? mecz_biezacy();
+
+if ((!$mecz || ($mecz['klucz'] ?? null) !== $klucz_meczu) && $klucz_meczu !== null) {
+    $czesci = explode('|', $klucz_meczu, 3);
+
+    if (count($czesci) === 3 && $czesci[1] !== '' && $czesci[2] !== '') {
+        $mecz = ['gospodarz' => $czesci[1], 'gosc' => $czesci[2], 'klucz' => $klucz_meczu];
+    }
+}
 
 $u_siebie = !$mecz || $mecz['gospodarz'] === NASZ_KLUB;
 $rywal = $mecz ? ($u_siebie ? $mecz['gosc'] : $mecz['gospodarz']) : 'Rywal';
@@ -407,6 +467,22 @@ function kafelek_herbu(string $klub): string
         ? '<img class="tablica__herb" src="' . e($src) . '" alt="">'
         : '<span class="tablica__herb tablica__herb--brak">'
           . e(mb_strtoupper(mb_substr($klub, 0, 1))) . '</span>';
+}
+
+/**
+ * Przycisk kartki — stoi pod plusem przy naszym herbie i działa tak samo:
+ * otwiera okno, w którym wybiera się zawodnika, minutę i kolor.
+ */
+function przycisk_kartki(): string
+{
+    return '<button type="button" class="tablica__kartka" data-okno="okno-kartki"'
+         . ' aria-label="Dodaj kartkę">'
+         . '<svg viewBox="0 0 20 26" aria-hidden="true">'
+         . '<rect class="tablica__kartka-zolta" x="1" y="4" width="13" height="18" rx="2"'
+         . ' transform="rotate(-8 7.5 13)"/>'
+         . '<rect class="tablica__kartka-czerwona" x="6" y="4" width="13" height="18" rx="2"'
+         . ' transform="rotate(8 12.5 13)"/>'
+         . '</svg></button>';
 }
 
 /** Podpis zawodnika na liście wyboru: numer robi za pewny punkt zaczepienia. */
@@ -456,6 +532,50 @@ $poza_boiskiem = array_values(array_diff($kadra, $na_boisku));
 naglowek('Przebieg meczu');
 ?>
 
+<div class="przebieg__ekran">
+
+<?php if ($archiwum): ?>
+    <!-- Spotkania, które panel ma zapisane. Domyślnie prowadzimy najbliższe,
+         ale poprawka w rozegranym meczu musi być o jedno kliknięcie stąd. -->
+    <aside class="kolejki" aria-label="Mecze zapisane w panelu">
+        <h2 class="kolejki__tytul">Mecze</h2>
+
+        <ul class="kolejki__lista">
+            <?php foreach ($archiwum as $m):
+                $tu = (string) $m['mecz_klucz'] === (string) $klucz_meczu;
+                $to_biezacy = (string) $m['mecz_klucz'] === (string) ($mecz_biezacy['klucz'] ?? '');
+            ?>
+                <li>
+                    <a class="kolejka<?= $tu ? ' is-wybrana' : '' ?>"
+                       href="przebieg.php?mecz=<?= rawurlencode((string) $m['mecz_klucz']) ?>"
+                       <?= $tu ? 'aria-current="page"' : '' ?>>
+                        <span class="kolejka__kiedy">
+                            <?= e($m['mecz_data']
+                                    ? date('d.m', (int) strtotime((string) $m['mecz_data']))
+                                    : '—') ?>
+                            <?php if ($to_biezacy): ?>
+                                <b class="kolejka__najblizszy">najbliższy</b>
+                            <?php endif; ?>
+                        </span>
+
+                        <span class="kolejka__kto">
+                            <?= e((string) ($m['mecz_opis'] ?: $m['nazwa'] ?: $m['mecz_klucz'])) ?>
+                        </span>
+
+                        <span class="kolejka__sklad<?= (int) $m['zdarzen'] ? ' is-gotowy' : '' ?>">
+                            <?= ['przed' => 'przed meczem', 'trwa' => 'trwa', 'koniec' => 'po meczu']
+                                [(string) $m['stan']] ?? e((string) $m['stan']) ?>
+                            · <?= (int) $m['zdarzen'] ?> zdarz.
+                        </span>
+                    </a>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    </aside>
+<?php endif; ?>
+
+<div class="przebieg__tresc">
+
 <div class="naglowek-sekcji">
     <h1>Przebieg meczu</h1>
 
@@ -502,6 +622,14 @@ naglowek('Przebieg meczu');
     </section>
 <?php else: ?>
 
+<?php if ($archiwalny): ?>
+    <p class="przebieg__archiwum">
+        Poprawiasz mecz <b><?= e((string) ($sklad['mecz_opis'] ?: $sklad['mecz_klucz'])) ?></b>,
+        a nie ten najbliższy. Każdy zapis od razu idzie na stronę.
+        <a href="przebieg.php">Wróć do bieżącego meczu</a>
+    </p>
+<?php endif; ?>
+
 <p class="drobne">
     <?= $sklad['nazwa'] !== '' ? e((string) $sklad['nazwa']) . ' · ' : '' ?>
     ustawienie <?= e($formacja) ?>
@@ -521,6 +649,12 @@ naglowek('Przebieg meczu');
             <button type="button" class="tablica__plus"
                     data-gol="<?= $u_siebie ? 'my' : 'oni' ?>"
                     aria-label="Dodaj gola: <?= e($u_siebie ? 'Janovia' : $rywal) ?>">+</button>
+
+            <?php /* Kartka tylko pod naszym herbem: panel zna wyłącznie własną
+                     kadrę, więc ukaranego rywala nie miałby jak nazwać. */ ?>
+            <?php if ($u_siebie): ?>
+                <?= przycisk_kartki() ?>
+            <?php endif; ?>
         <?php endif; ?>
     </div>
 
@@ -550,6 +684,10 @@ naglowek('Przebieg meczu');
             <button type="button" class="tablica__plus"
                     data-gol="<?= $u_siebie ? 'oni' : 'my' ?>"
                     aria-label="Dodaj gola: <?= e($u_siebie ? $rywal : 'Janovia') ?>">+</button>
+
+            <?php if (!$u_siebie): ?>
+                <?= przycisk_kartki() ?>
+            <?php endif; ?>
         <?php endif; ?>
     </div>
 </section>
@@ -688,6 +826,10 @@ naglowek('Przebieg meczu');
                             <?php endif; ?>
                         <?php elseif ($z['typ'] === 'gol_rywala'): ?>
                             <strong>Gol rywala</strong>
+                        <?php elseif ($z['typ'] === 'kartka_zolta'): ?>
+                            <strong>Żółta kartka</strong> — <?= e(podpis_zawodnika($kto)) ?>
+                        <?php elseif ($z['typ'] === 'kartka_czerwona'): ?>
+                            <strong>Czerwona kartka</strong> — <?= e(podpis_zawodnika($kto)) ?>
                         <?php else: ?>
                             <strong>Zmiana</strong>
                             <small>
@@ -742,6 +884,40 @@ naglowek('Przebieg meczu');
 
             <div class="okno__przyciski">
                 <button class="btn" type="submit">Zapisz gola</button>
+                <button class="btn btn--pusty okno__anuluj" type="button">Anuluj</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="okno" id="okno-kartki" hidden>
+        <form class="okno__karta" method="post">
+            <?= pole_csrf() ?>
+            <input type="hidden" name="akcja" value="kartka">
+
+            <h2>Kartka</h2>
+
+            <label>
+                Zawodnik
+                <select name="zawodnik" required>
+                    <?= opcje_strzelcow($na_boisku, $poza_boiskiem, $wg_id, 'wybierz zawodnika') ?>
+                </select>
+            </label>
+
+            <label>
+                Minuta
+                <input type="number" name="minuta" required
+                       min="0" max="<?= MAKS_MINUTA ?>" inputmode="numeric">
+            </label>
+
+            <?php /* Kolor wybiera przycisk, nie osobne pole: i tak trzeba
+                     kliknąć „zapisz", więc jedno kliknięcie wystarczy. */ ?>
+            <div class="okno__przyciski">
+                <button class="btn btn--zolta" type="submit" name="kolor" value="zolta">
+                    Żółta
+                </button>
+                <button class="btn btn--czerwona" type="submit" name="kolor" value="czerwona">
+                    Czerwona
+                </button>
                 <button class="btn btn--pusty okno__anuluj" type="button">Anuluj</button>
             </div>
         </form>
@@ -860,6 +1036,10 @@ naglowek('Przebieg meczu');
         /* Połowa mówi stoperowi, od czego liczyć czas doliczony: 45+2 albo
            90+2 — bez niej 47 minuta w obu wypadkach wygląda tak samo. */
         'polowa'     => polowa_skladu($sklad),
+        /* Czy zegar w ogóle biegnie. Przy meczu rozegranym podpowiadanie
+           minuty z „czasu od pierwszego gwizdka" dawało sufit 130 — liczbę
+           tym gorszą, że wygląda na wpisaną celowo. */
+        'trwa'       => $stan === 'trwa',
         'pauza'      => $pauza ? date('c', (int) strtotime((string) $pauza)) : null,
         /* { idZawodnika: liczba bramek } — klucze w JSON-ie i tak są tekstem,
            a skrypt czyta je po numerze, więc object_cast jest tu konieczny. */
@@ -868,8 +1048,11 @@ naglowek('Przebieg meczu');
         'zmiany'     => $zmiany,
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>
 </script>
-<script src="js/sklad.js?v=22"></script>
+<script src="js/sklad.js?v=23"></script>
 
 <?php endif; ?>
+
+</div><!-- .przebieg__tresc -->
+</div><!-- .przebieg__ekran -->
 
 <?php stopka(); ?>

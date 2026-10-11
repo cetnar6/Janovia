@@ -3482,6 +3482,13 @@ a.marquee__item {
     height: 1.05rem;
 }
 
+/* Kartka jest węższa niż wysoka — tak wygląda w dłoni sędziego i tak
+   odróżnia się od piłki na pierwszy rzut oka. */
+.zdarz__kartka {
+    width: 0.8rem;
+    height: 1.05rem;
+}
+
 .zdarz__wynik {
     font-size: 0.82rem;
     font-weight: 800;

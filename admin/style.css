@@ -510,7 +510,10 @@ td.akcje { white-space: nowrap; font-size: 0; }
 
 /* Mecze po lewej, reszta ekranu po prawej. Na telefonie lista ląduje nad
    boiskiem — jest krótka, a bez niej nie wiadomo, czyj skład się układa. */
-.sklad__ekran {
+/* Przebieg ma ten sam układ co skład: lista meczów po lewej, ekran po
+   prawej. Jedna reguła, bo to ta sama decyzja — który mecz oglądamy. */
+.sklad__ekran,
+.przebieg__ekran {
     display: grid;
     grid-template-columns: minmax(13rem, 17rem) minmax(0, 1fr);
     gap: clamp(1rem, 2vw, 2rem);
@@ -588,7 +591,8 @@ td.akcje { white-space: nowrap; font-size: 0; }
 }
 
 @media (max-width: 900px) {
-    .sklad__ekran { grid-template-columns: minmax(0, 1fr); }
+    .sklad__ekran,
+    .przebieg__ekran { grid-template-columns: minmax(0, 1fr); }
     .kolejki { position: static; }
 }
 
@@ -1664,4 +1668,66 @@ td.akcje { white-space: nowrap; font-size: 0; }
    awaryjna, nie druga droga do celu tej karty. */
 .przebieg__odswiez {
     margin-top: 0.9rem;
+}
+
+/* ---------- przebieg: mecz archiwalny i kartki ---------- */
+
+/* Poprawianie rozegranego meczu wygląda identycznie jak prowadzenie go na
+   żywo, więc ekran musi powiedzieć wprost, czego dotyczy. */
+.przebieg__archiwum {
+    margin-bottom: 1rem;
+    padding: 0.7rem 0.9rem;
+    background-color: rgba(85, 170, 255, 0.08);
+    border: 1px solid rgba(85, 170, 255, 0.35);
+    border-radius: 8px;
+    font-size: 0.85rem;
+}
+
+.przebieg__archiwum a { margin-left: 0.4rem; }
+
+/* Kolor kartki na przycisku, bo to on jest wyborem — nazwa obok niego
+   byłaby drugim opisem tej samej rzeczy. */
+.btn--zolta {
+    background-color: #F5C518;
+    border-color: #F5C518;
+    color: #1A1A1A;
+}
+
+.btn--czerwona {
+    background-color: var(--czerwony);
+    border-color: var(--czerwony);
+    color: #FFFFFF;
+}
+
+.zdarzenie--kartka_zolta .zdarzenie__minuta { color: #F5C518; }
+.zdarzenie--kartka_czerwona .zdarzenie__minuta { color: var(--czerwony); }
+
+/* Kartka pod plusem: ten sam rozmiar i ta sama reakcja, bo to ten sam gest
+   — jedno dotknięcie otwiera okno z wyborem zawodnika i minuty. */
+.tablica__kartka {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    padding: 0;
+    background-color: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.2s;
+}
+
+.tablica__kartka svg { width: 1.3rem; height: 1.3rem; }
+.tablica__kartka-zolta { fill: #F5C518; }
+.tablica__kartka-czerwona { fill: var(--czerwony); }
+
+.tablica__kartka:hover {
+    border-color: var(--gold);
+    transform: translateY(-1px);
+}
+
+.tablica__kartka:focus-visible {
+    outline: 2px solid var(--blue-light);
+    outline-offset: 2px;
 }

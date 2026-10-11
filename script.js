@@ -1567,6 +1567,15 @@
             '<path class="zdarz__schodzi" d="M16 4v13m0 0 3.5-3.5M16 17l-3.5-3.5"/>' +
         '</svg>';
 
+    /* Kartka: prostokąt w kolorze, bez napisu — na osi czasu i tak stoi
+       obok nazwiska, a żółty i czerwony czyta się szybciej niż słowo. */
+    function kartka(czerwona) {
+        return '<svg class="zdarz__kartka" viewBox="0 0 14 18" aria-hidden="true">' +
+                   '<rect x="1" y="1" width="12" height="16" rx="2"' +
+                       ' fill="' + (czerwona ? '#E5484D' : '#F5C518') + '"/>' +
+               '</svg>';
+    }
+
     /**
      * Wiersz osi czasu, ułożony po tej stronie, po której padło zdarzenie.
      *
@@ -1630,12 +1639,17 @@
             dopisek = z.asysta ? '(' + ktoZdarzenia(z.asysta) + ')' : '';
         } else if (z.typ === 'gol_rywala') {
             kto = rywal;
+        } else if (z.typ === 'kartka_zolta' || z.typ === 'kartka_czerwona') {
+            kto = ktoZdarzenia(z.kto);
         } else {
             kto = ktoZdarzenia(z.wchodzi);
             dopisek = ktoZdarzenia(z.schodzi);
         }
 
-        var ikona = z.typ === 'zmiana' ? IKONA_ZMIANY : pilka();
+        var ikona = z.typ === 'zmiana' ? IKONA_ZMIANY
+                  : (z.typ === 'kartka_zolta' || z.typ === 'kartka_czerwona')
+                        ? kartka(z.typ === 'kartka_czerwona')
+                        : pilka();
 
         /* Wynik po bramce w kolejności z tablicy: gospodarz – gość. */
         var wynik = '';
@@ -1697,8 +1711,11 @@
         var s = sekundy % 60;
         var minuty = Math.floor(sekundy / 60);
         var koniec = (PRZEBIEG && PRZEBIEG.polowa === 2) ? 90 : 45;
+        var doliczone = minuty - koniec;
 
-        return (minuty > koniec ? koniec + '+' + (minuty - koniec) : minuty) +
+        /* Powyżej kwadransa doliczonego czasu to już nie doliczony czas,
+           tylko połowa nieprzełączona w panelu — wtedy sama minuta. */
+        return (doliczone > 0 && doliczone <= 15 ? koniec + '+' + doliczone : minuty) +
                ':' + (s < 10 ? '0' + s : s);
     }
 

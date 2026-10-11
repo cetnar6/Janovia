@@ -577,8 +577,11 @@
         var s = sekundy % 60;
         var minuty = Math.floor(sekundy / 60);
         var koniec = (DANE.polowa === 2 ? 90 : 45);
+        var doliczone = minuty - koniec;
 
-        return (minuty > koniec ? koniec + '+' + (minuty - koniec) : minuty) +
+        /* Powyżej kwadransa to nie doliczony czas, tylko połowa, której nikt
+           nie przełączył — wtedy uczciwiej pokazać samą minutę. */
+        return (doliczone > 0 && doliczone <= 15 ? koniec + '+' + doliczone : minuty) +
                ':' + (s < 10 ? '0' + s : s);
     }
 
@@ -653,7 +656,11 @@
         var minuta = okno.querySelector('input[type="number"]');
 
         if (minuta) {
-            var teraz = minutaMeczu();
+            /* Podpowiadamy tylko wtedy, gdy zegar biegnie. W meczu
+               rozegranym „czas od pierwszego gwizdka" to już kilka godzin,
+               więc podpowiedź wychodziła na sufit (130) i wyglądała na
+               świadomy wybór. Lepiej zostawić pole puste. */
+            var teraz = DANE.trwa ? minutaMeczu() : null;
 
             minuta.value = teraz !== null ? String(teraz) : (DANE.minuta ? String(DANE.minuta) : '');
         }
@@ -1232,6 +1239,15 @@
             otworzOkno(document.getElementById(
                 btn.getAttribute('data-gol') === 'my' ? 'okno-gol' : 'okno-gol-rywala'
             ));
+        });
+    });
+
+    /* Przyciski otwierające okno wprost, bez gestu na boisku — na razie
+       kartki. Nazwa okna siedzi w atrybucie, żeby dołożenie kolejnego nie
+       wymagało tu ani jednej linijki. */
+    Array.prototype.forEach.call(document.querySelectorAll('[data-okno]'), function (btn) {
+        btn.addEventListener('click', function () {
+            otworzOkno(document.getElementById(btn.getAttribute('data-okno')));
         });
     });
 

@@ -581,7 +581,7 @@ naglowek('Skład');
         'maksRezerw' => MAKS_REZERWOWYCH,
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>
 </script>
-<script src="js/sklad.js?v=22"></script>
+<script src="js/sklad.js?v=23"></script>
 
 <?php endif; ?>
 
