@@ -22,9 +22,10 @@ admin/inc/fb-token.php
 # wrzucić do repozytorium przypadkowe ustawienie z próbnego kliknięcia.
 data/sklad.json
 
-# przebieg meczu dopisywany na żywo w panelu trenera — ten sam powód
-# co wyżej: plik w całości generuje panel
+# przebieg meczu dopisywany na żywo w panelu trenera i wyniki spotkań
+# rozegranych w panelu — ten sam powód co wyżej: pliki generuje panel
 data/przebieg.json
+data/wyniki.json
 
 # baza SQLite — plik binarny z danymi lokalnymi
 dane/

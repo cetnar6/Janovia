@@ -1803,6 +1803,39 @@
         wyrownajNazwy(rail);
     }
 
+    /**
+     * Dokłada do terminarza wyniki meczów zakończonych w panelu.
+     *
+     * Ten sam mecz siedzi w danych w kilku listach (kolejka, pełny terminarz,
+     * ostatnie spotkanie), więc poprawiamy każdą — inaczej wynik pojawiłby się
+     * w jednym miejscu, a kreska została w drugim.
+     */
+    function uzupelnijWynikiZPanelu(dane, wyniki) {
+        if (!wyniki || !wyniki.mecze) { return; }
+
+        var listy = [
+            dane.wszystkie_mecze,
+            dane.nadchodzace,
+            dane.ostatnia_kolejka && dane.ostatnia_kolejka.mecze,
+            dane.ostatni ? [dane.ostatni] : null
+        ];
+
+        listy.forEach(function (lista) {
+            if (!lista) { return; }
+
+            lista.forEach(function (m) {
+                if (m.wynik) { return; }
+
+                var nasz = wyniki.mecze[kluczMeczu(m)];
+
+                if (nasz) {
+                    m.wynik = nasz;
+                    m.wynik_z_panelu = true;
+                }
+            });
+        });
+    }
+
     function rysujOdliczanie(dane) {
         meczeDoOdliczania = dane.nadchodzace || [];
         odswiezOdliczanie();
@@ -2667,11 +2700,18 @@
 
         Promise.all([
             pobierzJSON('data/liga.json'),
-            pobierzJSON('data/mecze-panelu.json')
+            pobierzJSON('data/mecze-panelu.json'),
+            pobierzJSON('data/wyniki.json')
         ]).then(function (wyniki) {
             var dane = wyniki[0];
             var panel = wyniki[1];
             if (!dane) { return; }
+
+            /* Nasze wyniki wyprzedzają 90minut: tam rezultat wpisuje sędzia
+               albo gospodarz, czasem dopiero w poniedziałek, a my wiemy swoje
+               w chwili końcowego gwizdka. Uzupełniamy tylko kreski — wpisanego
+               już wyniku nie ruszamy, bo tabela i tak liczy się z 90minut. */
+            uzupelnijWynikiZPanelu(dane, wyniki[2]);
 
             if (panel && panel.mecze && panel.mecze.length) {
                 // herb wgrany w panelu dla przeciwnika spoza listy klubów ligowych —

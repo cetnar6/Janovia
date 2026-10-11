@@ -217,6 +217,64 @@ function plik_przebiegu(): string
     return katalog_strony() . '/data/przebieg.json';
 }
 
+/** Plik z wynikami meczów rozegranych w panelu. */
+function plik_wynikow(): string
+{
+    return katalog_strony() . '/data/wyniki.json';
+}
+
+/**
+ * Wyniki spotkań zakończonych w panelu.
+ *
+ * 90minut wpisuje rezultat dopiero wtedy, gdy zrobi to sędzia albo gospodarz
+ * — czasem w poniedziałek. My wiemy swoje w chwili końcowego gwizdka, więc
+ * strona bierze wynik stąd wszędzie tam, gdzie terminarz ma jeszcze kreskę.
+ * Zapisujemy go w kolejności gospodarz–gość, bo tak czyta go reszta strony;
+ * „my i oni" to pojęcia panelu, nie tabeli.
+ */
+function opublikuj_wyniki(PDO $db): void
+{
+    if (!tabela_istnieje('sklady') || !kolumna_istnieje('sklady', 'mecz_klucz')) {
+        return;
+    }
+
+    $mecze = [];
+
+    $zakonczone = $db->query(
+        "SELECT mecz_klucz FROM sklady WHERE mecz_klucz IS NOT NULL AND stan = 'koniec'"
+    )->fetchAll(PDO::FETCH_COLUMN);
+
+    foreach ($zakonczone as $klucz) {
+        $klucz = (string) $klucz;
+        [, $gospodarz] = array_pad(explode('|', $klucz, 3), 3, '');
+
+        $my = 0;
+        $oni = 0;
+
+        foreach (zdarzenia_meczu($db, $klucz) as $z) {
+            if ($z['typ'] === 'gol') { $my++; }
+            if ($z['typ'] === 'gol_rywala') { $oni++; }
+        }
+
+        $u_siebie = $gospodarz === NASZ_KLUB;
+
+        $mecze[$klucz] = ($u_siebie ? $my : $oni) . '-' . ($u_siebie ? $oni : $my);
+    }
+
+    $json = json_encode([
+        'zaktualizowano' => date('c'),
+        'mecze'          => (object) $mecze,
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+
+    $katalog = dirname(plik_wynikow());
+
+    if (!is_dir($katalog)) {
+        mkdir($katalog, 0775, true);
+    }
+
+    file_put_contents(plik_wynikow(), $json . "\n");
+}
+
 /**
  * Zapisuje przebieg do data/przebieg.json.
  *
@@ -325,6 +383,10 @@ function opublikuj_przebieg(PDO $db): void
     }
 
     file_put_contents(plik_przebiegu(), $json . "\n");
+
+    /* Wyniki idą razem z przebiegiem: każdy zapis w panelu może być tym,
+       po którym mecz dostaje rezultat. */
+    opublikuj_wyniki($db);
 }
 
 /* ---------- druga drużyna i herby ---------- */

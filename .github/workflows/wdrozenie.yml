@@ -124,9 +124,10 @@ jobs:
       #   * panel administratora — zapisuje zawodników, posty, sponsorów
       #     i mecze z bazy MySQL przy każdym zapisie formularza,
       #   * panel trenera — zatwierdzony skład zapisuje do data/sklad.json,
-      #     a gole i zmiany do data/przebieg.json; tylko on wie, czy jest co
-      #     pokazywać, a plik z repozytorium nadpisałby to stanem sprzed
-      #     zatwierdzenia albo skasował przebieg trwającego meczu,
+      #     gole i zmiany do data/przebieg.json, a wyniki rozegranych spotkań
+      #     do data/wyniki.json; tylko on wie, czy jest co pokazywać, a plik
+      #     z repozytorium nadpisałby to stanem sprzed zatwierdzenia albo
+      #     skasował przebieg trwającego meczu,
       #   * cron.php — co dobę ciągnie tabelę z 90minut, archiwum sezonów
       #     i posty z Facebooka. 28.09 wdrożenie cofnęło właśnie data/liga.json
       #     o dwa tygodnie: z tabeli zniknęły kolejki 5 i 6, bo w repozytorium
@@ -173,7 +174,7 @@ jobs:
           UZYTKOWNIK: ${{ secrets.FTP_USER }}
           SSHPASS: ${{ secrets.FTP_PASSWORD }}
         run: |
-          lftp -c "set cmd:fail-exit true; set sftp:connect-program 'sshpass -e ssh -a -x -o StrictHostKeyChecking=yes'; set net:max-retries 3; set net:timeout 20; open -u '$UZYTKOWNIK',dummy sftp://$HOST; mkdir -f $ZDALNY_KATALOG; mirror --reverse --delete --verbose --parallel=2 -x '^uploads/' -x '^admin/inc/config\.php$' -x '^data/zawodnicy\.json$' -x '^data/posty\.json$' -x '^data/mecze-panelu\.json$' -x '^data/sponsorzy\.json$' -x '^data/liga\.json$' -x '^data/archiwum\.json$' -x '^data/facebook\.json$' -x '^data/sklad\.json$' -x '^data/przebieg\.json$' -x '^data/fb/' wysylka/ $ZDALNY_KATALOG/"
+          lftp -c "set cmd:fail-exit true; set sftp:connect-program 'sshpass -e ssh -a -x -o StrictHostKeyChecking=yes'; set net:max-retries 3; set net:timeout 20; open -u '$UZYTKOWNIK',dummy sftp://$HOST; mkdir -f $ZDALNY_KATALOG; mirror --reverse --delete --verbose --parallel=2 -x '^uploads/' -x '^admin/inc/config\.php$' -x '^data/zawodnicy\.json$' -x '^data/posty\.json$' -x '^data/mecze-panelu\.json$' -x '^data/sponsorzy\.json$' -x '^data/liga\.json$' -x '^data/archiwum\.json$' -x '^data/facebook\.json$' -x '^data/sklad\.json$' -x '^data/przebieg\.json$' -x '^data/wyniki\.json$' -x '^data/fb/' wysylka/ $ZDALNY_KATALOG/"
 
       # Osobno i BEZ --delete: logotypy sponsorów z repozytorium mają trafić
       # na serwer przy pierwszym wdrożeniu, ale pliki wgrane później przez
