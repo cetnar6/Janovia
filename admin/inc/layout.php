@@ -17,7 +17,7 @@ function naglowek(string $tytul, bool $zNawigacja = true): void
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap">
-    <link rel="stylesheet" href="style.css?v=30">
+    <link rel="stylesheet" href="style.css?v=31">
 </head>
 <body>
 
@@ -52,6 +52,10 @@ function naglowek(string $tytul, bool $zNawigacja = true): void
             <a href="posty.php">Aktualności</a>
             <a href="mecze.php">Mecze</a>
             <a href="sponsorzy.php">Sponsorzy</a>
+            <?php /* Migracje dotąd wisiały tylko na pulpicie i tylko wtedy, gdy
+                     coś zalegało — czyli dokładnie wtedy, gdy były niepotrzebne
+                     do znalezienia. Stały link kosztuje jedno słowo w menu. */ ?>
+            <a href="migracje.php">Baza</a>
         <?php endif; ?>
         <a href="../index.html" target="_blank" rel="noopener">Strona &nearr;</a>
     </nav>
