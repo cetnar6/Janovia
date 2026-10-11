@@ -2394,6 +2394,14 @@
                 ? rysujMurawe(sklad, wpis.zdarzenia) +
                   pasRezerwowych(sklad, wpis.zdarzenia)
                 : '<p class="sklad__brak">Skład na ten mecz nie został ogłoszony.</p>';
+
+            /* Ławka nosi data-reveal, bo na stronie meczu wjeżdża przy
+               przewijaniu. Tutaj nie ma czego obserwować — treść powstaje
+               już po otwarciu okna, często pod zakładką, która jeszcze nie
+               jest widoczna, więc obserwator nigdy by jej nie odsłonił
+               i ławka zostawała przezroczysta. Pokazujemy ją od razu. */
+            Array.prototype.forEach.call(widok.querySelectorAll('[data-reveal]'),
+                function (el) { el.classList.add('is-in'); });
         });
     }
 

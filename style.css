@@ -3384,10 +3384,14 @@ a.marquee__item {
     padding: 0.9rem;
 }
 
+/* Siatka, nie zawijany rząd: przy pięciu zmiennikach flex zostawiał
+   wiersze o różnej szerokości, bo każdy kafelek rósł do swojego nazwiska.
+   Kolumny o równej szerokości układają ławkę w prostokąt niezależnie od
+   tego, ilu rezerwowych zgłosił trener. */
 .przebiegok__widok .lawkarez__lista {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+    gap: 0.4rem;
 }
 
 .przebiegok__widok .rezerwowy__poz { margin-left: 0.2rem; }
