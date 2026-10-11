@@ -2271,7 +2271,10 @@
 
         panelPrzebiegu.innerHTML =
             '<div class="przebiegok__tlo" data-zamknij-przebieg></div>' +
-            '<div class="przebiegok__karta">' +
+            /* data-lenis-prevent jest konieczne: Lenis przewija stronę własnym
+               kodem i połyka kółko myszy także nad oknem — bez tego listy
+               zdarzeń dłuższej niż ekran nie dało się przewinąć. */
+            '<div class="przebiegok__karta" data-lenis-prevent>' +
                 '<button class="przebiegok__zamknij" type="button"' +
                     ' data-zamknij-przebieg aria-label="Zamknij">&times;</button>' +
                 '<div class="przebiegok__tresc"></div>' +
