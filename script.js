@@ -1226,12 +1226,14 @@
      * Samo nazwisko by nie wystarczyło: dwóch Pulaków w składzie to u nas
      * normalny stan.
      */
-    function bramkiZawodnika(z) {
-        if (!z || !PRZEBIEG || !PRZEBIEG.zdarzenia) { return 0; }
+    function bramkiZawodnika(z, zdarzenia) {
+        zdarzenia = zdarzenia || (PRZEBIEG && PRZEBIEG.zdarzenia);
+
+        if (!z || !zdarzenia) { return 0; }
 
         var ile = 0;
 
-        PRZEBIEG.zdarzenia.forEach(function (e) {
+        zdarzenia.forEach(function (e) {
             if (e.typ !== 'gol' || !e.kto) { return; }
 
             var pasuje = z.id && e.kto.id
@@ -1258,8 +1260,8 @@
 
     /* Piłka przy nazwisku — jedna na bramkę, do trzech. Wyżej liczba wygrywa
        z kreskami, bo pięć kółek obok twarzy przestaje być informacją. */
-    function pilkiZawodnika(z) {
-        var ile = bramkiZawodnika(z);
+    function pilkiZawodnika(z, zdarzenia) {
+        var ile = bramkiZawodnika(z, zdarzenia);
 
         if (!ile) { return ''; }
 
@@ -1289,7 +1291,7 @@
                '</span>';
     }
 
-    function kafelekSkladu(pole) {
+    function kafelekSkladu(pole, zdarzenia) {
         var z = pole.zawodnik;
 
         if (!z) {
@@ -1301,7 +1303,7 @@
 
         return '<div class="sklad__pole" style="left:' + pole.x + '%;top:' + pole.y + '%">' +
                    twarzZawodnika(z, 'sklad__twarz') +
-                   pilkiZawodnika(z) +
+                   pilkiZawodnika(z, zdarzenia) +
                    '<span class="sklad__numer">' + (z.numer ? z.numer : '–') + '</span>' +
                    '<span class="sklad__nazwisko">' + esc(z.nazwisko) +
                        (z.kapitan ? '<i class="sklad__opaska" title="Kapitan">C</i>' : '') +
@@ -1309,7 +1311,9 @@
                '</div>';
     }
 
-    function rysujMurawe() {
+    function rysujMurawe(sklad, zdarzenia) {
+        sklad = sklad || SKLAD;
+
         return '<div class="murawa">' +
                    '<div class="murawa__linie" aria-hidden="true">' +
                        '<span class="murawa__srodek"></span>' +
@@ -1317,7 +1321,9 @@
                        '<span class="murawa__pole16 murawa__pole16--dol"></span>' +
                        '<span class="murawa__pole16 murawa__pole16--gora"></span>' +
                    '</div>' +
-                   SKLAD.pola.map(kafelekSkladu).join('') +
+                   sklad.pola.map(function (p) {
+                       return kafelekSkladu(p, zdarzenia);
+                   }).join('') +
                '</div>';
     }
 
@@ -1332,8 +1338,10 @@
      * Kolejność jest ta z panelu — trener układa ją tak, jak zamierza
      * zmieniać, więc sortowanie po numerach zgubiłoby informację.
      */
-    function pasRezerwowych() {
-        var lawka = (SKLAD && SKLAD.rezerwowi) || [];
+    function pasRezerwowych(sklad, zdarzenia) {
+        sklad = sklad || SKLAD;
+
+        var lawka = (sklad && sklad.rezerwowi) || [];
 
         if (!lawka.length) { return ''; }
 
@@ -1348,7 +1356,7 @@
                                   '<span class="rezerwowy__kto">' +
                                       '<strong>' + esc(z.nazwisko) +
                                           (z.kapitan ? '<i class="sklad__opaska" title="Kapitan">C</i>' : '') +
-                                          pilkiZawodnika(z) +
+                                          pilkiZawodnika(z, zdarzenia) +
                                       '</strong>' +
                                       '<small>' + esc(z.imie) + '</small>' +
                                   '</span>' +
@@ -2278,6 +2286,25 @@
         return panelPrzebiegu;
     }
 
+    /* Składy rozegranych meczów wiszą w osobnym pliku i ważą dziesięć razy
+       tyle co wyniki — ściągamy je dopiero, gdy ktoś otworzy okno meczu,
+       i trzymamy do końca wizyty. */
+    var SKLADY = null;
+    var skladyWDrodze = null;
+
+    function wczytajSklady() {
+        if (SKLADY) { return Promise.resolve(SKLADY); }
+
+        if (!skladyWDrodze) {
+            skladyWDrodze = pobierzJSON('data/sklady.json').then(function (dane) {
+                SKLADY = dane || { mecze: {} };
+                return SKLADY;
+            });
+        }
+
+        return skladyWDrodze;
+    }
+
     function otworzPrzebieg(m) {
         var wpis = szczegolyMeczu(m);
 
@@ -2302,16 +2329,63 @@
                 (m.kolejka ? 'Kolejka ' + m.kolejka + ' · ' : '') +
                 esc(m.termin || m.kolejka_opis || '') +
             '</p>' +
-            '<ol class="oczas">' +
-                wpis.zdarzenia.map(function (z) {
-                    return wierszZdarzenia(z, rywal, uSiebie);
-                }).join('') +
-            '</ol>';
+            '<div class="zakladki zakladki--okno" role="tablist" aria-label="Skład i szczegóły meczu">' +
+                '<button class="zakladka is-aktywna" type="button" role="tab"' +
+                    ' aria-selected="true" data-widok="przebieg">Szczegóły</button>' +
+                '<button class="zakladka" type="button" role="tab"' +
+                    ' aria-selected="false" data-widok="sklad">Skład</button>' +
+            '</div>' +
+            '<div class="przebiegok__widok" data-widok="przebieg">' +
+                '<ol class="oczas">' +
+                    wpis.zdarzenia.map(function (z) {
+                        return wierszZdarzenia(z, rywal, uSiebie);
+                    }).join('') +
+                '</ol>' +
+            '</div>' +
+            '<div class="przebiegok__widok" data-widok="sklad" hidden>' +
+                '<p class="sklad__brak">Wczytuję skład…</p>' +
+            '</div>';
 
         p.hidden = false;
         blokujPrzewijanie(true);
         p.querySelector('.przebiegok__zamknij').focus();
+
+        /* Skład dociągamy od razu po otwarciu, a nie dopiero po kliknięciu
+           zakładki — plik jest mały, a przełączanie ma być natychmiastowe. */
+        wczytajSklady().then(function (sklady) {
+            var widok = p.querySelector('[data-widok="sklad"].przebiegok__widok');
+
+            if (!widok) { return; }
+
+            var sklad = sklady.mecze ? sklady.mecze[kluczMeczu(m)] : null;
+
+            widok.innerHTML = sklad
+                ? rysujMurawe(sklad, wpis.zdarzenia) +
+                  pasRezerwowych(sklad, wpis.zdarzenia)
+                : '<p class="sklad__brak">Skład na ten mecz nie został ogłoszony.</p>';
+        });
     }
+
+    /* Przełączanie zakładek w oknie meczu — delegacja, bo okno powstaje
+       dopiero przy pierwszym kliknięciu ikony. */
+    document.addEventListener('click', function (e) {
+        var btn = e.target.closest ? e.target.closest('.zakladki--okno .zakladka') : null;
+
+        if (!btn) { return; }
+
+        var okno = btn.closest('.przebiegok');
+        var wybrany = btn.getAttribute('data-widok');
+
+        Array.prototype.forEach.call(okno.querySelectorAll('.zakladki--okno .zakladka'), function (b) {
+            var aktywna = b === btn;
+            b.classList.toggle('is-aktywna', aktywna);
+            b.setAttribute('aria-selected', aktywna ? 'true' : 'false');
+        });
+
+        Array.prototype.forEach.call(okno.querySelectorAll('.przebiegok__widok'), function (w) {
+            w.hidden = w.getAttribute('data-widok') !== wybrany;
+        });
+    });
 
     function zamknijPrzebieg() {
         if (!panelPrzebiegu || panelPrzebiegu.hidden) { return; }

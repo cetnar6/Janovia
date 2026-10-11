@@ -54,14 +54,21 @@ function plik_skladu(): string
  * znał, każda zmiana ustawienia w panelu wymagałaby zmiany w drugim miejscu
  * i prędzej czy później boisko na stronie rozjechałoby się z panelem.
  */
-function opublikuj_sklad(
+/**
+ * Skład w kształcie, który czyta strona: pola z współrzędnymi i ławka.
+ *
+ * Wydzielone z publikacji, bo ten sam kształt trafia dziś w dwa miejsca —
+ * do data/sklad.json z najbliższym meczem i do wyników rozegranych spotkań,
+ * gdzie kibic ogląda skład sprzed tygodnia.
+ */
+function sklad_do_publikacji(
     array $zawodnicy,
     string $formacja,
     array $ustawienie,
-    array $rezerwowi,
-    string $opis
-): void {
+    array $rezerwowi
+): array {
     $wg_id = [];
+
     foreach ($zawodnicy as $z) {
         $wg_id[(int) $z['id']] = $z;
     }
@@ -105,6 +112,29 @@ function opublikuj_sklad(
             $lawka[] = $kto($wg_id[$id]);
         }
     }
+
+    return ['formacja' => $formacja, 'pola' => $pola, 'rezerwowi' => $lawka];
+}
+
+/**
+ * Zapisuje zatwierdzony skład do data/sklad.json.
+ *
+ * Plik jest samowystarczalny: oprócz nazwisk niesie też współrzędne pól.
+ * Dzięki temu script.js na stronie nie musi znać listy formacji — gdyby ją
+ * znał, każda zmiana ustawienia w panelu wymagałaby zmiany w drugim miejscu
+ * i prędzej czy później boisko na stronie rozjechałoby się z panelem.
+ */
+function opublikuj_sklad(
+    array $zawodnicy,
+    string $formacja,
+    array $ustawienie,
+    array $rezerwowi,
+    string $opis
+): void {
+    $sklad = sklad_do_publikacji($zawodnicy, $formacja, $ustawienie, $rezerwowi);
+
+    $pola = $sklad['pola'];
+    $lawka = $sklad['rezerwowi'];
 
     $json = json_encode([
         'zaktualizowano' => date('c'),

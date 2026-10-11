@@ -174,7 +174,7 @@ jobs:
           UZYTKOWNIK: ${{ secrets.FTP_USER }}
           SSHPASS: ${{ secrets.FTP_PASSWORD }}
         run: |
-          lftp -c "set cmd:fail-exit true; set sftp:connect-program 'sshpass -e ssh -a -x -o StrictHostKeyChecking=yes'; set net:max-retries 3; set net:timeout 20; open -u '$UZYTKOWNIK',dummy sftp://$HOST; mkdir -f $ZDALNY_KATALOG; mirror --reverse --delete --verbose --parallel=2 -x '^uploads/' -x '^admin/inc/config\.php$' -x '^data/zawodnicy\.json$' -x '^data/posty\.json$' -x '^data/mecze-panelu\.json$' -x '^data/sponsorzy\.json$' -x '^data/liga\.json$' -x '^data/archiwum\.json$' -x '^data/facebook\.json$' -x '^data/sklad\.json$' -x '^data/przebieg\.json$' -x '^data/wyniki\.json$' -x '^data/fb/' wysylka/ $ZDALNY_KATALOG/"
+          lftp -c "set cmd:fail-exit true; set sftp:connect-program 'sshpass -e ssh -a -x -o StrictHostKeyChecking=yes'; set net:max-retries 3; set net:timeout 20; open -u '$UZYTKOWNIK',dummy sftp://$HOST; mkdir -f $ZDALNY_KATALOG; mirror --reverse --delete --verbose --parallel=2 -x '^uploads/' -x '^admin/inc/config\.php$' -x '^data/zawodnicy\.json$' -x '^data/posty\.json$' -x '^data/mecze-panelu\.json$' -x '^data/sponsorzy\.json$' -x '^data/liga\.json$' -x '^data/archiwum\.json$' -x '^data/facebook\.json$' -x '^data/sklad\.json$' -x '^data/przebieg\.json$' -x '^data/wyniki\.json$' -x '^data/sklady\.json$' -x '^data/fb/' wysylka/ $ZDALNY_KATALOG/"
 
       # Osobno i BEZ --delete: logotypy sponsorów z repozytorium mają trafić
       # na serwer przy pierwszym wdrożeniu, ale pliki wgrane później przez

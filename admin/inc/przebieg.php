@@ -217,10 +217,78 @@ function plik_przebiegu(): string
     return katalog_strony() . '/data/przebieg.json';
 }
 
+/**
+ * Skład, w jakim zagrano dane spotkanie — w kształcie, którego używa strona.
+ *
+ * Pusta tablica, gdy składu nie zatwierdzono: wtedy w oknie meczu zostaje
+ * sama oś czasu, zamiast pustego boiska udającego ustawienie.
+ */
+function sklad_rozegranego(PDO $db, string $klucz): ?array
+{
+    require_once __DIR__ . '/sklad.php';
+
+    $stmt = $db->prepare('SELECT * FROM sklady WHERE mecz_klucz = ? LIMIT 1');
+    $stmt->execute([$klucz]);
+    $wiersz = $stmt->fetch();
+
+    if (!$wiersz || (int) ($wiersz['opublikowany'] ?? 0) !== 1) {
+        return null;
+    }
+
+    $zawodnicy = zawodnicy_do_skladu($db);
+    $dozwoleni = array_column($zawodnicy, 'id');
+
+    $ustawienie = [];
+    $odczytane = json_decode((string) $wiersz['ustawienie'], true);
+
+    if (is_array($odczytane)) {
+        foreach ($odczytane as $pole => $id) {
+            if (in_array((int) $id, $dozwoleni, true)) {
+                $ustawienie[$pole] = (int) $id;
+            }
+        }
+    }
+
+    if (!$ustawienie) {
+        return null;
+    }
+
+    $rezerwowi = [];
+    $lawka = json_decode((string) ($wiersz['rezerwowi'] ?? '[]'), true);
+
+    if (is_array($lawka)) {
+        foreach ($lawka as $id) {
+            $id = (int) $id;
+
+            if (in_array($id, $dozwoleni, true) && !in_array($id, $ustawienie, true)) {
+                $rezerwowi[] = $id;
+            }
+        }
+    }
+
+    $formacja = czy_znana_formacja((string) $wiersz['formacja'])
+        ? (string) $wiersz['formacja']
+        : formacja_domyslna();
+
+    return sklad_do_publikacji($zawodnicy, $formacja, $ustawienie, $rezerwowi);
+}
+
 /** Plik z wynikami meczów rozegranych w panelu. */
 function plik_wynikow(): string
 {
     return katalog_strony() . '/data/wyniki.json';
+}
+
+/**
+ * Plik ze składami rozegranych spotkań.
+ *
+ * Osobny od wyników, bo waży dziesięć razy tyle: wyniki i oś czasu strona
+ * wczytuje zawsze (ikona przy meczu musi wiedzieć, czy jest co pokazać),
+ * a składy dopiero wtedy, gdy ktoś naprawdę zajrzy do okna meczu.
+ */
+function plik_skladow(): string
+{
+    return katalog_strony() . '/data/sklady.json';
 }
 
 /**
@@ -239,6 +307,7 @@ function opublikuj_wyniki(PDO $db): void
     }
 
     $mecze = [];
+    $sklady = [];
 
     $zakonczone = $db->query(
         "SELECT mecz_klucz FROM sklady WHERE mecz_klucz IS NOT NULL AND stan = 'koniec'"
@@ -254,17 +323,18 @@ function opublikuj_wyniki(PDO $db): void
         $mecze[$klucz] = [
             'wynik' => ($u_siebie ? $przebieg['my'] : $przebieg['oni']) . '-'
                      . ($u_siebie ? $przebieg['oni'] : $przebieg['my']),
-            /* Oś czasu jedzie razem z wynikiem: strona pokazuje ją pod ikoną
-               przy meczu, więc nie ma po co ciągnąć osobnego pliku na kliknięcie
-               — cały sezon to kilkaset wierszy. */
+            /* Oś czasu i skład jadą razem z wynikiem: strona pokazuje jedno
+               i drugie pod ikoną przy meczu, więc nie ma po co ciągnąć osobnego
+               pliku na kliknięcie — rozegrany mecz to kilka kilobajtów. */
             'zdarzenia' => $przebieg['zdarzenia'],
         ];
-    }
 
-    $json = json_encode([
-        'zaktualizowano' => date('c'),
-        'mecze'          => (object) $mecze,
-    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+        $sklad = sklad_rozegranego($db, $klucz);
+
+        if ($sklad) {
+            $sklady[$klucz] = $sklad;
+        }
+    }
 
     $katalog = dirname(plik_wynikow());
 
@@ -272,7 +342,15 @@ function opublikuj_wyniki(PDO $db): void
         mkdir($katalog, 0775, true);
     }
 
-    file_put_contents(plik_wynikow(), $json . "\n");
+    file_put_contents(plik_wynikow(), json_encode([
+        'zaktualizowano' => date('c'),
+        'mecze'          => (object) $mecze,
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) . "\n");
+
+    file_put_contents(plik_skladow(), json_encode([
+        'zaktualizowano' => date('c'),
+        'mecze'          => (object) $sklady,
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) . "\n");
 }
 
 /**

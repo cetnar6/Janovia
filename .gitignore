@@ -26,6 +26,7 @@ data/sklad.json
 # rozegranych w panelu — ten sam powód co wyżej: pliki generuje panel
 data/przebieg.json
 data/wyniki.json
+data/sklady.json
 
 # baza SQLite — plik binarny z danymi lokalnymi
 dane/
