@@ -2733,26 +2733,20 @@
     function wierszMeczu(m) {
         var nasz = m.gospodarz === NASZ_KLUB || m.gosc === NASZ_KLUB;
 
-        /* Znak stoi tuż przy wyniku, a nie na końcu wiersza — należy do tego
-           meczu, nie do rzędu. Miejsce na niego rezerwujemy w KAŻDYM wierszu,
-           także bez przebiegu: inaczej wiersz ze znakiem byłby szerszy od
-           sąsiadów i herby straciłyby wspólną oś. */
+        /* Znak przebiegu — na prawym skraju wiersza, w stałej kolumnie. */
         var znak = szczegolyMeczu(m)
-            ? '<svg viewBox="0 0 24 24">' +
-                  '<circle cx="5" cy="7" r="1.6"/><rect x="9" y="6" width="11" height="2" rx="1"/>' +
-                  '<circle cx="5" cy="12" r="1.6"/><rect x="9" y="11" width="11" height="2" rx="1"/>' +
-                  '<circle cx="5" cy="17" r="1.6"/><rect x="9" y="16" width="7" height="2" rx="1"/>' +
-              '</svg>'
+            ? '<span class="wynik__znak" aria-hidden="true">' +
+                  '<svg viewBox="0 0 24 24">' +
+                      '<circle cx="5" cy="7" r="1.6"/><rect x="9" y="6" width="11" height="2" rx="1"/>' +
+                      '<circle cx="5" cy="12" r="1.6"/><rect x="9" y="11" width="11" height="2" rx="1"/>' +
+                      '<circle cx="5" cy="17" r="1.6"/><rect x="9" y="16" width="7" height="2" rx="1"/>' +
+                  '</svg>' +
+              '</span>'
             : '';
 
-        var srodek = '<span class="wynik__srodek">' +
-                         (m.wynik
-                             ? '<span class="wynik__rezultat">' +
-                                   esc(m.wynik.replace('-', ' : ')) + '</span>'
-                             : '<span class="wynik__rezultat wynik__rezultat--brak">–</span>') +
-                         '<span class="wynik__znak' + (znak ? '' : ' is-pusty') + '"' +
-                             ' aria-hidden="true">' + znak + '</span>' +
-                     '</span>';
+        var srodek = m.wynik
+            ? '<span class="wynik__rezultat">' + esc(m.wynik.replace('-', ' : ')) + '</span>'
+            : '<span class="wynik__rezultat wynik__rezultat--brak">–</span>';
 
         /* Klikalny jest cały wiersz, nie sama ikona — w rzędzie wysokim na
            62 px trafienie w kwadrat 27 px na telefonie to loteria. Ikona
@@ -2776,6 +2770,10 @@
                        przyciskHerbu(m.gosc, 'xs') +
                        '<span>' + esc(skrot(m.gosc)) + '</span>' +
                    '</span>' +
+                   /* Znak na prawym skraju wiersza. Komórka jest w KAŻDYM
+                      wierszu, także bez przebiegu — bez niej rząd ze znakiem
+                      byłby szerszy i herby straciłyby wspólną oś. */
+                   '<span class="wynik__akcje">' + znak + '</span>' +
                    uwagaMeczu(m, 'wynik__uwaga') +
                '</li>';
     }
