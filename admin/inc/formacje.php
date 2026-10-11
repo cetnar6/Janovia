@@ -22,6 +22,30 @@ declare(strict_types=1);
 function formacje(): array
 {
     return [
+        '4-2-3-1' => [
+            'opis'  => 'Dwóch przed obroną, trójka pod jedynką z przodu.',
+            'pola' => [
+                ['id' => 'br',  'etykieta' => 'BR', 'x' => 50, 'y' => 91, 'grupa' => 'bramkarz'],
+
+                ['id' => 'lo',  'etykieta' => 'LO', 'x' => 15, 'y' => 72, 'grupa' => 'obrońca'],
+                ['id' => 'so1', 'etykieta' => 'ŚO', 'x' => 38, 'y' => 75, 'grupa' => 'obrońca'],
+                ['id' => 'so2', 'etykieta' => 'ŚO', 'x' => 62, 'y' => 75, 'grupa' => 'obrońca'],
+                ['id' => 'po',  'etykieta' => 'PO', 'x' => 85, 'y' => 72, 'grupa' => 'obrońca'],
+
+                /* Dwójka przed obroną i trójka wyżej — razem pięciu pomocników,
+                   bo „trójka pod napastnikiem" to w kadrze nadal pomocnicy:
+                   grupa decyduje tylko o podpowiedzi przy przeciąganiu. */
+                ['id' => 'dp1', 'etykieta' => 'DP', 'x' => 37, 'y' => 60, 'grupa' => 'pomocnik'],
+                ['id' => 'dp2', 'etykieta' => 'DP', 'x' => 63, 'y' => 60, 'grupa' => 'pomocnik'],
+
+                ['id' => 'lp',  'etykieta' => 'LP', 'x' => 14, 'y' => 41, 'grupa' => 'pomocnik'],
+                ['id' => 'op',  'etykieta' => 'OP', 'x' => 50, 'y' => 45, 'grupa' => 'pomocnik'],
+                ['id' => 'pp',  'etykieta' => 'PP', 'x' => 86, 'y' => 41, 'grupa' => 'pomocnik'],
+
+                ['id' => 'n1',  'etykieta' => 'NAP', 'x' => 50, 'y' => 20, 'grupa' => 'napastnik'],
+            ],
+        ],
+
         '4-4-2' => [
             'opis'  => 'Klasyka — dwóch napastników i równa czwórka w pomocy.',
             'pola' => [
@@ -87,7 +111,7 @@ function formacje(): array
 /** Nazwa formacji, która ma być zaznaczona, gdy zapisana nie istnieje. */
 function formacja_domyslna(): string
 {
-    return '4-4-2';
+    return '4-2-3-1';
 }
 
 /** Czy panel zna taką formację — brama wejściowa dla danych z formularza. */
