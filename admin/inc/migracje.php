@@ -418,6 +418,43 @@ function migracje(): array
         ],
 
         [
+            'id'    => 'polowa-przebiegu',
+            'nazwa' => 'Połowa przy zdarzeniu meczu',
+            'opis'  => 'Bez tego nie da się odróżnić doliczonego czasu pierwszej '
+                     . 'połowy od początku drugiej — oś czasu pisze „48" zamiast „45+3".',
+
+            'potrzebna' => static function (): bool {
+                return (tabela_istnieje('zdarzenia') && !kolumna_istnieje('zdarzenia', 'polowa'))
+                    || (tabela_istnieje('sklady') && !kolumna_istnieje('sklady', 'polowa'));
+            },
+
+            'zastosuj' => static function (PDO $db): void {
+                /* Przy zdarzeniu kolumna zostaje pusta dla wpisów, które już
+                   są: nie wiemy o nich nic ponad minutę, a zgadywanie na stałe
+                   zakłamałoby historię. Puste czyta się regułą „ponad 45 to
+                   druga połowa" — czyli dokładnie tak, jak wyglądały dotąd. */
+                if (tabela_istnieje('zdarzenia') && !kolumna_istnieje('zdarzenia', 'polowa')) {
+                    $db->exec(
+                        sterownik_bazy() === 'mysql'
+                            ? 'ALTER TABLE zdarzenia ADD COLUMN polowa TINYINT NULL'
+                            : 'ALTER TABLE zdarzenia ADD COLUMN polowa INTEGER'
+                    );
+                }
+
+                /* Przy składzie trzymamy połowę, która właśnie trwa — ustawia
+                   ją pierwszy gwizdek i wznowienie po przerwie. Stąd bierze ją
+                   każde nowe zdarzenie. */
+                if (tabela_istnieje('sklady') && !kolumna_istnieje('sklady', 'polowa')) {
+                    $db->exec(
+                        sterownik_bazy() === 'mysql'
+                            ? 'ALTER TABLE sklady ADD COLUMN polowa TINYINT NOT NULL DEFAULT 1'
+                            : 'ALTER TABLE sklady ADD COLUMN polowa INTEGER NOT NULL DEFAULT 1'
+                    );
+                }
+            },
+        ],
+
+        [
             'id'    => 'rola-wynik',
             'nazwa' => 'Konta do obsługi wyniku',
             'opis'  => 'Bez tego baza nie przyjmie roli „wynik", więc nie da się '

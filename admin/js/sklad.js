@@ -568,21 +568,31 @@
             : Math.min(DANE.maksMinuta || 130, Math.floor(sekundy / 60) + 1);
     }
 
+    /**
+     * Zegar stadionowy: minuty bez godzin, sekundy zawsze dwucyfrowe,
+     * a po regulaminowym końcu połowy czas doliczony — „45+2:14", nie
+     * „47:14". Od czego liczyć, mówi połowa podana przez panel.
+     */
+    function zegarStadionowy(sekundy) {
+        var s = sekundy % 60;
+        var minuty = Math.floor(sekundy / 60);
+        var koniec = (DANE.polowa === 2 ? 90 : 45);
+
+        return (minuty > koniec ? koniec + '+' + (minuty - koniec) : minuty) +
+               ':' + (s < 10 ? '0' + s : s);
+    }
+
     /* Zegarów jest dwa — w plakietce stanu i na tablicy wyniku — więc klasa,
        nie identyfikator. Oba pokazują to samo, bo liczą z tego samego gwizdka. */
     var zegary = document.querySelectorAll('.stoper');
 
     if (zegary.length) {
-        /* Minuty bez godzin — po dziewięćdziesiątej leci 91:00, a nie 1:31:00.
-           Minuty bez zera wiodącego, sekundy zawsze dwucyfrowe, jak na zegarze
-           na stadionie. */
         var tyknij = function () {
             var sekundy = sekundyMeczu();
 
             if (sekundy === null) { return; }
 
-            var s = sekundy % 60;
-            var czas = Math.floor(sekundy / 60) + ':' + (s < 10 ? '0' + s : s);
+            var czas = zegarStadionowy(sekundy);
 
             Array.prototype.forEach.call(zegary, function (el) {
                 el.textContent = czas;

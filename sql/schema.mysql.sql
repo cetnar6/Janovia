@@ -130,6 +130,8 @@ CREATE TABLE IF NOT EXISTS sklady (
     start_meczu    DATETIME     NULL,
     -- chwila zatrzymania stopera (przerwa); NULL = mecz leci
     przerwa_od     DATETIME     NULL,
+    -- połowa, która właśnie trwa; stąd bierze ją każde nowe zdarzenie
+    polowa         TINYINT      NOT NULL DEFAULT 1,
     zaktualizowano DATETIME     NOT NULL,
     utworzono      DATETIME     NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_polish_ci;
@@ -148,6 +150,9 @@ CREATE TABLE IF NOT EXISTS zdarzenia (
     -- gol | gol_rywala | zmiana
     typ          VARCHAR(16) NOT NULL,
     minuta       INT         NOT NULL,
+    -- 1 albo 2; NULL w zapisach sprzed tej kolumny. Bez niej „46" z doliczonego
+    -- czasu pierwszej połowy wygląda identycznie jak początek drugiej
+    polowa       TINYINT     NULL,
     -- gol: strzelec; zmiana: wchodzący
     zawodnik_id  INT         NULL,
     -- gol: asystujący; zmiana: schodzący

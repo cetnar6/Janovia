@@ -74,6 +74,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
         'options' => ['min_range' => 0, 'max_range' => MAKS_MINUTA],
     ]);
 
+    /* Połowa idzie osobnym zapisem, bo kolumna może jeszcze nie istnieć:
+       na hostingu migracje uruchamia administrator ręcznie, a panel ma
+       działać także zanim to zrobi. */
+    $ustaw_polowe = static function (PDO $db, int $id, int $polowa): void {
+        if (kolumna_istnieje('sklady', 'polowa')) {
+            $db->prepare('UPDATE sklady SET polowa = ? WHERE id = ?')->execute([$polowa, $id]);
+        }
+    };
+
+    /* Z której połowy jest wpisywane teraz zdarzenie. */
+    $polowa_teraz = polowa_skladu($sklad);
+
     $z_listy = static function ($wartosc, array $dozwolone): ?int {
         $id = filter_var($wartosc, FILTER_VALIDATE_INT);
 
@@ -85,6 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
 
     if ($akcja === 'stan') {
         $nowy = (string) ($_POST['stan'] ?? '');
+        $stan_przed = (string) ($sklad['stan'] ?? 'przed');
 
         if (!in_array($nowy, STANY_MECZU, true)) {
             komunikat('Nieznany stan meczu.', 'blad');
@@ -105,6 +118,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
                $nowy === 'trwa' ? null : ($sklad['przerwa_od'] ?? null),
                $sklad['id'],
            ]);
+
+        /* Pierwszy gwizdek i cofnięcie meczu wracają do pierwszej połowy.
+           Wznowienie omyłkowo zakończonego meczu — nie: wtedy gra się dalej
+           tam, gdzie mecz stanął. */
+        if ($nowy === 'przed' || ($nowy === 'trwa' && $stan_przed === 'przed')) {
+            $ustaw_polowe($db, (int) $sklad['id'], 1);
+        }
 
         opublikuj_przebieg($db);
 
@@ -155,6 +175,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
 
             $db->prepare('UPDATE sklady SET start_meczu = ?, przerwa_od = NULL WHERE id = ?')
                ->execute([date('Y-m-d H:i:s', time() - max(0, $odliczyc)), $wiersz['id']]);
+
+            /* Dopiero przerwa między połowami zmienia połowę — krótka przerwa
+               na kontuzję zostawia tę samą. */
+            if ($polowa) {
+                $ustaw_polowe($db, (int) $wiersz['id'], 2);
+            }
 
             opublikuj_przebieg($db);
 
@@ -214,6 +240,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
         $db->prepare("UPDATE sklady SET stan = 'przed', start_meczu = NULL, przerwa_od = NULL
                        WHERE id = ?")
            ->execute([$sklad['id']]);
+        $ustaw_polowe($db, (int) $sklad['id'], 1);
         opublikuj_przebieg($db);
 
         komunikat('Przebieg wyczyszczony — można wpisywać następny mecz.');
@@ -252,7 +279,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
             $asysta = null;
         }
 
-        dopisz_zdarzenie($db, $klucz_meczu, 'gol', $minuta, $strzelec, $asysta);
+        dopisz_zdarzenie($db, $klucz_meczu, 'gol', $minuta, $strzelec, $asysta, $polowa_teraz);
 
         opublikuj_przebieg($db);
         komunikat('Gol zapisany — ' . $minuta . ' minuta.');
@@ -260,7 +287,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
     }
 
     if ($akcja === 'gol_rywala') {
-        dopisz_zdarzenie($db, $klucz_meczu, 'gol_rywala', $minuta, null, null);
+        dopisz_zdarzenie($db, $klucz_meczu, 'gol_rywala', $minuta, null, null, $polowa_teraz);
 
         opublikuj_przebieg($db);
         komunikat('Gol rywala zapisany — ' . $minuta . ' minuta.', 'blad');
@@ -276,7 +303,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
             przekieruj('przebieg.php');
         }
 
-        dopisz_zdarzenie($db, $klucz_meczu, 'zmiana', $minuta, $wchodzi, $schodzi);
+        dopisz_zdarzenie($db, $klucz_meczu, 'zmiana', $minuta, $wchodzi, $schodzi, $polowa_teraz);
 
         opublikuj_przebieg($db);
         komunikat('Zmiana zapisana — ' . $minuta . ' minuta.');
@@ -356,7 +383,7 @@ foreach ($zdarzenia as $z) {
 
     if ($z['typ'] === 'zmiana') {
         $zmiany[] = [
-            'minuta'  => (int) $z['minuta'],
+            'minuta'  => opis_minuty((int) $z['minuta'], polowa_zdarzenia($z)),
             'wchodzi' => (int) $z['zawodnik_id'],
             'schodzi' => (int) $z['zawodnik2_id'],
         ];
@@ -646,12 +673,12 @@ naglowek('Przebieg meczu');
     <?php else: ?>
         <ol class="zdarzenia">
             <?php foreach ($zdarzenia as $z):
-                $minuta = (int) $z['minuta'];
+                $minuta = opis_minuty((int) $z['minuta'], polowa_zdarzenia($z));
                 $kto = $wg_id[(int) $z['zawodnik_id']] ?? null;
                 $kto2 = $wg_id[(int) $z['zawodnik2_id']] ?? null;
             ?>
                 <li class="zdarzenie zdarzenie--<?= e((string) $z['typ']) ?>">
-                    <span class="zdarzenie__minuta"><?= $minuta ?>'</span>
+                    <span class="zdarzenie__minuta"><?= e($minuta) ?>'</span>
 
                     <span class="zdarzenie__tresc">
                         <?php if ($z['typ'] === 'gol'): ?>
@@ -830,6 +857,9 @@ naglowek('Przebieg meczu');
                             ? date('c', (int) strtotime((string) $sklad['start_meczu']))
                             : null,
         'maksMinuta' => MAKS_MINUTA,
+        /* Połowa mówi stoperowi, od czego liczyć czas doliczony: 45+2 albo
+           90+2 — bez niej 47 minuta w obu wypadkach wygląda tak samo. */
+        'polowa'     => polowa_skladu($sklad),
         'pauza'      => $pauza ? date('c', (int) strtotime((string) $pauza)) : null,
         /* { idZawodnika: liczba bramek } — klucze w JSON-ie i tak są tekstem,
            a skrypt czyta je po numerze, więc object_cast jest tu konieczny. */
@@ -838,7 +868,7 @@ naglowek('Przebieg meczu');
         'zmiany'     => $zmiany,
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>
 </script>
-<script src="js/sklad.js?v=21"></script>
+<script src="js/sklad.js?v=22"></script>
 
 <?php endif; ?>
 

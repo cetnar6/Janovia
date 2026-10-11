@@ -1574,6 +1574,50 @@
      * z prawej. Gdyby nasze zdarzenia zawsze szły w lewo, wynik na tablicy
      * i kolejność w osi czasu kłóciłyby się przy meczu na wyjeździe.
      */
+    /**
+     * Minuta tak, jak pisze ją tablica na stadionie: „45+3" zamiast „48".
+     *
+     * Gotowy opis liczy panel — on jeden wie, czy 48 minuta to doliczony
+     * czas pierwszej połowy, czy początek drugiej. Zapisy sprzed tej zmiany
+     * opisu nie mają, więc zostaje sama liczba.
+     */
+    function minutaZdarzenia(z) {
+        return z.minuta_opis ? String(z.minuta_opis) : String(z.minuta | 0);
+    }
+
+    /** Z której połowy jest zdarzenie — bez zapisu zgadujemy po minucie. */
+    function polowaZdarzenia(z) {
+        if (z.polowa === 1 || z.polowa === 2) { return z.polowa; }
+
+        return (z.minuta | 0) > 45 ? 2 : 1;
+    }
+
+    /**
+     * Oś czasu meczu z poziomą kreską między połowami.
+     *
+     * Kreska nie jest ozdobą: bez niej gol „45+3" i gol „46" stoją obok
+     * siebie jako sąsiednie minuty, choć dzieli je przerwa.
+     */
+    function osCzasu(zdarzenia, rywal, uSiebie) {
+        var byla = false;
+
+        return zdarzenia.map(function (z) {
+            var wiersz = '';
+
+            if (!byla && polowaZdarzenia(z) === 2) {
+                byla = true;
+
+                /* Tylko między zdarzeniami — kreska nad pustą pierwszą
+                   połową zapowiadałaby coś, czego nie ma. */
+                if (zdarzenia.indexOf(z) > 0) {
+                    wiersz = '<li class="oczas__pauza"><span>Przerwa</span></li>';
+                }
+            }
+
+            return wiersz + wierszZdarzenia(z, rywal, uSiebie);
+        }).join('');
+    }
+
     function wierszZdarzenia(z, rywal, uSiebie) {
         var nasze = z.typ !== 'gol_rywala';
         var poLewej = uSiebie ? nasze : !nasze;
@@ -1610,7 +1654,7 @@
 
         return '<li class="zdarz zdarz--' + z.typ +
                    (poLewej ? ' zdarz--lewa' : ' zdarz--prawa') + '">' +
-                   '<span class="zdarz__minuta">' + (z.minuta | 0) + '\u2032</span>' +
+                   '<span class="zdarz__minuta">' + esc(minutaZdarzenia(z)) + '\u2032</span>' +
                    '<span class="zdarz__znak">' + ikona + wynik + '</span>' +
                    opis +
                '</li>';
@@ -1642,15 +1686,20 @@
     }
 
     /* Minuty bez godzin: po dziewięćdziesiątej leci 91:00, a nie 1:31:00 —
-       tak samo, jak zegar na stadionie i jak stoper w panelu trenera. */
+       tak samo, jak zegar na stadionie i jak stoper w panelu trenera.
+       Po regulaminowym końcu połowy zegar przechodzi na czas doliczony:
+       „45+2:14" w pierwszej, „90+2:14" w drugiej. */
     function zegarMeczu() {
         var sekundy = sekundyMeczu();
 
         if (sekundy === null) { return null; }
 
         var s = sekundy % 60;
+        var minuty = Math.floor(sekundy / 60);
+        var koniec = (PRZEBIEG && PRZEBIEG.polowa === 2) ? 90 : 45;
 
-        return Math.floor(sekundy / 60) + ':' + (s < 10 ? '0' + s : s);
+        return (minuty > koniec ? koniec + '+' + (minuty - koniec) : minuty) +
+               ':' + (s < 10 ? '0' + s : s);
     }
 
     /* Zegar tyka co sekundę, ale sekcja przerysowuje się rzadko — dlatego
@@ -1708,9 +1757,7 @@
         /* Sama oś czasu: wynik stoi już na karcie spotkania nad zakładkami
            i powtarzanie go tutaj kazałoby czytać to samo dwa razy. */
         box.innerHTML = zdarzenia.length
-            ? '<ol class="oczas">' + zdarzenia.map(function (z) {
-                  return wierszZdarzenia(z, rywal, u_siebie);
-              }).join('') + '</ol>'
+            ? '<ol class="oczas">' + osCzasu(zdarzenia, rywal, u_siebie) + '</ol>'
             : '<p class="sklad__brak">Na razie bez bramek i zmian.</p>';
     }
 
@@ -2368,9 +2415,7 @@
             '</div>' +
             '<div class="przebiegok__widok" data-widok="przebieg">' +
                 '<ol class="oczas">' +
-                    wpis.zdarzenia.map(function (z) {
-                        return wierszZdarzenia(z, rywal, uSiebie);
-                    }).join('') +
+                    osCzasu(wpis.zdarzenia, rywal, uSiebie) +
                 '</ol>' +
             '</div>' +
             '<div class="przebiegok__widok" data-widok="sklad" hidden>' +

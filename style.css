@@ -3425,6 +3425,28 @@ a.marquee__item {
     padding: 0.45rem 0.2rem;
 }
 
+/* Kreska przerwy: pierwsza połowa kończy się fizycznie, nie tylko w opisie
+   minut. Napis siedzi w linii, żeby wiersz nie udawał kolejnego zdarzenia. */
+.oczas__pauza {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0.5rem 0;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.oczas__pauza::before,
+.oczas__pauza::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background-color: var(--line);
+}
+
 /* Zdarzenia gościa lecą od prawej krawędzi — ta sama treść, odbita. */
 .zdarz--prawa {
     flex-direction: row-reverse;

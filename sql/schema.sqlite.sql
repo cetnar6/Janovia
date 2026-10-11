@@ -129,6 +129,8 @@ CREATE TABLE IF NOT EXISTS sklady (
     start_meczu    TEXT,
     -- chwila zatrzymania stopera (przerwa); NULL = mecz leci
     przerwa_od     TEXT,
+    -- połowa, która właśnie trwa; stąd bierze ją każde nowe zdarzenie
+    polowa         INTEGER NOT NULL DEFAULT 1 CHECK (polowa IN (1,2)),
     zaktualizowano TEXT NOT NULL,
     utworzono      TEXT NOT NULL
 );
@@ -147,6 +149,9 @@ CREATE TABLE IF NOT EXISTS zdarzenia (
     -- gol | gol_rywala | zmiana
     typ          TEXT    NOT NULL CHECK (typ IN ('gol','gol_rywala','zmiana')),
     minuta       INTEGER NOT NULL,
+    -- 1 albo 2; NULL w zapisach sprzed tej kolumny. Bez niej „46" z doliczonego
+    -- czasu pierwszej połowy wygląda identycznie jak początek drugiej
+    polowa       INTEGER CHECK (polowa IS NULL OR polowa IN (1,2)),
     -- gol: strzelec; zmiana: wchodzący
     zawodnik_id  INTEGER,
     -- gol: asystujący; zmiana: schodzący

@@ -24,6 +24,10 @@ const STANY_MECZU = ['przed', 'trwa', 'koniec'];
    w którym stanął. */
 const PRZERWA_OD_MINUTY = 40;
 
+/* Regulaminowa długość połowy. Wszystko ponad nią to czas doliczony, więc
+   zamiast „48" piszemy „45+3" — tak jak tablica na stadionie. */
+const POLOWA_MINUT = 45;
+
 /** Zawodnicy po identyfikatorach, w mapie id => wiersz. */
 function zawodnicy_po_id(PDO $db, array $ids): array
 {
@@ -99,7 +103,8 @@ function dopisz_zdarzenie(
     string $typ,
     int $minuta,
     ?int $zawodnik,
-    ?int $drugi
+    ?int $drugi,
+    int $polowa = 1
 ): void {
     if (!kolumna_istnieje('zdarzenia', 'mecz_klucz')) {
         $db->prepare(
@@ -110,10 +115,58 @@ function dopisz_zdarzenie(
         return;
     }
 
+    /* Połowa jedzie z panelu, a nie z minuty: 46 minuta to równie dobrze
+       doliczony czas pierwszej połowy, co początek drugiej — po przerwie
+       stoper wraca na 45:00 i obie wyglądają tak samo. */
+    if (kolumna_istnieje('zdarzenia', 'polowa')) {
+        $db->prepare(
+            'INSERT INTO zdarzenia (mecz_klucz, typ, minuta, polowa, zawodnik_id, zawodnik2_id, utworzono)
+                  VALUES (?, ?, ?, ?, ?, ?, ?)'
+        )->execute([$klucz, $typ, $minuta, $polowa, $zawodnik, $drugi, date('Y-m-d H:i:s')]);
+
+        return;
+    }
+
     $db->prepare(
         'INSERT INTO zdarzenia (mecz_klucz, typ, minuta, zawodnik_id, zawodnik2_id, utworzono)
               VALUES (?, ?, ?, ?, ?, ?)'
     )->execute([$klucz, $typ, $minuta, $zawodnik, $drugi, date('Y-m-d H:i:s')]);
+}
+
+/**
+ * Połowa, w której wypadło zdarzenie.
+ *
+ * Wpisy sprzed tej kolumny jej nie mają — wtedy zgadujemy po minucie. Mylimy
+ * się wyłącznie na golach z doliczonego czasu pierwszej połowy, a i tak
+ * pokazujemy wtedy to samo, co przed zmianą.
+ */
+function polowa_zdarzenia(array $z): int
+{
+    $polowa = (int) ($z['polowa'] ?? 0);
+
+    if ($polowa === 1 || $polowa === 2) {
+        return $polowa;
+    }
+
+    return (int) ($z['minuta'] ?? 0) > POLOWA_MINUT ? 2 : 1;
+}
+
+/** „45+3" albo „90+5" dla czasu doliczonego, zwykła liczba dla reszty. */
+function opis_minuty(int $minuta, int $polowa): string
+{
+    $podstawa = $polowa === 2 ? 2 * POLOWA_MINUT : POLOWA_MINUT;
+
+    return $minuta > $podstawa
+        ? $podstawa . '+' . ($minuta - $podstawa)
+        : (string) $minuta;
+}
+
+/** Która połowa trwa w zapisanym meczu. */
+function polowa_skladu(?array $sklad): int
+{
+    $polowa = (int) ($sklad['polowa'] ?? 1);
+
+    return $polowa === 2 ? 2 : 1;
 }
 
 /**
@@ -402,6 +455,11 @@ function zdarzenia_do_publikacji(PDO $db, ?string $klucz): array
 
     foreach ($zdarzenia as $z) {
         $minuta = (int) $z['minuta'];
+        $polowa = polowa_zdarzenia($z);
+
+        /* Gotowy opis minuty idzie z panelu, żeby strona i panel nie liczyły
+           doliczonego czasu każde po swojemu. */
+        $opis_minuty = opis_minuty($minuta, $polowa);
 
         if ($z['typ'] === 'gol' || $z['typ'] === 'gol_rywala') {
             if ($z['typ'] === 'gol') {
@@ -413,6 +471,8 @@ function zdarzenia_do_publikacji(PDO $db, ?string $klucz): array
             $lista[] = [
                 'typ'    => $z['typ'],
                 'minuta' => $minuta,
+                'polowa' => $polowa,
+                'minuta_opis' => $opis_minuty,
                 'kto'    => $z['typ'] === 'gol' ? $kto($z['zawodnik_id']) : null,
                 'asysta' => $z['typ'] === 'gol' ? $kto($z['zawodnik2_id']) : null,
                 'wynik'  => ['my' => $my, 'oni' => $oni],
@@ -424,6 +484,8 @@ function zdarzenia_do_publikacji(PDO $db, ?string $klucz): array
         $lista[] = [
             'typ'     => 'zmiana',
             'minuta'  => $minuta,
+            'polowa'  => $polowa,
+            'minuta_opis' => $opis_minuty,
             'wchodzi' => $kto($z['zawodnik_id']),
             'schodzi' => $kto($z['zawodnik2_id']),
         ];
@@ -464,6 +526,9 @@ function opublikuj_przebieg(PDO $db): void
         'mecz'           => $mecz['klucz'] ?? null,
         'opis_meczu'     => $mecz['opis'] ?? null,
         'stan'           => (string) ($sklad['stan'] ?? 'przed'),
+        /* Która połowa leci — bez tego strona nie wie, czy 47 minuta to
+           „45+2", czy początek drugiej połowy. */
+        'polowa'         => polowa_skladu($sklad),
         'start'          => $start ? date('c', (int) strtotime((string) $start)) : null,
         /* Chwila zatrzymania zegara — strona zamraża na niej stoper
            i pisze „Przerwa" zamiast „Na żywo". */
