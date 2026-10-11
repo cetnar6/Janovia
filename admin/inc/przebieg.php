@@ -259,6 +259,44 @@ function minuta_z_wpisu($tekst, int $polowa_domyslna): ?array
     return ['minuta' => $minuta, 'polowa' => $polowa];
 }
 
+/**
+ * Ile ten sam ukarany ma już kartek w tym meczu.
+ *
+ * Nasz zawodnik rozpoznaje się po identyfikatorze, rywal po numerze na
+ * koszulce — innego punktu zaczepienia o cudzej kadrze nie mamy.
+ *
+ * Zwraca ['zolte' => int, 'czerwona' => bool].
+ */
+function kartki_ukaranego(array $zdarzenia, ?int $zawodnik, ?int $numer): array
+{
+    $zolte = 0;
+    $czerwona = false;
+
+    foreach ($zdarzenia as $z) {
+        $typ = (string) $z['typ'];
+
+        if (in_array($typ, KARTKI, true)) {
+            if ($zawodnik === null || (int) $z['zawodnik_id'] !== $zawodnik) {
+                continue;
+            }
+        } elseif (in_array($typ, KARTKI_RYWALA, true)) {
+            if ($numer === null || (int) ($z['numer_rywala'] ?? 0) !== $numer) {
+                continue;
+            }
+        } else {
+            continue;
+        }
+
+        if (strpos($typ, 'czerwona') !== false) {
+            $czerwona = true;
+        } else {
+            $zolte++;
+        }
+    }
+
+    return ['zolte' => $zolte, 'czerwona' => $czerwona];
+}
+
 /** Która połowa trwa w zapisanym meczu. */
 function polowa_skladu(?array $sklad): int
 {

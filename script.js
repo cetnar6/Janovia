@@ -1306,6 +1306,58 @@
                '</span>';
     }
 
+    /**
+     * Kartki zawodnika w tym meczu — znaczek przy krążku, po prawej stronie
+     * obwódki, żeby nie wchodzić piłkom w drogę.
+     *
+     * Dwie żółte to czerwona, więc panel zapisuje wtedy oba zdarzenia i oba
+     * tu pokazujemy: żółtą i czerwoną obok siebie. Tak samo czyta się to na
+     * tablicy — wiadomo, za co zawodnik wyleciał.
+     */
+    function kartkiZawodnika(z, zdarzenia) {
+        zdarzenia = zdarzenia || (PRZEBIEG && PRZEBIEG.zdarzenia);
+
+        if (!z || !zdarzenia) { return ''; }
+
+        var zolte = 0;
+        var czerwona = false;
+
+        zdarzenia.forEach(function (e) {
+            if (e.typ !== 'kartka_zolta' && e.typ !== 'kartka_czerwona') { return; }
+            if (!e.kto) { return; }
+
+            var pasuje = z.id && e.kto.id
+                ? z.id === e.kto.id
+                : e.kto.nazwisko === z.nazwisko && e.kto.imie === z.imie;
+
+            if (!pasuje) { return; }
+
+            if (e.typ === 'kartka_czerwona') { czerwona = true; } else { zolte++; }
+        });
+
+        if (!zolte && !czerwona) { return ''; }
+
+        var znaki = '';
+
+        /* Dwie żółte i czerwona to jedno zdarzenie w oczach kibica, więc
+           i jeden znak: żółto-czerwony. Czerwona pokazana od razu zostaje
+           osobnym, całym prostokątem. */
+        var drugaZolta = czerwona && zolte >= 2;
+
+        if (!drugaZolta) {
+            for (var i = 0; i < Math.min(zolte, 2); i++) {
+                znaki += kartka(false);
+            }
+        }
+
+        if (czerwona) { znaki += kartka(true, drugaZolta); }
+
+        return '<span class="kartki" title="' +
+                   (zolte ? zolte + ' × żółta' : '') +
+                   (zolte && czerwona ? ', ' : '') +
+                   (czerwona ? 'czerwona' : '') + '">' + znaki + '</span>';
+    }
+
     /* Twarz albo inicjały — ten sam zapis na murawie i na ławce. Zastępnik
        nie jest ozdobnikiem: skład bywa ogłaszany, zanim ktokolwiek wgra
        zdjęcie, a pusty krążek czyta się jak błąd ładowania. */
@@ -1332,6 +1384,7 @@
         return '<div class="sklad__pole" style="left:' + pole.x + '%;top:' + pole.y + '%">' +
                    twarzZawodnika(z, 'sklad__twarz') +
                    pilkiZawodnika(z, zdarzenia) +
+                   kartkiZawodnika(z, zdarzenia) +
                    '<span class="sklad__numer">' + (z.numer ? z.numer : '–') + '</span>' +
                    '<span class="sklad__nazwisko">' + esc(z.nazwisko) +
                        (z.kapitan ? '<i class="sklad__opaska" title="Kapitan">C</i>' : '') +
@@ -1385,6 +1438,7 @@
                                       '<strong>' + esc(z.nazwisko) +
                                           (z.kapitan ? '<i class="sklad__opaska" title="Kapitan">C</i>' : '') +
                                           pilkiZawodnika(z, zdarzenia) +
+                                          kartkiZawodnika(z, zdarzenia) +
                                       '</strong>' +
                                       '<small>' + esc(z.imie) + '</small>' +
                                   '</span>' +
@@ -1568,12 +1622,53 @@
         '</svg>';
 
     /* Kartka: prostokąt w kolorze, bez napisu — na osi czasu i tak stoi
-       obok nazwiska, a żółty i czerwony czyta się szybciej niż słowo. */
-    function kartka(czerwona) {
+       obok nazwiska, a żółty i czerwony czyta się szybciej niż słowo.
+
+       Czerwona za drugą żółtą ma własny znak: prostokąt przecięty po skosie,
+       żółty u góry, czerwony u dołu. Tak rysuje się ją wszędzie, bo to co
+       innego niż czerwona pokazana od razu. */
+    function kartka(czerwona, zaDrugaZolta) {
+        var plama = zaDrugaZolta
+            /* Trójkąt kończy się tam, gdzie zaczyna się zaokrąglenie rogu,
+               więc nie wystaje poza prostokąt — bez maski i bez powtarzanych
+               identyfikatorów clipPath. */
+            ? '<path d="M13 4 L13 15 Q13 17 11 17 L3 17 Z" fill="#E5484D"/>'
+            : '';
+
         return '<svg class="zdarz__kartka" viewBox="0 0 14 18" aria-hidden="true">' +
                    '<rect x="1" y="1" width="12" height="16" rx="2"' +
-                       ' fill="' + (czerwona ? '#E5484D' : '#F5C518') + '"/>' +
+                       ' fill="' + (czerwona && !zaDrugaZolta ? '#E5484D' : '#F5C518') + '"/>' +
+                   plama +
                '</svg>';
+    }
+
+    /**
+     * Czy ta czerwona to druga żółta.
+     *
+     * Nie pytamy o to bazy: czerwona dopisana po drugiej żółtej to jedyny
+     * przypadek, w którym ukarany ma w meczu dwie żółte — więc wystarczy je
+     * policzyć. Czerwona pokazana od razu zostaje czerwona, nawet jeśli
+     * zawodnik miał wcześniej jedną żółtą.
+     */
+    function czyDrugaZolta(z, zdarzenia) {
+        if (!zdarzenia) { return false; }
+
+        var rywala = z.typ === 'kartka_czerwona_rywala';
+        var id = z.kto ? z.kto.id : null;
+        var numer = z.numer || null;
+        var zolte = 0;
+
+        zdarzenia.forEach(function (e) {
+            if (rywala) {
+                if (e.typ !== 'kartka_zolta_rywala' || e.numer !== numer) { return; }
+            } else {
+                if (e.typ !== 'kartka_zolta' || !e.kto || !id || e.kto.id !== id) { return; }
+            }
+
+            zolte++;
+        });
+
+        return zolte >= 2;
     }
 
     /**
@@ -1623,11 +1718,11 @@
                 }
             }
 
-            return wiersz + wierszZdarzenia(z, rywal, uSiebie);
+            return wiersz + wierszZdarzenia(z, rywal, uSiebie, zdarzenia);
         }).join('');
     }
 
-    function wierszZdarzenia(z, rywal, uSiebie) {
+    function wierszZdarzenia(z, rywal, uSiebie, zdarzenia) {
         var nasze = z.typ !== 'gol_rywala'
                  && z.typ !== 'kartka_zolta_rywala'
                  && z.typ !== 'kartka_czerwona_rywala';
@@ -1655,7 +1750,8 @@
 
         var ikona = z.typ === 'zmiana' ? IKONA_ZMIANY
                   : /kartka/.test(z.typ)
-                        ? kartka(/czerwona/.test(z.typ))
+                        ? kartka(/czerwona/.test(z.typ),
+                                 /czerwona/.test(z.typ) && czyDrugaZolta(z, zdarzenia))
                         : pilka();
 
         /* Wynik po bramce w kolejności z tablicy: gospodarz – gość. */

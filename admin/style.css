@@ -1731,3 +1731,40 @@ td.akcje { white-space: nowrap; font-size: 0; }
     outline: 2px solid var(--blue-light);
     outline-offset: 2px;
 }
+
+/* ---------- kartki przy zawodniku ---------- */
+
+/* Prawy łuk obwódki — piłki trzymają lewy, więc strzelec z żółtą ma oba
+   znaki i żaden nie wchodzi na twarz. */
+.kartki {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.kartka {
+    width: 0.62rem;
+    height: 0.82rem;
+    flex-shrink: 0;
+}
+
+.pole .kartki {
+    position: absolute;
+    inset: 0;
+    display: block;
+    pointer-events: none;
+}
+
+.pole .kartki .kartka {
+    position: absolute;
+    width: 0.72rem;
+    height: 0.95rem;
+    transform: translate(-50%, -50%);
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6));
+}
+
+.pole .kartki .kartka:nth-of-type(1) { left: 94%;  top: 19%; }
+.pole .kartki .kartka:nth-of-type(2) { left: 102%; top: 50%; }
+.pole .kartki .kartka:nth-of-type(3) { left: 94%;  top: 81%; }
+
+.zawodnik__kto .kartki { margin-left: 3px; }

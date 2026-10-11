@@ -161,6 +161,55 @@
      * i od razu widać hat-tricka. Wyżej liczba wygrywa z kreskami, bo pięć
      * kółek obok nazwiska przestaje być informacją, a zaczyna być plamą.
      */
+    /**
+     * Kartki zawodnika w tym meczu — znaczek przy krążku, po prawej stronie
+     * obwódki. Piłki zajmują lewą, więc strzelec z żółtą ma oba znaki
+     * i żaden nie zasłania twarzy.
+     *
+     * Druga żółta oznacza czerwoną i panel zapisuje oba zdarzenia, więc
+     * pokazujemy oba — widać wtedy, za co zawodnik wyleciał.
+     */
+    function kartki(id) {
+        var k = (DANE.kartki && DANE.kartki[id]) || null;
+
+        if (!k) { return ''; }
+
+        var zolte = k.zolte || 0;
+        var czerwona = !!k.czerwona;
+
+        if (!zolte && !czerwona) { return ''; }
+
+        /* Czerwona za drugą żółtą ma własny znak: prostokąt przecięty po
+           skosie. Trójkąt kończy się tam, gdzie zaczyna się zaokrąglenie
+           rogu, więc nie wystaje poza kartkę. */
+        var znak = function (czerwonaKartka, zaDrugaZolta) {
+            return '<svg class="kartka" viewBox="0 0 14 18" aria-hidden="true">' +
+                       '<rect x="1" y="1" width="12" height="16" rx="2" fill="' +
+                           (czerwonaKartka && !zaDrugaZolta ? '#E5484D' : '#F5C518') + '"/>' +
+                       (zaDrugaZolta
+                           ? '<path d="M13 4 L13 15 Q13 17 11 17 L3 17 Z" fill="#E5484D"/>'
+                           : '') +
+                   '</svg>';
+        };
+
+        var tresc = '';
+
+        /* Dwie żółte i czerwona to jedno zdarzenie w oczach kibica, więc
+           i jeden znak: żółto-czerwony. */
+        var drugaZolta = czerwona && zolte >= 2;
+
+        if (!drugaZolta) {
+            for (var i = 0; i < Math.min(zolte, 2); i++) { tresc += znak(false, false); }
+        }
+
+        if (czerwona) { tresc += znak(true, drugaZolta); }
+
+        return '<span class="kartki" title="' +
+                   (zolte ? zolte + ' x żółta' : '') +
+                   (zolte && czerwona ? ', ' : '') +
+                   (czerwona ? 'czerwona' : '') + '">' + tresc + '</span>';
+    }
+
     function pilki(id) {
         var ile = (DANE.gole && DANE.gole[id]) || 0;
 
@@ -278,6 +327,7 @@
                        bo środek jest już zajęty. */
                     awatar(z, 'pole__twarz') +
                     pilki(z.id) +
+                    kartki(z.id) +
                     '<span class="pole__numer">' + (z.numer ? z.numer : '–') + '</span>' +
                     '<span class="pole__nazwisko">' + esc(nazwisko(z)) +
                         (z.kapitan ? '<i class="pole__opaska" title="Kapitan">C</i>' : '') +
@@ -404,6 +454,7 @@
                        '<strong>' + esc(z.nazwisko) +
                            (z.kapitan ? '<i class="zawodnik__opaska" title="Kapitan">C</i>' : '') +
                            pilki(z.id) +
+                           kartki(z.id) +
                        '</strong>' +
                        '<small>' + esc(z.imie) + '</small>' +
                    '</span>' +

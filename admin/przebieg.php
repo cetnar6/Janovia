@@ -333,9 +333,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
            czerwonej i tak przechodzi normalną drogą. */
         dopisz_zdarzenie($db, $klucz_meczu, $typ, $minuta, $ukarany, null, $polowa_teraz);
 
+        /* Druga żółta to czerwona — sędzia pokazuje obie, więc panel też
+           zapisuje obie. Dopisujemy ją sami, bo przy linii bocznej nikt nie
+           będzie pamiętał, że ten zawodnik miał już jedną. */
+        $miał = kartki_ukaranego($zdarzenia, $ukarany, null);
+        $wylecial = $typ === 'kartka_zolta' && $miał['zolte'] >= 1 && !$miał['czerwona'];
+
+        if ($wylecial) {
+            dopisz_zdarzenie($db, $klucz_meczu, 'kartka_czerwona', $minuta, $ukarany,
+                             null, $polowa_teraz);
+        }
+
         opublikuj_przebieg($db);
-        komunikat(($typ === 'kartka_czerwona' ? 'Czerwona' : 'Żółta')
-                . ' kartka zapisana — ' . opis_minuty($minuta, $polowa_teraz) . ' minuta.');
+        komunikat($wylecial
+            ? 'Druga żółta w ' . opis_minuty($minuta, $polowa_teraz)
+              . ' minucie — dopisana czerwona.'
+            : ($typ === 'kartka_czerwona' ? 'Czerwona' : 'Żółta')
+              . ' kartka zapisana — ' . opis_minuty($minuta, $polowa_teraz) . ' minuta.');
         przekieruj($powrot);
     }
 
@@ -360,10 +374,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
 
         dopisz_zdarzenie($db, $klucz_meczu, $typ, $minuta, null, null, $polowa_teraz, $numer);
 
+        /* To samo po stronie rywala — tam ukaranego poznajemy po numerze. */
+        $miał = kartki_ukaranego($zdarzenia, null, $numer);
+        $wylecial = $typ === 'kartka_zolta_rywala' && $miał['zolte'] >= 1 && !$miał['czerwona'];
+
+        if ($wylecial) {
+            dopisz_zdarzenie($db, $klucz_meczu, 'kartka_czerwona_rywala', $minuta, null,
+                             null, $polowa_teraz, $numer);
+        }
+
         opublikuj_przebieg($db);
-        komunikat(($typ === 'kartka_czerwona_rywala' ? 'Czerwona' : 'Żółta')
-                . ' kartka dla rywala (nr ' . $numer . ') — '
-                . opis_minuty($minuta, $polowa_teraz) . ' minuta.');
+        komunikat($wylecial
+            ? 'Druga żółta dla rywala (nr ' . $numer . ') w '
+              . opis_minuty($minuta, $polowa_teraz) . ' minucie — dopisana czerwona.'
+            : ($typ === 'kartka_czerwona_rywala' ? 'Czerwona' : 'Żółta')
+              . ' kartka dla rywala (nr ' . $numer . ') — '
+              . opis_minuty($minuta, $polowa_teraz) . ' minuta.');
         przekieruj($powrot);
     }
 
@@ -457,10 +483,28 @@ $ustawienie_biezace = $aktywny
 $gole_zawodnikow = [];
 $zmiany = [];
 
+$kartki_zawodnikow = [];
+
 foreach ($zdarzenia as $z) {
     if ($z['typ'] === 'gol' && $z['zawodnik_id'] !== null) {
         $id = (int) $z['zawodnik_id'];
         $gole_zawodnikow[$id] = ($gole_zawodnikow[$id] ?? 0) + 1;
+    }
+
+    /* Kartki trafiają na kafelek zawodnika, więc liczymy je tak samo jak
+       bramki — osobno żółte, osobno czerwoną. */
+    if (in_array($z['typ'], KARTKI, true) && $z['zawodnik_id'] !== null) {
+        $id = (int) $z['zawodnik_id'];
+
+        if (!isset($kartki_zawodnikow[$id])) {
+            $kartki_zawodnikow[$id] = ['zolte' => 0, 'czerwona' => false];
+        }
+
+        if ($z['typ'] === 'kartka_czerwona') {
+            $kartki_zawodnikow[$id]['czerwona'] = true;
+        } else {
+            $kartki_zawodnikow[$id]['zolte']++;
+        }
     }
 
     if ($z['typ'] === 'zmiana') {
@@ -861,7 +905,11 @@ naglowek('Przebieg meczu');
                         <?php elseif ($z['typ'] === 'kartka_zolta'): ?>
                             <strong>Żółta kartka</strong> — <?= e(podpis_zawodnika($kto)) ?>
                         <?php elseif ($z['typ'] === 'kartka_czerwona'): ?>
-                            <strong>Czerwona kartka</strong> — <?= e(podpis_zawodnika($kto)) ?>
+                            <strong>
+                                <?= kartki_ukaranego($zdarzenia, (int) $z['zawodnik_id'], null)['zolte'] >= 2
+                                    ? 'Czerwona kartka (druga żółta)'
+                                    : 'Czerwona kartka' ?>
+                            </strong> — <?= e(podpis_zawodnika($kto)) ?>
                         <?php elseif (in_array($z['typ'], KARTKI_RYWALA, true)): ?>
                             <strong>
                                 <?= $z['typ'] === 'kartka_czerwona_rywala' ? 'Czerwona' : 'Żółta' ?>
@@ -1149,11 +1197,15 @@ naglowek('Przebieg meczu');
         /* { idZawodnika: liczba bramek } — klucze w JSON-ie i tak są tekstem,
            a skrypt czyta je po numerze, więc object_cast jest tu konieczny. */
         'gole'       => (object) $gole_zawodnikow,
+        /* { idZawodnika: { zolte, czerwona } } — znaczek przy krążku. */
+        'kartki'     => (object) array_map(static function (array $k) {
+            return ['zolte' => (int) $k['zolte'], 'czerwona' => (bool) $k['czerwona']];
+        }, $kartki_zawodnikow),
         'doZmiany'   => array_values($aktywny ? $wolni : $lawka),
         'zmiany'     => $zmiany,
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>
 </script>
-<script src="js/sklad.js?v=25"></script>
+<script src="js/sklad.js?v=26"></script>
 
 <?php endif; ?>
 
