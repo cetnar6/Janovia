@@ -104,7 +104,9 @@ function zdarzenia_meczu(PDO $db, ?string $klucz): array
        przed nią. Wpisy bez zapisanej połowy czytamy tą samą regułą, co
        reszta panelu: ponad 45 to druga połowa. */
     $kolejnosc = kolumna_istnieje('zdarzenia', 'polowa')
-        ? 'COALESCE(polowa, CASE WHEN minuta > ' . POLOWA_MINUT . ' THEN 2 ELSE 1 END), minuta, id'
+        ? 'CASE WHEN minuta > ' . (POLOWA_MINUT + MAKS_DOLICZONY) . ' THEN 2'
+          . '     WHEN minuta <= ' . POLOWA_MINUT . ' THEN COALESCE(polowa, 1)'
+          . '     ELSE COALESCE(polowa, 2) END, minuta, id'
         : 'minuta, id';
 
     if (!kolumna_istnieje('zdarzenia', 'mecz_klucz')) {
@@ -178,13 +180,22 @@ function dopisz_zdarzenie(
  */
 function polowa_zdarzenia(array $z): int
 {
+    $minuta = (int) ($z['minuta'] ?? 0);
     $polowa = (int) ($z['polowa'] ?? 0);
+
+    /* Minuta potrafi obalić zapis. Doliczony czas pierwszej połowy kończy
+       się po kwadransie, więc 89 minuta jest drugą połową bez względu na to,
+       co stało w kolumnie — a stać tam mogła jedynka, bo mecz poprawiany po
+       fakcie stoi w panelu przy pierwszej połowie. */
+    if ($minuta > POLOWA_MINUT + MAKS_DOLICZONY) {
+        return 2;
+    }
 
     if ($polowa === 1 || $polowa === 2) {
         return $polowa;
     }
 
-    return (int) ($z['minuta'] ?? 0) > POLOWA_MINUT ? 2 : 1;
+    return $minuta > POLOWA_MINUT ? 2 : 1;
 }
 
 /** „45+3" albo „90+5" dla czasu doliczonego, zwykła liczba dla reszty. */
@@ -225,7 +236,12 @@ function minuta_z_wpisu($tekst, int $polowa_domyslna): ?array
 
     if ($doliczone === null) {
         $minuta = $podstawa;
-        $polowa = $polowa_domyslna;
+
+        /* Sama liczba mówi wszystko: do 45 to pierwsza połowa, powyżej —
+           druga. Doliczony czas pierwszej pisze się „45+3" i tylko tak;
+           branie połowy ze stanu panelu wpisywało 89 minutę w pierwszą,
+           gdy poprawiało się mecz już rozegrany. */
+        $polowa = $podstawa > POLOWA_MINUT ? 2 : 1;
     } else {
         /* Plus ma sens tylko po regulaminowym końcu połowy. Przy innej
            liczbie („30+2") czytamy to jako zwykłą sumę i zostajemy przy
