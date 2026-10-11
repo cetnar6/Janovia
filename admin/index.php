@@ -6,6 +6,14 @@ require_once __DIR__ . '/inc/migracje.php';
 
 wymagaj_logowania();
 
+/* Pulpit pokazuje liczby zawodników, publikację na stronie i stan migracji —
+   nic z tego nie jest trenerowi ani obsłudze wyniku potrzebne i nic z tego
+   nie powinni móc ruszyć. Zamiast ciąć tę stronę na pół, odsyłamy ich na
+   własne ekrany. */
+if (!czy_administrator()) {
+    przekieruj(strona_startowa());
+}
+
 $db = baza();
 
 $zawodnikow = (int) $db->query('SELECT COUNT(*) FROM zawodnicy WHERE aktywny = 1')->fetchColumn();

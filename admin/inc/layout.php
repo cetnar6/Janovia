@@ -17,28 +17,52 @@ function naglowek(string $tytul, bool $zNawigacja = true): void
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap">
-    <link rel="stylesheet" href="style.css?v=5">
+    <link rel="stylesheet" href="style.css?v=29">
 </head>
 <body>
 
 <?php if ($zNawigacja): ?>
 <header class="pasek">
-    <a class="pasek__logo" href="index.php">
+    <?php
+        $admin = czy_administrator();
+        $wynik = czy_wynik();
+
+        $tytul_panelu = $admin
+            ? 'Panel administratora'
+            : ($wynik ? 'Przebieg meczu' : 'Panel trenera');
+    ?>
+
+    <a class="pasek__logo" href="<?= e(strona_startowa()) ?>">
         <img src="../png/JanoviaJanowiec.png" alt="">
-        <span>Panel administratora</span>
+        <span><?= e($tytul_panelu) ?></span>
     </a>
 
+    <?php /* Trener nie dostaje linków, których i tak nie otworzy. Samo
+             wycięcie ich z menu niczego nie zabezpiecza — o tym decyduje
+             wymagaj_administratora() na każdej stronie — ale menu pełne
+             odnośników kończących się komunikatem o braku dostępu byłoby
+             po prostu wrogie. */ ?>
     <nav class="pasek__nav">
-        <a href="zawodnicy.php">Zawodnicy</a>
-        <a href="posty.php">Aktualności</a>
-        <a href="mecze.php">Mecze</a>
-        <a href="sponsorzy.php">Sponsorzy</a>
+        <?php if (!$wynik): ?>
+            <a href="sklad.php">Skład</a>
+        <?php endif; ?>
+        <a href="przebieg.php">Przebieg meczu</a>
+        <?php if ($admin): ?>
+            <a href="zawodnicy.php">Zawodnicy</a>
+            <a href="posty.php">Aktualności</a>
+            <a href="mecze.php">Mecze</a>
+            <a href="sponsorzy.php">Sponsorzy</a>
+        <?php endif; ?>
         <a href="../index.html" target="_blank" rel="noopener">Strona &nearr;</a>
     </nav>
 
     <form class="pasek__wyloguj" method="post" action="logout.php">
         <?= pole_csrf() ?>
-        <span><?= e($_SESSION['admin_login'] ?? '') ?></span>
+        <span>
+            <?= e($_SESSION['admin_login'] ?? '') ?><?php
+                if ($wynik) { echo ' · wynik'; } elseif (!$admin) { echo ' · trener'; }
+            ?>
+        </span>
         <button type="submit">Wyloguj</button>
     </form>
 </header>

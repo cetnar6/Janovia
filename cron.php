@@ -48,6 +48,33 @@ $zadania = [
             $w['posty'], $w['zdjecia'],
             $w['usuniete'] ? sprintf(', usunięto %d starych', $w['usuniete']) : '');
     },
+
+    /* Skład najbliższego meczu. Trener może ustawić go tydzień wcześniej —
+       i wtedy na stronę ma trafić dopiero, gdy to spotkanie stanie się tym
+       najbliższym. Zadanie idzie PO terminarzu, bo to on decyduje, który
+       mecz jest teraz pierwszy w kolejce. */
+    'skład na najbliższy mecz' => static function (): string {
+        /* Jedyne zadanie, które sięga do bazy — a ten skrypt bywa uruchamiany
+           także tam, gdzie bazy nie ma (runner GitHuba pobiera dane i nie zna
+           hasła do MySQL). Ładujemy je więc dopiero tutaj i tylko wtedy, gdy
+           konfiguracja w ogóle istnieje; inaczej pierwszy require wywaliłby
+           całego crona, razem z pobieraniem terminarza. */
+        if (!is_file(__DIR__ . '/admin/inc/config.php')) {
+            return 'pominięte — ten host nie ma dostępu do bazy';
+        }
+
+        require_once __DIR__ . '/admin/inc/sklad.php';
+
+        $mecz = mecz_biezacy();
+
+        if (!$mecz) {
+            return 'brak nadchodzących meczów';
+        }
+
+        return opublikuj_sklad_biezacy(baza())
+            ? 'opublikowany — ' . $mecz['opis']
+            : 'brak zatwierdzonego składu na ' . $mecz['opis'];
+    },
 ];
 
 $udane = 0;

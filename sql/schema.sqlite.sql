@@ -91,6 +91,63 @@ CREATE TABLE IF NOT EXISTS administratorzy (
     login        TEXT    NOT NULL UNIQUE,
     -- wynik password_hash(), nigdy hasło jawnie
     hash_hasla   TEXT    NOT NULL,
+    -- trener widzi wyłącznie ekran składu, „wynik" wyłącznie przebieg meczu;
+    -- administrator cały panel
+    rola         TEXT    NOT NULL DEFAULT 'administrator'
+                         CHECK (rola IN ('administrator','trener','wynik')),
     utworzono    TEXT    NOT NULL DEFAULT (datetime('now','localtime')),
     ostatnie_logowanie TEXT
+);
+
+-- ---------- SKŁADY (panel trenera) ----------
+
+-- Ustawienie trzymamy jako JSON, nie wiersz na pozycję: liczba i nazwy pól
+-- zależą od formacji, więc osobna tabela i tak skończyłaby jako worek na
+-- tekst. Co wolno zapisać, pilnuje PHP przy zapisie — musi i tak sprawdzić,
+-- czy zawodnik istnieje i czy pole należy do wybranej formacji.
+CREATE TABLE IF NOT EXISTS sklady (
+    id             INTEGER PRIMARY KEY AUTOINCREMENT,
+    -- spotkanie z terminarza, na które ustawiono ten skład:
+    -- klucz „kolejka|gospodarz|gość", podpis i termin (do nazwania meczu,
+    -- gdy wypadnie już z terminarza)
+    mecz_klucz     TEXT,
+    mecz_opis      TEXT,
+    mecz_data      TEXT,
+    -- opis meczu wpisywany ręcznie, np. „Janovia — Sokół Pień, 11.10"
+    nazwa          TEXT NOT NULL DEFAULT '',
+    formacja       TEXT NOT NULL,
+    -- mapa: identyfikator pola => identyfikator zawodnika
+    ustawienie     TEXT NOT NULL,
+    -- lista identyfikatorów: ławka rezerwowych, w kolejności ustalonej przez trenera
+    rezerwowi      TEXT NOT NULL DEFAULT '[]',
+    -- tylko zatwierdzony skład trafia do data/sklad.json i na stronę klubu
+    opublikowany   INTEGER NOT NULL DEFAULT 0 CHECK (opublikowany IN (0,1)),
+    opublikowano   TEXT,
+    -- przed | trwa | koniec — jeden zapisany skład to jedno spotkanie
+    stan           TEXT NOT NULL DEFAULT 'przed' CHECK (stan IN ('przed','trwa','koniec')),
+    -- godzina pierwszego gwizdka; podpowiada minutę przy wpisywaniu zdarzeń
+    start_meczu    TEXT,
+    -- chwila zatrzymania stopera (przerwa); NULL = mecz leci
+    przerwa_od     TEXT,
+    zaktualizowano TEXT NOT NULL,
+    utworzono      TEXT NOT NULL
+);
+
+-- ---------- PRZEBIEG MECZU ----------
+
+-- Gole i zmiany dopisywane na żywo. Osobne wiersze, nie JSON przy składzie:
+-- w trakcie meczu zdarzenia dochodzą i znikają pojedynczo, więc kasowanie
+-- pomyłki ma być jednym DELETE, a nie przepisaniem całej listy.
+-- Bez kluczy obcych do zawodników: skreślenie kogoś z kadry nie może
+-- wymazywać historii meczu.
+CREATE TABLE IF NOT EXISTS zdarzenia (
+    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+    -- gol | gol_rywala | zmiana
+    typ          TEXT    NOT NULL CHECK (typ IN ('gol','gol_rywala','zmiana')),
+    minuta       INTEGER NOT NULL,
+    -- gol: strzelec; zmiana: wchodzący
+    zawodnik_id  INTEGER,
+    -- gol: asystujący; zmiana: schodzący
+    zawodnik2_id INTEGER,
+    utworzono    TEXT    NOT NULL
 );

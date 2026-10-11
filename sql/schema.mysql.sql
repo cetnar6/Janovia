@@ -91,6 +91,64 @@ CREATE TABLE IF NOT EXISTS administratorzy (
     login              VARCHAR(40)  NOT NULL UNIQUE,
     -- wynik password_hash(), nigdy hasło jawnie
     hash_hasla         VARCHAR(255) NOT NULL,
+    -- trener widzi wyłącznie ekran składu, „wynik" wyłącznie przebieg meczu;
+    -- administrator cały panel
+    rola               ENUM('administrator','trener','wynik') NOT NULL DEFAULT 'administrator',
     utworzono          TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     ostatnie_logowanie DATETIME     NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_polish_ci;
+
+-- ---------- SKŁADY (panel trenera) ----------
+
+-- Ustawienie trzymamy jako JSON, nie wiersz na pozycję: liczba i nazwy pól
+-- zależą od formacji, więc osobna tabela i tak skończyłaby jako worek na
+-- tekst. Co wolno zapisać, pilnuje PHP przy zapisie — musi i tak sprawdzić,
+-- czy zawodnik istnieje i czy pole należy do wybranej formacji.
+CREATE TABLE IF NOT EXISTS sklady (
+    id             INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    -- spotkanie z terminarza, na które ustawiono ten skład:
+    -- klucz „kolejka|gospodarz|gość", podpis i termin (do nazwania meczu,
+    -- gdy wypadnie już z terminarza)
+    mecz_klucz     VARCHAR(120) NULL,
+    mecz_opis      VARCHAR(160) NULL,
+    mecz_data      DATETIME     NULL,
+    -- opis meczu wpisywany ręcznie, np. „Janovia — Sokół Pień, 11.10"
+    nazwa          VARCHAR(160) NOT NULL DEFAULT '',
+    formacja       VARCHAR(20)  NOT NULL,
+    -- mapa: identyfikator pola => identyfikator zawodnika
+    ustawienie     TEXT         NOT NULL,
+    -- lista identyfikatorów: ławka rezerwowych, w kolejności ustalonej przez trenera.
+    -- NULL, a nie DEFAULT '[]', bo MySQL starszy niż 8.0.13 nie pozwala TEXT-owi
+    -- na wartość domyślną; pustą ławkę PHP i tak czyta z NULL-a tak samo.
+    rezerwowi      TEXT         NULL,
+    -- tylko zatwierdzony skład trafia do data/sklad.json i na stronę klubu
+    opublikowany   TINYINT(1)   NOT NULL DEFAULT 0,
+    opublikowano   DATETIME     NULL,
+    -- przed | trwa | koniec — jeden zapisany skład to jedno spotkanie
+    stan           VARCHAR(10)  NOT NULL DEFAULT 'przed',
+    -- godzina pierwszego gwizdka; podpowiada minutę przy wpisywaniu zdarzeń
+    start_meczu    DATETIME     NULL,
+    -- chwila zatrzymania stopera (przerwa); NULL = mecz leci
+    przerwa_od     DATETIME     NULL,
+    zaktualizowano DATETIME     NOT NULL,
+    utworzono      DATETIME     NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_polish_ci;
+
+-- ---------- PRZEBIEG MECZU ----------
+
+-- Gole i zmiany dopisywane na żywo. Osobne wiersze, nie JSON przy składzie:
+-- w trakcie meczu zdarzenia dochodzą i znikają pojedynczo, więc kasowanie
+-- pomyłki ma być jednym DELETE, a nie przepisaniem całej listy.
+-- Bez kluczy obcych do zawodników: skreślenie kogoś z kadry nie może
+-- wymazywać historii meczu.
+CREATE TABLE IF NOT EXISTS zdarzenia (
+    id           INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    -- gol | gol_rywala | zmiana
+    typ          VARCHAR(16) NOT NULL,
+    minuta       INT         NOT NULL,
+    -- gol: strzelec; zmiana: wchodzący
+    zawodnik_id  INT         NULL,
+    -- gol: asystujący; zmiana: schodzący
+    zawodnik2_id INT         NULL,
+    utworzono    DATETIME    NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_polish_ci;

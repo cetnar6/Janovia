@@ -4,7 +4,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/inc/layout.php';
 
 if (zalogowany()) {
-    przekieruj('index.php');
+    przekieruj(strona_startowa());
 }
 
 $blad = null;
@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         baza()->prepare('UPDATE administratorzy SET ostatnie_logowanie = ? WHERE id = ?')
               ->execute([date('Y-m-d H:i:s'), $admin['id']]);
 
-        przekieruj('index.php');
+        przekieruj(strona_startowa());
     }
 
     $blad = 'Nieprawidłowy login lub hasło.';

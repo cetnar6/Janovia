@@ -7,7 +7,7 @@
 
     var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var NASZ_KLUB = 'Janovia Janowiec';
-    var STADION_JANOVIA = 'Janowiec 70, 39-312 Janowiec';
+    var STADION_JANOVIA = 'Janowiec 66, 39-312 Janowiec';
 
     /* =========================================
        0. PŁYNNE PRZEWIJANIE (Lenis)
@@ -250,6 +250,8 @@
     var clock = document.getElementById('clock');
     var sekcjaOdliczania = clock ? clock.closest('.countdown') : null;
     var znacznikTrwa = document.getElementById('countdown-trwa');
+    var stanOdliczania = document.getElementById('countdown-stan');
+    var wynikOdliczania = document.getElementById('countdown-wynik');
     var cel = clock ? new Date(clock.getAttribute('data-target')).getTime() : 0;
     var meczeDoOdliczania = [];
 
@@ -296,6 +298,12 @@
         };
 
         var tick = function () {
+            /* W trakcie meczu sekcja pokazuje wynik i minutę — zegar
+               odliczania nie ma wtedy do czego odliczać. */
+            if (odliczanieNaZywo()) { return; }
+
+            clock.hidden = false;
+
             var diff = cel - Date.now();
 
             /* Termin minął przy otwartej stronie (ktoś zostawił kartę na czas
@@ -1173,6 +1181,584 @@
         if (e.key === 'Escape') { zamknijDruzyne(); }
     });
 
+    /* ---------- STRONA MECZU (mecz.html) ---------- */
+
+    var SKLAD = null;
+    var PRZEBIEG = null;
+    var MAMY = { liga: false, sklad: false, przebieg: false };
+
+    var SKROT_POZYCJI = {
+        'bramkarz':  'BR',
+        'obrońca':   'OB',
+        'pomocnik':  'PM',
+        'napastnik': 'NA'
+    };
+
+    /* Boisko rysujemy z data/sklad.json, które niesie nie tylko nazwiska, ale
+       i współrzędne pól. Dzięki temu nie musimy tu znać listy formacji —
+       gdybyśmy ją znali, każda zmiana ustawienia w panelu wymagałaby zmiany
+       także tutaj i boisko rozjechałoby się z tym, co widzi trener. */
+    /**
+     * Ile bramek ma na koncie ten zawodnik.
+     *
+     * Liczymy z przebiegu meczu, a nie ze składu: skład mówi, kto gra,
+     * przebieg — co się wydarzyło. Dopasowujemy po identyfikatorze, a gdy
+     * któryś z plików jest starszy i go nie niesie — po imieniu i nazwisku.
+     * Samo nazwisko by nie wystarczyło: dwóch Pulaków w składzie to u nas
+     * normalny stan.
+     */
+    function bramkiZawodnika(z) {
+        if (!z || !PRZEBIEG || !PRZEBIEG.zdarzenia) { return 0; }
+
+        var ile = 0;
+
+        PRZEBIEG.zdarzenia.forEach(function (e) {
+            if (e.typ !== 'gol' || !e.kto) { return; }
+
+            var pasuje = z.id && e.kto.id
+                ? z.id === e.kto.id
+                : e.kto.nazwisko === z.nazwisko && e.kto.imie === z.imie;
+
+            if (pasuje) { ile++; }
+        });
+
+        return ile;
+    }
+
+    /** Sama grafika piłki — do osi czasu i do plakietek przy strzelcach. */
+    function pilka() {
+        return '<svg class="pilka" viewBox="0 0 24 24" aria-hidden="true">' +
+                   '<circle cx="12" cy="12" r="11"/>' +
+                   '<path class="pilka__latka" d="M13.7 9.65 12.4 5.63 15.82 3.14 19.24 5.63 17.94 9.65Z' +
+                       'M14.76 12.9 18.18 10.41 21.61 12.9 20.3 16.92 16.07 16.92Z' +
+                       'M12 14.9 15.42 17.39 14.12 21.41 9.88 21.41 8.58 17.39Z' +
+                       'M9.24 12.9 7.93 16.92 3.7 16.92 2.39 12.9 5.82 10.41Z' +
+                       'M10.3 9.65 6.06 9.65 4.76 5.63 8.18 3.14 11.6 5.63Z"/>' +
+               '</svg>';
+    }
+
+    /* Piłka przy nazwisku — jedna na bramkę, do trzech. Wyżej liczba wygrywa
+       z kreskami, bo pięć kółek obok twarzy przestaje być informacją. */
+    function pilkiZawodnika(z) {
+        var ile = bramkiZawodnika(z);
+
+        if (!ile) { return ''; }
+
+        var ikona = pilka();
+
+        /* Trzy piłki to górna granica czytelności przy krążku na murawie —
+           czwarta zaczyna wychodzić poza kafelek i wpadać pod sąsiada.
+           Nadwyżkę dopisujemy liczbą, bo „+2" zajmuje tyle co pół piłki. */
+        var widoczne = Math.min(ile, 3);
+
+        return '<span class="gole" title="Bramki: ' + ile + '">' +
+                   new Array(widoczne + 1).join(ikona) +
+                   (ile > 3 ? '<b>+' + (ile - 3) + '</b>' : '') +
+               '</span>';
+    }
+
+    /* Twarz albo inicjały — ten sam zapis na murawie i na ławce. Zastępnik
+       nie jest ozdobnikiem: skład bywa ogłaszany, zanim ktokolwiek wgra
+       zdjęcie, a pusty krążek czyta się jak błąd ładowania. */
+    function twarzZawodnika(z, klasa) {
+        if (z.zdjecie) {
+            return '<img class="' + klasa + '" src="' + esc(z.zdjecie) + '" alt="" loading="lazy">';
+        }
+
+        return '<span class="' + klasa + ' ' + klasa + '--brak">' +
+                   esc((z.imie.charAt(0) + z.nazwisko.charAt(0)).toUpperCase()) +
+               '</span>';
+    }
+
+    function kafelekSkladu(pole) {
+        var z = pole.zawodnik;
+
+        if (!z) {
+            // panel nie pozwala zatwierdzić niepełnego składu, ale gdyby pole
+            // mimo to przyszło puste — lepiej puste kółko niż dziura w siatce
+            return '<div class="sklad__pole sklad__pole--puste" style="left:' + pole.x +
+                   '%;top:' + pole.y + '%"><span>' + esc(pole.etykieta) + '</span></div>';
+        }
+
+        return '<div class="sklad__pole" style="left:' + pole.x + '%;top:' + pole.y + '%">' +
+                   twarzZawodnika(z, 'sklad__twarz') +
+                   pilkiZawodnika(z) +
+                   '<span class="sklad__numer">' + (z.numer ? z.numer : '–') + '</span>' +
+                   '<span class="sklad__nazwisko">' + esc(z.nazwisko) +
+                       (z.kapitan ? '<i class="sklad__opaska" title="Kapitan">C</i>' : '') +
+                   '</span>' +
+               '</div>';
+    }
+
+    function rysujMurawe() {
+        return '<div class="murawa">' +
+                   '<div class="murawa__linie" aria-hidden="true">' +
+                       '<span class="murawa__srodek"></span>' +
+                       '<span class="murawa__kolo"></span>' +
+                       '<span class="murawa__pole16 murawa__pole16--dol"></span>' +
+                       '<span class="murawa__pole16 murawa__pole16--gora"></span>' +
+                   '</div>' +
+                   SKLAD.pola.map(kafelekSkladu).join('') +
+               '</div>';
+    }
+
+    /**
+     * Ławka rezerwowych: kolumna kafelków obok boiska, takich samych jak
+     * w panelu trenera.
+     *
+     * Kafelek, a nie samo nazwisko z numerem: twarz mówi kibicowi, kto
+     * wchodzi, szybciej niż nazwisko, a plakietka pozycji — co ławka
+     * realnie zabezpiecza.
+     *
+     * Kolejność jest ta z panelu — trener układa ją tak, jak zamierza
+     * zmieniać, więc sortowanie po numerach zgubiłoby informację.
+     */
+    function pasRezerwowych() {
+        var lawka = (SKLAD && SKLAD.rezerwowi) || [];
+
+        if (!lawka.length) { return ''; }
+
+        return '<section class="lawkarez" data-reveal>' +
+                   '<h3 class="lawkarez__tytul">Ławka rezerwowych</h3>' +
+                   '<div class="lawkarez__lista">' + lawka.map(function (z) {
+                       return '<div class="rezerwowy">' +
+                                  '<span class="rezerwowy__numer">' +
+                                      (z.numer ? z.numer : '–') +
+                                  '</span>' +
+                                  twarzZawodnika(z, 'rezerwowy__twarz') +
+                                  '<span class="rezerwowy__kto">' +
+                                      '<strong>' + esc(z.nazwisko) +
+                                          (z.kapitan ? '<i class="sklad__opaska" title="Kapitan">C</i>' : '') +
+                                          pilkiZawodnika(z) +
+                                      '</strong>' +
+                                      '<small>' + esc(z.imie) + '</small>' +
+                                  '</span>' +
+                                  '<span class="rezerwowy__poz">' +
+                                      esc(SKROT_POZYCJI[z.pozycja] || '') +
+                                  '</span>' +
+                              '</div>';
+                   }).join('') + '</div>' +
+               '</section>';
+    }
+
+    /**
+     * Termin pisany w całości: dzień tygodnia słownie, pełna nazwa miesiąca
+     * i rok. Na karcie w karuzeli miejsca jest tyle, że musi wystarczyć
+     * „ND 11.10", ale tu jest cała strona i skrót tylko zmuszałby do
+     * doszyfrowywania, o który dzień chodzi.
+     *
+     * Gdy 90minut nie poda jeszcze godziny, podaje samo okno kolejki
+     * („10-11 października”). Wyciągamy z niego drugi dzień i piszemy oba
+     * słownie — zmyślenie dokładnej daty byłoby gorsze niż przyznanie,
+     * że termin jeszcze nie jest ustalony.
+     */
+    function terminSlownie(m) {
+        var data = m.data_iso ? new Date(m.data_iso) : null;
+
+        if (!data || isNaN(data.getTime())) {
+            return m.kolejka_opis || 'termin nieustalony';
+        }
+
+        var dzien = DNI_TYGODNIA[data.getDay()];
+        var miesiac = MIESIACE[data.getMonth()];
+
+        if (!m.data_przyblizona) {
+            return dzien + ', ' + data.getDate() + ' ' + miesiac + ' ' + data.getFullYear() +
+                   ', godz. ' + pad(data.getHours()) + ':' + pad(data.getMinutes());
+        }
+
+        var zakres = String(m.kolejka_opis || '').match(/(\d{1,2})\s*[-–]\s*(\d{1,2})/);
+        var ile = zakres ? parseInt(zakres[2], 10) - parseInt(zakres[1], 10) : 0;
+
+        /* Zakres przez granicę miesiąca („31-1 listopada”) dałby różnicę
+           ujemną — wtedy odpuszczamy i zostaje sam pierwszy dzień. */
+        if (ile > 0 && ile < 7) {
+            var drugi = new Date(data.getTime());
+            drugi.setDate(drugi.getDate() + ile);
+
+            return dzien + ' lub ' + DNI_TYGODNIA[drugi.getDay()] + ', ' +
+                   data.getDate() + '–' + drugi.getDate() + ' ' +
+                   MIESIACE[drugi.getMonth()] + ' ' + drugi.getFullYear() +
+                   ' · godzina nieustalona';
+        }
+
+        return dzien + ', ' + data.getDate() + ' ' + miesiac + ' ' + data.getFullYear() +
+               ' · godzina nieustalona';
+    }
+
+    /**
+     * Środek karty spotkania: „vs" przed pierwszym gwizdkiem, wynik potem.
+     *
+     * Wynik mieszka tutaj, a nie w zakładce „Szczegóły": to pierwsza rzecz,
+     * po którą kibic wchodzi na stronę, a zakładka z osią czasu odpowiada
+     * już na drugie pytanie — jak do tego wyniku doszło.
+     */
+    function srodekKarty(m) {
+        var trwa = !!PRZEBIEG && PRZEBIEG.stan === 'trwa';
+        var poMeczu = !!PRZEBIEG && PRZEBIEG.stan === 'koniec';
+
+        if (!trwa && !poMeczu) {
+            return '<span class="spotkanie__vs">vs</span>';
+        }
+
+        var uSiebie = m.gospodarz === NASZ_KLUB;
+        var my = PRZEBIEG.wynik ? PRZEBIEG.wynik.my : 0;
+        var oni = PRZEBIEG.wynik ? PRZEBIEG.wynik.oni : 0;
+        var czas = zegarMeczu();
+        var pauza = trwa && !!PRZEBIEG.pauza;
+
+        return '<div class="spotkanie__wynik' + (trwa && !pauza ? ' spotkanie__wynik--zywo' : '') + '">' +
+                   '<span class="spotkanie__stan">' +
+                       (trwa ? (pauza ? 'Przerwa' : 'Na żywo') : 'Po meczu') +
+                       (trwa && czas !== null
+                           ? ' · <b class="tablica__zegar" id="zegar">' + czas + '</b>'
+                           : '') +
+                   '</span>' +
+                   '<strong>' + (uSiebie ? my : oni) + ':' + (uSiebie ? oni : my) + '</strong>' +
+               '</div>';
+    }
+
+    /** Karta z danymi spotkania: herby, termin, miejsce, forma obu drużyn. */
+    function kartaSpotkania(m, dane) {
+        var kiedy = terminSlownie(m);
+
+        var gdzie = m.gospodarz === NASZ_KLUB ? 'u siebie' : 'wyjazd';
+
+        return '<article class="spotkanie">' +
+                   '<div class="spotkanie__druzyny">' +
+                       '<div class="spotkanie__strona">' +
+                           przyciskHerbu(m.gospodarz, 'md') +
+                           '<b>' + esc(m.gospodarz) + '</b>' +
+                           rysujForme(m.gospodarz, dane.forma) +
+                       '</div>' +
+                       srodekKarty(m) +
+                       '<div class="spotkanie__strona">' +
+                           przyciskHerbu(m.gosc, 'md') +
+                           '<b>' + esc(m.gosc) + '</b>' +
+                           rysujForme(m.gosc, dane.forma) +
+                       '</div>' +
+                   '</div>' +
+
+                   '<dl class="spotkanie__dane">' +
+                       '<div><dt>Termin</dt><dd>' + esc(kiedy) + '</dd></div>' +
+                       '<div><dt>Rozgrywki</dt><dd>' +
+                           esc(dane.liga || 'Klasa B') +
+                           (m.kolejka ? ' · kolejka ' + m.kolejka : '') +
+                       '</dd></div>' +
+                       '<div><dt>Miejsce</dt><dd>' +
+                           esc(gdzie) +
+                           ' <a class="spotkanie__mapa" href="' + linkMapy(m.gospodarz) + '"' +
+                               ' target="_blank" rel="noopener">pokaż na mapie</a>' +
+                       '</dd></div>' +
+                   '</dl>' +
+
+                   uwagaMeczu(m, 'spotkanie__uwaga') +
+               '</article>';
+    }
+
+    /* ---------- zakładki: skład / szczegóły ---------- */
+
+    function pokazZakladke(nazwa) {
+        Array.prototype.forEach.call(document.querySelectorAll('.zakladka'), function (btn) {
+            var wybrana = btn.getAttribute('data-panel') === nazwa;
+            btn.classList.toggle('is-aktywna', wybrana);
+            btn.setAttribute('aria-selected', wybrana ? 'true' : 'false');
+
+            var panel = document.getElementById(btn.getAttribute('aria-controls'));
+            if (panel) { panel.hidden = !wybrana; }
+        });
+    }
+
+    function wlaczZakladki() {
+        var przyciski = document.querySelectorAll('.zakladka');
+        if (!przyciski.length) { return; }
+
+        Array.prototype.forEach.call(przyciski, function (btn, i) {
+            btn.addEventListener('click', function () {
+                pokazZakladke(btn.getAttribute('data-panel'));
+            });
+
+            /* Strzałki w zakładkach to nie ozdoba: tego oczekuje każdy, kto
+               chodzi po stronie klawiaturą, a role="tablist" wprost to obiecuje. */
+            btn.addEventListener('keydown', function (e) {
+                if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') { return; }
+
+                e.preventDefault();
+
+                var krok = e.key === 'ArrowRight' ? 1 : -1;
+                var nastepny = przyciski[(i + krok + przyciski.length) % przyciski.length];
+
+                pokazZakladke(nastepny.getAttribute('data-panel'));
+                nastepny.focus();
+            });
+        });
+    }
+
+    /* ---------- szczegóły: gole i zmiany ---------- */
+
+    /** Nazwisko z numerem; brak zawodnika w kadrze nie może wywrócić wiersza. */
+    function ktoZdarzenia(z) {
+        if (!z) { return 'zawodnik spoza kadry'; }
+
+        return (z.numer ? z.numer + '. ' : '') + z.imie + ' ' + z.nazwisko;
+    }
+
+    /* Strzałki zmiany: wchodzący w górę na zielono, schodzący w dół na
+       czerwono — ten sam znak, który kibic zna z tabel wyników. */
+    var IKONA_ZMIANY =
+        '<svg class="zdarz__strzalki" viewBox="0 0 24 24" aria-hidden="true">' +
+            '<path class="zdarz__wchodzi" d="M8 20V7M8 7 4.5 10.5M8 7l3.5 3.5"/>' +
+            '<path class="zdarz__schodzi" d="M16 4v13m0 0 3.5-3.5M16 17l-3.5-3.5"/>' +
+        '</svg>';
+
+    /**
+     * Wiersz osi czasu, ułożony po tej stronie, po której padło zdarzenie.
+     *
+     * Strony są te same, co na tablicy nad nią: gospodarz z lewej, gość
+     * z prawej. Gdyby nasze zdarzenia zawsze szły w lewo, wynik na tablicy
+     * i kolejność w osi czasu kłóciłyby się przy meczu na wyjeździe.
+     */
+    function wierszZdarzenia(z, rywal, uSiebie) {
+        var nasze = z.typ !== 'gol_rywala';
+        var poLewej = uSiebie ? nasze : !nasze;
+
+        var kto;
+        var dopisek = '';
+
+        if (z.typ === 'gol') {
+            kto = ktoZdarzenia(z.kto);
+            dopisek = z.asysta ? '(' + ktoZdarzenia(z.asysta) + ')' : '';
+        } else if (z.typ === 'gol_rywala') {
+            kto = rywal;
+        } else {
+            kto = ktoZdarzenia(z.wchodzi);
+            dopisek = ktoZdarzenia(z.schodzi);
+        }
+
+        var ikona = z.typ === 'zmiana' ? IKONA_ZMIANY : pilka();
+
+        /* Wynik po bramce w kolejności z tablicy: gospodarz – gość. */
+        var wynik = '';
+
+        if (z.wynik) {
+            wynik = '<b class="zdarz__wynik">' +
+                        (uSiebie ? z.wynik.my : z.wynik.oni) + ' - ' +
+                        (uSiebie ? z.wynik.oni : z.wynik.my) +
+                    '</b>';
+        }
+
+        var opis = '<span class="zdarz__kto">' +
+                       '<strong>' + esc(kto) + '</strong>' +
+                       (dopisek ? '<small>' + esc(dopisek) + '</small>' : '') +
+                   '</span>';
+
+        return '<li class="zdarz zdarz--' + z.typ +
+                   (poLewej ? ' zdarz--lewa' : ' zdarz--prawa') + '">' +
+                   '<span class="zdarz__minuta">' + (z.minuta | 0) + '\u2032</span>' +
+                   '<span class="zdarz__znak">' + ikona + wynik + '</span>' +
+                   opis +
+               '</li>';
+    }
+
+    /**
+     * Tablica wyniku i oś czasu meczu.
+     *
+     * Kolejność drużyn bierzemy z terminarza, nie z pliku przebiegu: panel
+     * trenera zna tylko własne bramki, a kibic czyta wynik w tej kolejności,
+     * w jakiej widzi go na tablicy i w tabeli — gospodarz z lewej.
+     */
+    /* Ile sekund od pierwszego gwizdka. Sufit jest po to, żeby mecz, którego
+       nikt nie zakończył w panelu, nie pokazywał rano tysiąca minut. */
+    function sekundyMeczu() {
+        if (!PRZEBIEG || PRZEBIEG.stan !== 'trwa' || !PRZEBIEG.start) { return null; }
+
+        var start = new Date(PRZEBIEG.start).getTime();
+
+        if (isNaN(start)) { return null; }
+
+        /* Na przerwie zegar stoi: liczymy do chwili, w której trener go
+           zatrzymał, więc kibic widzi 45:00, a nie czas trwania przerwy. */
+        var pauza = PRZEBIEG.pauza ? new Date(PRZEBIEG.pauza).getTime() : NaN;
+        var koniec = isNaN(pauza) ? Date.now() : pauza;
+
+        return Math.max(0, Math.min(130 * 60, Math.floor((koniec - start) / 1000)));
+    }
+
+    /* Minuty bez godzin: po dziewięćdziesiątej leci 91:00, a nie 1:31:00 —
+       tak samo, jak zegar na stadionie i jak stoper w panelu trenera. */
+    function zegarMeczu() {
+        var sekundy = sekundyMeczu();
+
+        if (sekundy === null) { return null; }
+
+        var s = sekundy % 60;
+
+        return Math.floor(sekundy / 60) + ':' + (s < 10 ? '0' + s : s);
+    }
+
+    /* Zegar tyka co sekundę, ale sekcja przerysowuje się rzadko — dlatego
+       wskaźnik szukamy przy każdym tyknięciu zamiast trzymać referencję,
+       która po przerysowaniu wskazywałaby element wyrzucony z dokumentu. */
+    var pulsZegara = null;
+
+    function pilnujZegara() {
+        if (!PRZEBIEG || PRZEBIEG.stan !== 'trwa') {
+            if (pulsZegara) { window.clearInterval(pulsZegara); pulsZegara = null; }
+            return;
+        }
+
+        if (pulsZegara) { return; }
+
+        pulsZegara = window.setInterval(function () {
+            var zegar = document.getElementById('zegar');
+            var czas = zegarMeczu();
+
+            if (zegar && czas) { zegar.textContent = czas; }
+        }, 1000);
+    }
+
+    function rysujSzczegoly() {
+        var box = document.getElementById('mecz-szczegoly');
+        if (!box) { return; }
+
+        var mecz = (DANE_LIGI && DANE_LIGI.nadchodzace && DANE_LIGI.nadchodzace[0]) || null;
+        var rywal = mecz
+            ? (mecz.gospodarz === NASZ_KLUB ? mecz.gosc : mecz.gospodarz)
+            : 'Rywal';
+
+        var znacznik = document.getElementById('znacznik-zywo');
+        var trwa = !!PRZEBIEG && PRZEBIEG.stan === 'trwa';
+        var pauza = trwa && !!PRZEBIEG.pauza;
+
+        if (znacznik) {
+            znacznik.hidden = !trwa;
+            znacznik.textContent = pauza ? 'przerwa' : 'na żywo';
+            znacznik.classList.toggle('is-pauza', pauza);
+        }
+
+        var zdarzenia = (PRZEBIEG && PRZEBIEG.zdarzenia) || [];
+
+        if (!PRZEBIEG || (PRZEBIEG.stan === 'przed' && !zdarzenia.length)) {
+            box.innerHTML = '<p class="sklad__brak">' +
+                'Mecz jeszcze się nie zaczął. Bramki, ich strzelcy i zmiany ' +
+                'pojawią się tutaj na żywo, gdy tylko sędzia odgwiżdże początek.</p>';
+            return;
+        }
+
+        var u_siebie = !mecz || mecz.gospodarz === NASZ_KLUB;
+
+        /* Sama oś czasu: wynik stoi już na karcie spotkania nad zakładkami
+           i powtarzanie go tutaj kazałoby czytać to samo dwa razy. */
+        box.innerHTML = zdarzenia.length
+            ? '<ol class="oczas">' + zdarzenia.map(function (z) {
+                  return wierszZdarzenia(z, rywal, u_siebie);
+              }).join('') + '</ol>'
+            : '<p class="sklad__brak">Na razie bez bramek i zmian.</p>';
+    }
+
+    /* Mecz trwa krócej niż dwie godziny, a trener wpisuje gola z opóźnieniem
+       kilkunastu sekund — minuta odświeżania jest wyczuwalnie „na żywo",
+       a nie zamienia strony w odpytywacz serwera. Pętla kręci się tylko
+       wtedy, gdy mecz naprawdę trwa. */
+    var pulsPrzebiegu = null;
+
+    function pilnujPrzebiegu() {
+        var trwa = !!PRZEBIEG && PRZEBIEG.stan === 'trwa';
+
+        if (!trwa) {
+            if (pulsPrzebiegu) { window.clearInterval(pulsPrzebiegu); pulsPrzebiegu = null; }
+            return;
+        }
+
+        if (pulsPrzebiegu) { return; }
+
+        pulsPrzebiegu = window.setInterval(function () {
+            pobierzJSON('data/przebieg.json').then(function (dane) {
+                PRZEBIEG = dane;
+
+                /* Przerysowujemy całą sekcję, nie same szczegóły: po bramce
+                   przybywa piłka przy krążku na boisku, a ten siedzi
+                   w zakładce obok. */
+                sprobujStroneMeczu();
+                odswiezOdliczanie();
+                pilnujPrzebiegu();
+            });
+        }, 60000);
+    }
+
+    function rysujPrzebieg(dane) {
+        PRZEBIEG = dane;
+        MAMY.przebieg = true;
+
+        sprobujStroneMeczu();
+
+        /* Strona główna nie ma karty meczu, ale ma odliczanie, które w trakcie
+           spotkania zamienia się w tablicę wyniku — i odświeżanie, żeby kolejna
+           bramka doszła sama. */
+        odswiezOdliczanie();
+        pilnujPrzebiegu();
+    }
+
+    /* Strona składa się z trzech źródeł: terminarza (liga.json), składu
+       (sklad.json) i przebiegu (przebieg.json). Rysujemy dopiero, gdy
+       wszystkie odpowiedziały — brak składu czy przebiegu to normalny stan,
+       nie powód, żeby wstrzymywać dane o meczu. */
+    function sprobujStroneMeczu() {
+        var karta = document.getElementById('mecz-karta');
+
+        if (!karta || !MAMY.liga || !MAMY.sklad || !MAMY.przebieg) { return; }
+
+        var mecz = (DANE_LIGI && DANE_LIGI.nadchodzace && DANE_LIGI.nadchodzace[0]) || null;
+        var opis = document.getElementById('mecz-opis');
+        var box = document.getElementById('mecz-sklad');
+
+        if (mecz) {
+            karta.innerHTML = kartaSpotkania(mecz, DANE_LIGI);
+
+            if (opis) {
+                opis.textContent = skrot(mecz.gospodarz) + ' — ' + skrot(mecz.gosc);
+            }
+
+            document.title = skrot(mecz.gospodarz) + ' — ' + skrot(mecz.gosc) +
+                             ' · Janovia Janowiec';
+        } else {
+            karta.innerHTML = '<p class="spotkanie__pusto">' +
+                'Terminarz nie przewiduje w tej chwili kolejnego spotkania.</p>';
+            if (opis) { opis.textContent = 'Brak zaplanowanych meczów.'; }
+        }
+
+        if (!box) { return; }
+
+        box.innerHTML = SKLAD && SKLAD.pola && SKLAD.pola.length
+            ? '<p class="sklad__meta">' +
+                  (SKLAD.opis ? esc(SKLAD.opis) + ' · ' : '') +
+                  'ustawienie ' + esc(SKLAD.formacja) +
+              '</p>' +
+              '<div class="skladsiatka">' + rysujMurawe() + pasRezerwowych() + '</div>'
+            : '<p class="sklad__brak">Skład na ten mecz nie został jeszcze ogłoszony. ' +
+              'Pojawi się tutaj, gdy trener go zatwierdzi.</p>';
+
+        rysujSzczegoly();
+        pilnujZegara();
+        pilnujPrzebiegu();
+
+        obserwuj(box.querySelectorAll('[data-reveal]'));
+    }
+
+    /* Przycisk pod odliczaniem leży w index.html z atrybutem hidden i odsłania
+       się dopiero tutaj. Brak pliku (trener nic nie zatwierdził) to normalny
+       stan — pobierzJSON zwraca wtedy null. */
+    function rysujSklad(dane) {
+        SKLAD = dane && dane.pola && dane.pola.length ? dane : null;
+        MAMY.sklad = true;
+
+        var btn = document.getElementById('pokaz-sklad');
+
+        if (btn && SKLAD) { btn.hidden = false; }
+
+        sprobujStroneMeczu();
+    }
+
     function rysujMecze(dane) {
         var rail = document.querySelector('[data-rail-id="fix"]');
         if (!rail) { return; }
@@ -1230,8 +1816,65 @@
     }
 
     /* Wywoływane też z zegara, gdy termin minie przy otwartej stronie. */
+    /**
+     * Mecz prowadzony w panelu wygrywa z odliczaniem.
+     *
+     * Odliczanie zna tylko godzinę z terminarza, a ta bywa przybliżona
+     * („17-18 października") albo minie, zanim sędzia gwizdnie — i wtedy
+     * strona główna zaczynała odliczać do NASTĘPNEGO meczu, choć ten trwał.
+     * Trener w panelu wie lepiej, więc gdy przebieg mówi „trwa", pokazujemy
+     * wynik i minutę zamiast zegara.
+     */
+    function odliczanieNaZywo() {
+        if (!clock || !PRZEBIEG) { return false; }
+
+        var trwa = PRZEBIEG.stan === 'trwa';
+        var poMeczu = PRZEBIEG.stan === 'koniec';
+
+        if (!trwa && !poMeczu) { return false; }
+
+        var mecz = meczeDoOdliczania[0];
+
+        if (!mecz) { return false; }
+
+        var uSiebie = mecz.gospodarz === NASZ_KLUB;
+        var my = PRZEBIEG.wynik ? PRZEBIEG.wynik.my : 0;
+        var oni = PRZEBIEG.wynik ? PRZEBIEG.wynik.oni : 0;
+        var czas = zegarMeczu();
+        var pauza = trwa && !!PRZEBIEG.pauza;
+
+        pokazOdliczanie(true);
+        clock.hidden = true;
+        ustawTrakcie(trwa && !pauza);
+
+        if (znacznikTrwa) { znacznikTrwa.hidden = false; }
+
+        if (stanOdliczania) {
+            stanOdliczania.textContent = poMeczu
+                ? 'Po meczu'
+                : (pauza ? 'Przerwa' : 'Na żywo') + (czas !== null ? ' · ' + czas : '');
+        }
+
+        if (wynikOdliczania) {
+            wynikOdliczania.hidden = false;
+            wynikOdliczania.firstElementChild.textContent =
+                (uSiebie ? my : oni) + ':' + (uSiebie ? oni : my);
+        }
+
+        wypiszMecz(mecz);
+
+        return true;
+    }
+
     function odswiezOdliczanie() {
         if (!clock) { return; }
+
+        if (odliczanieNaZywo()) { return; }
+
+        clock.hidden = false;
+
+        if (wynikOdliczania) { wynikOdliczania.hidden = true; }
+        if (stanOdliczania) { stanOdliczania.textContent = 'Mecz w trakcie'; }
 
         /* Mecz rozgrywany właśnie teraz wyprzedza odliczanie: zamiast zegara
            idzie etykieta, a celem staje się koniec spotkania — po nim sekcja
@@ -2050,6 +2693,9 @@
                w herb — musi mieć skąd wziąć terminarz i tabelę. */
             DANE_LIGI = dane;
 
+            MAMY.liga = true;
+            sprobujStroneMeczu();
+
             rysujTabele(dane);
             rysujKolejke(dane);
             rysujTerminarz(dane);
@@ -2058,6 +2704,12 @@
         });
 
         pobierzJSON('data/archiwum.json').then(rysujArchiwum);
+
+        // skład pokazuje się tylko wtedy, gdy trener go zatwierdził
+        pobierzJSON('data/sklad.json').then(rysujSklad);
+
+        wlaczZakladki();
+        pobierzJSON('data/przebieg.json').then(rysujPrzebieg);
     }
 
 })();

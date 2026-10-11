@@ -13,6 +13,12 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://janovia.pl/mecz.html</loc>
+    <lastmod>2026-10-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://janovia.pl/terminarz.html</loc>
     <lastmod>2026-08-28</lastmod>
     <changefreq>weekly</changefreq>

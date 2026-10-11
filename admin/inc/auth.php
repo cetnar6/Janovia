@@ -35,6 +35,121 @@ function wymagaj_logowania(): void
     }
 }
 
+/* ---------- role ---------- */
+
+const ROLA_ADMIN  = 'administrator';
+const ROLA_TRENER = 'trener';
+
+/* Konto do obsługi przebiegu meczu: wynik, strzelcy, zmiany, stoper.
+   Takich kont bywa kilka — ktokolwiek akurat siedzi przy linii bocznej
+   z telefonem — i żadne z nich nie ma po co widzieć kadry ani aktualności. */
+const ROLA_WYNIK = 'wynik';
+
+const ROLE = [ROLA_ADMIN, ROLA_TRENER, ROLA_WYNIK];
+
+/**
+ * Rola zalogowanego konta, czytana z bazy — nie z sesji.
+ *
+ * Sesja byłaby szybsza, ale zapamiętywałaby rolę z chwili logowania:
+ * odebranie komuś uprawnień zaczęłoby działać dopiero po jego wylogowaniu.
+ * Przy jednym zapytaniu na żądanie nie ma o co kruszyć kopii.
+ */
+function rola_uzytkownika(): ?string
+{
+    static $rola = null;
+
+    if ($rola !== null) {
+        return $rola;
+    }
+
+    if (!zalogowany()) {
+        return null;
+    }
+
+    try {
+        $stmt = baza()->prepare('SELECT rola FROM administratorzy WHERE id = ?');
+        $stmt->execute([$_SESSION['admin_id']]);
+        $z_bazy = $stmt->fetchColumn();
+    } catch (PDOException $e) {
+        /* Kolumny jeszcze nie ma — migracja „role" nie przeszła. Do tego czasu
+           wszyscy są administratorami, czyli dokładnie tak, jak panel działał
+           przed wprowadzeniem ról. Odwrotne założenie zamknęłoby Karolowi
+           drzwi do migracji, którą trzeba uruchomić właśnie z panelu. */
+        return $rola = ROLA_ADMIN;
+    }
+
+    /* Nieznana wartość (stara baza, ręczna poprawka w phpMyAdmin) to
+       administrator — tak jak panel działał, zanim role w ogóle powstały. */
+    $rola = in_array($z_bazy, ROLE, true) ? (string) $z_bazy : ROLA_ADMIN;
+
+    return $rola;
+}
+
+/**
+ * Ekran, na który trafia dane konto po zalogowaniu i zawsze, gdy zabłądzi
+ * tam, gdzie nie ma wstępu. Jedno miejsce, bo inaczej każda nowa rola
+ * wymagałaby poprawki w logowaniu, na pulpicie i przy każdej odmowie.
+ */
+function strona_startowa(): string
+{
+    if (czy_trener()) {
+        return 'sklad.php';
+    }
+
+    return czy_wynik() ? 'przebieg.php' : 'index.php';
+}
+
+function czy_administrator(): bool
+{
+    return rola_uzytkownika() === ROLA_ADMIN;
+}
+
+function czy_trener(): bool
+{
+    return rola_uzytkownika() === ROLA_TRENER;
+}
+
+function czy_wynik(): bool
+{
+    return rola_uzytkownika() === ROLA_WYNIK;
+}
+
+/**
+ * Wpuszcza wyłącznie administratora. Reszta trafia na swój ekran
+ * z wyjaśnieniem — cicha przekierówka na stronę logowania wyglądałaby jak
+ * awaria, a 403 bez wyjścia jak ślepy zaułek.
+ */
+function wymagaj_administratora(): void
+{
+    wymagaj_logowania();
+
+    if (czy_administrator()) {
+        return;
+    }
+
+    komunikat('Ta część panelu jest dostępna tylko dla administratora.', 'blad');
+    przekieruj(strona_startowa());
+}
+
+/** Skład układa trener i administrator — obsługa wyniku nie ma tam czego szukać. */
+function wymagaj_dostepu_do_skladu(): void
+{
+    wymagaj_logowania();
+
+    if (!czy_wynik()) {
+        return;
+    }
+
+    komunikat('To konto obsługuje wyłącznie przebieg meczu.', 'blad');
+    przekieruj('przebieg.php');
+}
+
+/** Przebieg meczu prowadzi każdy, kto w ogóle wszedł do panelu. */
+function wymagaj_dostepu_do_przebiegu(): void
+{
+    wymagaj_logowania();
+}
+
 function zaloguj(int $id, string $login): void
 {
     start_sesji();

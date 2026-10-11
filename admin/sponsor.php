@@ -8,7 +8,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/inc/layout.php';
 require_once __DIR__ . '/inc/zdjecia.php';
 
-wymagaj_logowania();
+wymagaj_administratora();
 
 // tylko podpowiedzi do pola tekstowego — własna rola też przejdzie
 const ROLE_SPONSORA = [

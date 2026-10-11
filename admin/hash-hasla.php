@@ -11,6 +11,10 @@
  * wklejasz do phpMyAdmin na serwerze.
  *
  *     php admin/hash-hasla.php Adminjanovia
+ *     php admin/hash-hasla.php kuba wynik
+ *
+ * Druga wartość to rola: „administrator" (domyślna), „trener" albo „wynik".
+ * Konto „wynik" prowadzi wyłącznie przebieg meczu — gole, zmiany i stoper.
  *
  * Hasło wpisujesz interaktywnie i nie widać go podczas pisania. Nie trafia
  * ani do historii poleceń, ani do żadnego pliku.
@@ -24,9 +28,14 @@ if (PHP_SAPI !== 'cli') {
 }
 
 $login = trim((string) ($argv[1] ?? ''));
+$rola  = trim((string) ($argv[2] ?? 'administrator'));
 
 if ($login === '') {
-    exit("Użycie: php admin/hash-hasla.php <login>\n");
+    exit("Użycie: php admin/hash-hasla.php <login> [administrator|trener|wynik]\n");
+}
+
+if (!in_array($rola, ['administrator', 'trener', 'wynik'], true)) {
+    exit("Rola musi być „administrator”, „trener” albo „wynik”.\n");
 }
 
 if (!preg_match('/^[A-Za-z0-9._-]{3,40}$/', $login)) {
@@ -37,7 +46,7 @@ function zapytaj(string $pytanie): string
 {
     echo $pytanie;
     system('stty -echo');
-    $odp = trim((string) fgets(STDIN));
+    $odp = rtrim((string) fgets(STDIN), "\r\n");
     system('stty echo');
     echo "\n";
     return $odp;
@@ -72,10 +81,19 @@ $hash = password_hash($haslo, PASSWORD_DEFAULT);
 
 // hash bcrypt zawiera $ i /, ale nigdy apostrofu, więc bezpiecznie wchodzi
 // w pojedyncze cudzysłowy SQL bez dodatkowego escapowania
+/* Rola jedzie w tym samym poleceniu. Bez niej konto wpadałoby na domyślne
+   „administrator", czyli z pełnym dostępem — a zakładamy je właśnie po to,
+   żeby ktoś miał dostęp wyłącznie do przebiegu meczu. */
 echo "Wklej to w phpMyAdmin, w bazie kosmetejanovia, zakładka SQL:\n\n";
-echo "INSERT INTO administratorzy (login, hash_hasla)\n";
-echo "VALUES ('" . $login . "', '" . $hash . "')\n";
-echo "ON DUPLICATE KEY UPDATE hash_hasla = VALUES(hash_hasla);\n\n";
+echo "INSERT INTO administratorzy (login, hash_hasla, rola)\n";
+echo "VALUES ('" . $login . "', '" . $hash . "', '" . $rola . "')\n";
+echo "ON DUPLICATE KEY UPDATE hash_hasla = VALUES(hash_hasla), rola = VALUES(rola);\n\n";
+
+if ($rola === 'wynik') {
+    echo "Najpierw uruchom w panelu migrację „Konta do obsługi wyniku” —\n";
+    echo "bez niej baza nie zna jeszcze tej roli i zapisze puste uprawnienia.\n\n";
+}
+
 echo "Dla bazy lokalnej (SQLite) użyj zamiast tego:\n\n";
-echo "INSERT OR REPLACE INTO administratorzy (login, hash_hasla)\n";
-echo "VALUES ('" . $login . "', '" . $hash . "');\n";
+echo "INSERT OR REPLACE INTO administratorzy (login, hash_hasla, rola)\n";
+echo "VALUES ('" . $login . "', '" . $hash . "', '" . $rola . "');\n";

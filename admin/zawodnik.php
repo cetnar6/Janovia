@@ -10,7 +10,7 @@ require_once __DIR__ . '/inc/layout.php';
 require_once __DIR__ . '/inc/zdjecia.php';
 require_once __DIR__ . '/inc/migracje.php';
 
-wymagaj_logowania();
+wymagaj_administratora();
 
 /* Lista pozycji mieszka razem z migracjami, bo to ona wyznacza schemat bazy.
    Trzymanie tu drugiej kopii kończyłoby się panelem oferującym rolę, której

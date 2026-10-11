@@ -13,6 +13,16 @@
     --text: #FFFFFF;
     --muted: #8D97A5;
     --czerwony: #CE3F3D;
+
+    /* Tło pod zawodnikiem: zdjęcia kadry mają wycięte tło, więc bez tego
+       przez sylwetkę prześwituje murawa albo karta. Ukośne pasy w klubowym
+       granacie, jaśniejsze ku górnemu prawemu rogowi — na tyle wygaszone,
+       żeby nie konkurowały z twarzą. */
+    --tlo-zawodnika:
+        repeating-linear-gradient(45deg,
+            rgba(255, 255, 255, 0.07) 0 10px,
+            rgba(255, 255, 255, 0) 10px 20px),
+        linear-gradient(140deg, #16243d 0%, #2b4777 55%, #1a2d4c 100%);
     --zielony: #2E9E5B;
 }
 
@@ -374,4 +384,1278 @@ td.akcje { white-space: nowrap; font-size: 0; }
     font-size: 0.72rem;
     font-weight: 800;
     line-height: 1;
+}
+
+/* =========================================
+   PANEL TRENERA — SKŁAD NA MECZ
+   ========================================= */
+
+.sklad__naglowek {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+}
+
+.sklad__zapis {
+    font-size: 0.78rem;
+    color: var(--muted);
+}
+
+/* Stan publikacji musi być widoczny od razu po wejściu: trener ma wiedzieć,
+   czy to, co widzi, oglądają też kibice. */
+.sklad__stan {
+    margin-left: auto;
+    padding: 0.25rem 0.7rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.sklad__stan--na-stronie {
+    border-color: var(--zielony);
+    color: var(--zielony);
+}
+
+.sklad__stan--roboczy {
+    color: var(--muted);
+}
+
+.sklad__pasek {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
+
+.sklad__formacje {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.formacja {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    max-width: 15rem;
+    padding: 0.6rem 0.9rem;
+    text-align: left;
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--text);
+    font: inherit;
+    cursor: pointer;
+    transition: border-color 0.25s, background-color 0.25s;
+}
+
+.formacja strong { font-size: 0.95rem; letter-spacing: 0.04em; }
+.formacja small  { font-size: 0.68rem; line-height: 1.3; color: var(--muted); }
+
+.formacja:hover { border-color: var(--blue); }
+
+.formacja.is-wybrana {
+    border-color: var(--gold);
+    background-color: rgba(255, 185, 0, 0.08);
+}
+
+/* W trakcie meczu formacji się nie zmienia — przygaszony przycisk mówi to
+   od razu, zanim trener w niego kliknie. */
+.formacja:disabled { opacity: 0.4; cursor: not-allowed; }
+.formacja:disabled:hover { border-color: var(--line); }
+.formacja:disabled.is-wybrana { opacity: 0.75; }
+
+.sklad__opis input[readonly] { color: var(--muted); cursor: default; }
+
+.formacja.is-wybrana strong { color: var(--gold); }
+
+.sklad__opis {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    flex: 1 1 18rem;
+    max-width: 24rem;
+}
+
+.sklad__opis span {
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.sklad__opis input {
+    padding: 0.6rem 0.8rem;
+    background-color: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--text);
+    font: inherit;
+    font-size: 0.85rem;
+}
+
+.sklad__opis input:focus-visible {
+    outline: 2px solid var(--blue-light);
+    outline-offset: 1px;
+}
+
+/* ---------- lista kolejek ---------- */
+
+/* Mecze po lewej, reszta ekranu po prawej. Na telefonie lista ląduje nad
+   boiskiem — jest krótka, a bez niej nie wiadomo, czyj skład się układa. */
+.sklad__ekran {
+    display: grid;
+    grid-template-columns: minmax(13rem, 17rem) minmax(0, 1fr);
+    gap: clamp(1rem, 2vw, 2rem);
+    align-items: start;
+}
+
+.kolejki {
+    position: sticky;
+    top: 1rem;
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.kolejki__tytul {
+    padding: 0.9rem 1rem;
+    border-bottom: 1px solid var(--line);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.kolejki__lista { list-style: none; }
+
+.kolejka {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid var(--line);
+    border-left: 3px solid transparent;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.kolejki__lista li:last-child .kolejka { border-bottom: 0; }
+
+.kolejka:hover { background-color: rgba(255, 255, 255, 0.03); }
+
+.kolejka.is-wybrana {
+    background-color: rgba(255, 185, 0, 0.07);
+    border-left-color: var(--gold);
+}
+
+.kolejka__kiedy {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.65rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.kolejka__najblizszy {
+    padding: 0.05rem 0.35rem;
+    background-color: rgba(46, 158, 91, 0.15);
+    border-radius: 999px;
+    font-size: 0.58rem;
+    font-weight: 800;
+    color: var(--zielony);
+}
+
+.kolejka__kto { font-size: 0.82rem; font-weight: 700; line-height: 1.25; }
+
+.kolejka__sklad { font-size: 0.65rem; color: var(--muted); }
+.kolejka__sklad.is-gotowy { color: var(--zielony); }
+
+.sklad__mecz {
+    width: 100%;
+    order: 3;
+    font-size: 0.8rem;
+    color: var(--muted);
+}
+
+@media (max-width: 900px) {
+    .sklad__ekran { grid-template-columns: minmax(0, 1fr); }
+    .kolejki { position: static; }
+}
+
+/* ---------- plansza: boisko + ławka ---------- */
+
+.sklad__plansza {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem);
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.boisko {
+    position: relative;
+    /* proporcje prawdziwego boiska, ustawionego pionowo */
+    aspect-ratio: 7 / 10;
+    max-height: 78vh;
+    margin-inline: auto;
+    width: 100%;
+    background:
+        repeating-linear-gradient(to bottom,
+            rgba(255, 255, 255, 0.022) 0 8%,
+            transparent 8% 16%),
+        linear-gradient(to bottom, #122a1b, #0d1f14);
+    border: 2px solid rgba(255, 255, 255, 0.14);
+    border-radius: 10px;
+    /* duch jedzie po body, ale pola nie mogą wychodzić poza murawę */
+    overflow: hidden;
+    touch-action: none;   /* bez tego przeciąganie przewija stronę */
+}
+
+.boisko__linie span {
+    position: absolute;
+    border: 2px solid rgba(255, 255, 255, 0.14);
+}
+
+.boisko__srodek { left: 0; right: 0; top: 50%; border-width: 0 0 2px; }
+
+.boisko__kolo {
+    left: 50%;
+    top: 50%;
+    width: 26%;
+    aspect-ratio: 1;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+}
+
+.boisko__pole {
+    left: 21%;
+    width: 58%;
+    height: 15%;
+    border-radius: 2px;
+}
+
+.boisko__pole--dol  { bottom: -2px; }
+.boisko__pole--gora { top: -2px; }
+
+.boisko__bramka {
+    left: 36%;
+    width: 28%;
+    height: 6%;
+}
+
+.boisko__bramka--dol  { bottom: -2px; }
+.boisko__bramka--gora { top: -2px; }
+
+/* ---------- pole na boisku ---------- */
+
+.pole {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.1rem;
+    width: clamp(3.4rem, 9%, 4.6rem);
+    aspect-ratio: 1;
+    padding: 0;
+    background-color: rgba(8, 9, 12, 0.55);
+    border: 2px dashed rgba(255, 255, 255, 0.22);
+    border-radius: 50%;
+    color: var(--text);
+    font: inherit;
+    cursor: grab;
+    touch-action: none;
+    transition: border-color 0.2s, background-color 0.2s, transform 0.2s;
+}
+
+.pole:hover { border-color: var(--blue-light); }
+
+.pole:focus-visible {
+    outline: 2px solid var(--blue-light);
+    outline-offset: 3px;
+}
+
+.pole__znak     { font-size: 1.1rem; font-weight: 700; color: var(--muted); }
+.pole__etykieta { font-size: 0.55rem; letter-spacing: 0.06em; color: var(--muted); }
+
+/* obsadzone pole — pełna koszulka zamiast pustego okręgu */
+.pole.is-obsadzone {
+    background-color: var(--blue);
+    border-style: solid;
+    border-color: rgba(255, 255, 255, 0.45);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.55);
+}
+
+.pole__numer {
+    font-size: 1rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+/* ---------- twarze ---------- */
+
+/* Na boisku zdjęcie wypełnia cały krążek — tak wyglądają grafiki ze składem
+   i tak trener rozpoznaje zawodnika szybciej niż po numerze. */
+.pole__twarz {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* kadr portretowy ma twarz w górnej części, więc przycinamy od dołu */
+    object-position: top center;
+    border-radius: 50%;
+    background: var(--tlo-zawodnika);
+}
+
+/* Zastępnik dostaje to samo tło co zdjęcie — inaczej dwa obsadzone pola
+   obok siebie wyglądałyby na dwa różne stany, a różnią się tylko tym,
+   że jednemu brakuje fotografii. */
+.pole__twarz--brak {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    color: #FFFFFF;
+}
+
+/* Numer zawsze na plakietce w rogu: środek krążka zajmuje zdjęcie albo
+   inicjały. Wcześniej numer stał pośrodku i zastępnik go zasłaniał. */
+.pole.is-obsadzone .pole__numer {
+    position: absolute;
+    right: -3px;
+    bottom: -3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.15rem;
+    height: 1.15rem;
+    padding: 0 0.2rem;
+    background-color: var(--bg);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 999px;
+    font-size: 0.62rem;
+}
+
+/* Zdjęcie zajmuje całe pole, więc niebieskie tło i tak nie byłoby widoczne —
+   zostaje sama obwódka, która oddziela twarz od murawy. */
+.pole.ma-twarz.is-obsadzone {
+    background-color: transparent;
+    overflow: visible;
+}
+
+.zawodnik__twarz {
+    flex-shrink: 0;
+    width: 2.1rem;
+    height: 2.1rem;
+    object-fit: cover;
+    object-position: top center;
+    border-radius: 50%;
+    background: var(--tlo-zawodnika);
+}
+
+.zawodnik__twarz--brak {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: var(--muted);
+    border: 1px solid var(--line);
+}
+
+.duch__twarz {
+    width: 2.2rem;
+    height: 2.2rem;
+    object-fit: cover;
+    object-position: top center;
+    border-radius: 50%;
+    background: var(--tlo-zawodnika);
+}
+
+.duch__twarz--brak {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* Nazwisko wychodzi poza okrąg — przy dłuższych i tak nie zmieściłoby się
+   w środku, a pod spodem czyta się je tak samo jak na grafikach ze składem. */
+.pole__nazwisko {
+    position: absolute;
+    top: calc(100% + 2px);
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    max-width: 7rem;
+    padding: 1px 5px;
+    background-color: rgba(8, 9, 12, 0.8);
+    border-radius: 4px;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pole__opaska,
+.zawodnik__opaska {
+    font-size: 0.52rem;
+    font-weight: 800;
+    font-style: normal;
+    color: var(--gold);
+}
+
+/* pole pasujące do pozycji wskazanego zawodnika */
+.pole.is-pasuje {
+    border-color: var(--gold);
+    background-color: rgba(255, 185, 0, 0.16);
+}
+
+/* Obsadzone pole nie ma tła ani widocznej ramki — zdjęcie zasłania jedno
+   i drugie. Żeby podpowiedź była widoczna także tam, złotą obrączkę dostaje
+   sam krążek z twarzą. */
+.pole.is-obsadzone.is-pasuje .pole__twarz {
+    box-shadow: 0 0 0 3px var(--gold), 0 0 16px rgba(255, 185, 0, 0.45);
+}
+
+/* pozostałe pola w czasie wybierania — przygaszone, żeby pasujące rzucały się w oczy */
+.pole.is-czeka:not(.is-pasuje) { opacity: 0.55; }
+
+/* pole pod kursorem w trakcie przeciągania */
+.pole.is-cel {
+    transform: translate(-50%, -50%) scale(1.12);
+    border-color: var(--gold);
+    border-style: solid;
+}
+
+.pole.is-ciagniety { opacity: 0.35; }
+
+/* ---------- ławka ---------- */
+
+.lawka {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.lawka__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.9rem 1rem;
+    border-bottom: 1px solid var(--line);
+}
+
+.lawka__head h2 { font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; }
+
+.lawka__licznik {
+    padding: 0.15rem 0.5rem;
+    background-color: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--muted);
+}
+
+.lawka__licznik.is-pelny {
+    border-color: var(--zielony);
+    color: var(--zielony);
+}
+
+.lawka__podpowiedz {
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid var(--line);
+    font-size: 0.7rem;
+    line-height: 1.45;
+    color: var(--muted);
+}
+
+.lawka__lista {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    max-height: 52vh;
+    padding: 0.5rem;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+}
+
+/* Podpis oddzielający rezerwowych — zawodników, których pozycja jest już
+   obsadzona. Bez niego ich przeskok na koniec listy wygląda jak zguba. */
+.lawka__dzial {
+    margin: 0.6rem 0.1rem 0.25rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid var(--line);
+    /* nad pierwszym działem jest już krawędź podpowiedzi — druga kreska
+       tuż pod nią wyglądałaby jak pusty wiersz */
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.lawka__dzial:first-child {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+}
+
+/* Przygaszeni, ale nadal w pełni klikalni: wstawienie trzeciego bramkarza
+   na obronę to decyzja trenera, nie błąd do zablokowania. */
+.zawodnik.is-rezerwa {
+    opacity: 0.62;
+}
+
+.zawodnik.is-rezerwa:hover,
+.zawodnik.is-rezerwa:focus-visible {
+    opacity: 1;
+}
+
+.lawka__pusto {
+    padding: 1.2rem 1rem;
+    font-size: 0.78rem;
+    color: var(--muted);
+}
+
+.zawodnik {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    width: 100%;
+    padding: 0.5rem 0.6rem;
+    text-align: left;
+    background-color: var(--bg-2);
+    border: 1px solid transparent;
+    border-radius: 7px;
+    color: var(--text);
+    font: inherit;
+    cursor: grab;
+    touch-action: none;
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+.zawodnik:hover { border-color: var(--blue); }
+
+.zawodnik:focus-visible {
+    outline: 2px solid var(--blue-light);
+    outline-offset: 1px;
+}
+
+.zawodnik.is-wybrany {
+    border-color: var(--gold);
+    background-color: rgba(255, 185, 0, 0.1);
+}
+
+.zawodnik__numer {
+    flex-shrink: 0;
+    width: 1.7rem;
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--gold);
+}
+
+.zawodnik__kto {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    line-height: 1.2;
+}
+
+.zawodnik__kto strong {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.82rem;
+}
+
+.zawodnik__kto small { font-size: 0.68rem; color: var(--muted); }
+
+.zawodnik__poz {
+    margin-left: auto;
+    flex-shrink: 0;
+    padding: 0.1rem 0.4rem;
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+}
+
+/* ---------- ławka rezerwowych ---------- */
+
+/* Pas pod boiskiem, a nie druga kolumna obok: zmienników jest kilku, a boisko
+   i tak zabiera całą wysokość ekranu — nie ma jej z czego oddać. */
+.rezerwa {
+    margin-top: 1.5rem;
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+.rezerwa__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.9rem 1rem;
+    border-bottom: 1px solid var(--line);
+}
+
+.rezerwa__head h2 { font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; }
+
+.rezerwa__licznik {
+    padding: 0.15rem 0.5rem;
+    background-color: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--muted);
+}
+
+.rezerwa__licznik.is-pelny {
+    border-color: var(--gold);
+    color: var(--gold);
+}
+
+.rezerwa__lista {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    /* niższy pas wyglądałby jak pomyłka w układzie, a nie jak miejsce,
+       w które można coś upuścić */
+    min-height: 5rem;
+    padding: 0.75rem;
+}
+
+.rezerwowy {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.4rem 0.6rem;
+    text-align: left;
+    background-color: var(--bg-2);
+    border: 1px solid transparent;
+    border-radius: 999px;
+    color: var(--text);
+    font: inherit;
+    cursor: grab;
+    touch-action: none;
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+.rezerwowy:hover { border-color: var(--blue); }
+
+.rezerwowy:focus-visible {
+    outline: 2px solid var(--blue-light);
+    outline-offset: 1px;
+}
+
+.rezerwowy.is-ciagniety { opacity: 0.35; }
+
+.rezerwowy__twarz {
+    flex-shrink: 0;
+    width: 1.9rem;
+    height: 1.9rem;
+    object-fit: cover;
+    object-position: top center;
+    border-radius: 50%;
+    background: var(--tlo-zawodnika);
+}
+
+.rezerwowy__twarz--brak {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: var(--muted);
+    border: 1px solid var(--line);
+}
+
+.rezerwowy__kto {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    line-height: 1.2;
+}
+
+.rezerwowy__kto strong {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.8rem;
+}
+
+.rezerwowy__kto small { font-size: 0.66rem; color: var(--muted); }
+
+.rezerwowy__poz {
+    flex-shrink: 0;
+    padding: 0.1rem 0.4rem;
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+}
+
+/* Kafelek „posadź tu": pokazuje się tylko wtedy, gdy ktoś jest już wybrany
+   stuknięciem — stąd złota ramka, bo to ten sam wybór, co na liście. */
+.rezerwa__slot {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 0.9rem;
+    background-color: rgba(255, 185, 0, 0.08);
+    border: 1px dashed var(--gold);
+    border-radius: 999px;
+    color: var(--gold);
+    font: inherit;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.rezerwa__slot:focus-visible {
+    outline: 2px solid var(--blue-light);
+    outline-offset: 1px;
+}
+
+.rezerwa__plus { font-size: 1rem; line-height: 1; }
+
+.rezerwa__pusto {
+    max-width: 44ch;
+    padding: 0.4rem 0.3rem;
+    font-size: 0.72rem;
+    line-height: 1.45;
+    color: var(--muted);
+}
+
+/* W trakcie przeciągania pas mówi, że też jest celem — inaczej jedynym
+   widocznym miejscem do upuszczenia byłoby boisko. */
+.rezerwa.is-czeka {
+    border-style: dashed;
+    border-color: rgba(47, 166, 240, 0.55);
+}
+
+.rezerwa.is-cel {
+    border-style: solid;
+    border-color: var(--gold);
+    background-color: rgba(255, 185, 0, 0.07);
+}
+
+/* Pełna ławka to jedyny gest w panelu, który zostaje bez skutku — mignięcie
+   na czerwono odróżnia odmowę od nietrafionego upuszczenia. */
+.rezerwa.is-pelna {
+    border-color: var(--czerwony);
+    background-color: rgba(206, 63, 61, 0.1);
+}
+
+/* ---------- tryb meczowy na ekranie składu ---------- */
+
+.sklad__stan--mecz {
+    border-color: var(--zielony);
+    color: var(--zielony);
+}
+
+/* Ławka w trakcie meczu jest jedynym miejscem, w którym można coś zrobić —
+   niebieska krawędź odróżnia ją od zamkniętego boiska obok. */
+.lawka--mecz { border-color: rgba(47, 166, 240, 0.35); }
+
+.rezerwa--mecz .rezerwa__lista { align-items: stretch; }
+
+.zmiana {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.4rem 0.7rem;
+    background-color: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+}
+
+.zmiana__minuta {
+    flex-shrink: 0;
+    font-size: 0.8rem;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    color: var(--blue-light);
+}
+
+/* ---------- piłki przy strzelcu ---------- */
+
+/* Piłki zachodzą na siebie jak ułożone monety: trzy zajmują wtedy niewiele
+   więcej miejsca niż jedna i mieszczą się nad krążkiem, zamiast wystawać
+   poza kafelek i wpadać pod sąsiada. Ciemny obrys każdej z nich pilnuje,
+   żeby mimo nachodzenia dało się je policzyć. */
+.gole {
+    display: inline-flex;
+    align-items: center;
+}
+
+.gole .pilka + .pilka { margin-left: -0.3rem; }
+
+/* Na krążku piłki układają się po lewym łuku obwódki — jedna pod drugą,
+   wzdłuż krawędzi, a nie rzędem w poprzek. Rząd zasłaniał twarz albo
+   wychodził poza murawę; łuk korzysta z miejsca, które i tak jest puste. */
+.pole .gole {
+    position: absolute;
+    inset: 0;
+    display: block;
+    padding: 0;
+    background: none;
+    transform: none;
+    pointer-events: none;
+}
+
+.pole .gole .pilka {
+    position: absolute;
+    margin: 0;
+    transform: translate(-50%, -50%);
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6));
+}
+
+/* Trzy punkty na obwodzie: górny lewy, lewy, dolny lewy. */
+.pole .gole .pilka:nth-of-type(1) { left: 6%;  top: 19%; }
+.pole .gole .pilka:nth-of-type(2) { left: -2%; top: 50%; }
+.pole .gole .pilka:nth-of-type(3) { left: 6%;  top: 81%; }
+
+/* Nadwyżka siada tam, gdzie skończyłby się czwarty punkt łuku. */
+.pole .gole b {
+    position: absolute;
+    left: 26%;
+    top: 97%;
+    margin: 0;
+    padding: 0 3px;
+    transform: translate(-50%, -50%);
+    background-color: rgba(8, 9, 12, 0.85);
+    border-radius: 999px;
+}
+
+.pilka {
+    width: 0.95rem;
+    height: 0.95rem;
+    flex-shrink: 0;
+}
+
+.pilka circle {
+    fill: #FFFFFF;
+    stroke: #14171E;
+    stroke-width: 1.7;
+}
+
+.pilka__latka { fill: #14171E; }
+
+.gole b {
+    margin-left: 3px;
+    font-size: 0.62rem;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+}
+
+/* W liście nazwisk piłka idzie w linii tekstu, zaraz za nazwiskiem. */
+.zawodnik__kto .gole,
+.rezerwowy__kto .gole {
+    margin-left: 3px;
+}
+
+/* ---------- tablica wyniku ---------- */
+
+.tablica {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: clamp(0.75rem, 3vw, 2rem);
+    margin-bottom: 1.5rem;
+    padding: 1rem clamp(0.75rem, 3vw, 2rem);
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+}
+
+.tablica__strona {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+}
+
+.tablica__strona b {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.tablica__herb {
+    width: 3.2rem;
+    height: 3.2rem;
+    object-fit: contain;
+}
+
+.tablica__herb--brak {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--muted);
+}
+
+/* Duży cel dla kciuka: bramka pada rzadko, ale zawsze w ruchu. */
+.tablica__plus {
+    width: 2.4rem;
+    height: 2.4rem;
+    background-color: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    color: var(--gold);
+    font: inherit;
+    font-size: 1.3rem;
+    font-weight: 800;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s, transform 0.2s;
+}
+
+.tablica__plus:hover {
+    border-color: var(--gold);
+    transform: translateY(-1px);
+}
+
+.tablica__plus:focus-visible {
+    outline: 2px solid var(--blue-light);
+    outline-offset: 2px;
+}
+
+/* Środkowa kolumna tablicy: stan i zegar nad wynikiem, tak jak na stronie
+   klubu — ten sam układ po obu stronach panelu i witryny. */
+.tablica__srodek {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.tablica__stan {
+    font-size: 0.6rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.tablica__stan--zywo { color: var(--czerwony); }
+
+/* Stałej szerokości cyfry, żeby zegar nie drgał przy każdej sekundzie. */
+.stoper { font-variant-numeric: tabular-nums; }
+
+.tablica__wynik {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: clamp(2rem, 6vw, 2.8rem);
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    color: var(--gold);
+}
+
+.tablica__wynik i { font-style: normal; color: var(--muted); }
+
+/* ---------- okno zmiany ---------- */
+
+.okno {
+    position: fixed;
+    inset: 0;
+    z-index: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.25rem;
+    background-color: rgba(8, 9, 12, 0.72);
+}
+
+.okno[hidden] { display: none; }
+
+.okno__karta {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: min(26rem, 100%);
+    padding: 1.5rem;
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+}
+
+.okno__karta h2 { font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase; }
+
+.okno__kto {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--muted);
+}
+
+.okno__kto strong { color: var(--text); }
+
+.okno__przyciski { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+
+/* ---------- przebieg meczu ---------- */
+
+.przebieg__stan {
+    padding: 0.3rem 0.8rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.przebieg__stan--trwa {
+    border-color: var(--zielony);
+    color: var(--zielony);
+}
+
+.przebieg__stan--koniec {
+    border-color: var(--gold);
+    color: var(--gold);
+}
+
+/* Przerwa to nadal trwający mecz, ale zegar stoi — stąd spokojniejszy,
+   niebieski ton zamiast zielonego „leci". */
+.przebieg__stan--przerwa {
+    border-color: var(--blue-light);
+    color: var(--blue-light);
+}
+
+.przebieg__sterowanie {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+}
+
+.przebieg__sterowanie form { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+
+/* Poprawka stopera: jedno pole i przycisk, w jednej linii z resztą
+   sterowania — to wyjątek, nie codzienność, więc nie zabiera karty. */
+.stoper-poprawka { align-items: center; }
+
+.stoper-poprawka label {
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+}
+
+.stoper-poprawka input[type="number"] {
+    width: 4.5rem;
+    margin-top: 0;
+    padding: 0.4rem 0.5rem;
+    font-size: 0.85rem;
+}
+
+.przebieg__stan b { font-weight: 800; font-variant-numeric: tabular-nums; }
+
+.przebieg__uwaga {
+    flex: 1 1 16rem;
+    font-size: 0.72rem;
+    color: var(--muted);
+}
+
+/* Trzy karty obok siebie na biurku, jedna pod drugą na telefonie — przy
+   linii bocznej liczy się, żeby każdy formularz był w całości na ekranie. */
+.przebieg__formularze {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.przebieg__formularze h2 {
+    margin-bottom: 1rem;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.przebieg__form { display: flex; flex-direction: column; gap: 1rem; }
+
+.przebieg__form .btn { align-self: flex-start; }
+
+.przebieg__podpowiedz {
+    font-size: 0.78rem;
+    line-height: 1.5;
+    color: var(--muted);
+}
+
+.zdarzenia { list-style: none; }
+
+.zdarzenie {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid var(--line);
+}
+
+.zdarzenie:last-child { border-bottom: 0; }
+
+.zdarzenie__minuta {
+    flex-shrink: 0;
+    width: 3rem;
+    font-size: 0.95rem;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    color: var(--gold);
+}
+
+.zdarzenie--gol_rywala .zdarzenie__minuta { color: var(--czerwony); }
+.zdarzenie--zmiana .zdarzenie__minuta { color: var(--blue-light); }
+
+.zdarzenie__tresc { flex: 1; font-size: 0.9rem; }
+.zdarzenie__tresc small { color: var(--muted); }
+
+/* ---------- pasek wyboru (telefon) ---------- */
+
+.pasek-wyboru {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 400;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.8rem 1rem calc(0.8rem + env(safe-area-inset-bottom));
+    background-color: var(--surface);
+    border-top: 1px solid var(--gold);
+    box-shadow: 0 -12px 30px rgba(0, 0, 0, 0.5);
+}
+
+.pasek-wyboru[hidden] { display: none; }
+
+.pasek-wyboru__tresc { display: flex; flex-direction: column; min-width: 0; line-height: 1.25; }
+.pasek-wyboru__kto { font-size: 0.9rem; color: var(--gold); }
+.pasek-wyboru__co { font-size: 0.72rem; color: var(--muted); }
+
+.pasek-wyboru__anuluj {
+    flex-shrink: 0;
+    padding: 0.5rem 1rem;
+    background: none;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: var(--text);
+    font: inherit;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* Na biurku ławka i boisko są obok siebie — pasek nie ma czego przypominać. */
+@media (min-width: 901px) {
+    .pasek-wyboru { display: none; }
+}
+
+/* ---------- kafelek jadący za kursorem ---------- */
+
+.duch {
+    position: fixed;
+    z-index: 500;
+    /* Kąt ustawia skrypt zależnie od kierunku jazdy; przejście wygładza
+       przeskoki między kolejnymi zdarzeniami ruchu i prostuje kafelek
+       po zatrzymaniu ręki. */
+    transform: translate(-50%, -50%);
+    transition: transform 0.12s ease-out;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    padding: 0.4rem 0.6rem;
+    background-color: var(--blue);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 10px;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6);
+    /* duch nie może przechwytywać kursora — pod nim szukamy pola */
+    pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .duch { transition: none; }
+}
+
+.duch__numer    { font-size: 0.95rem; font-weight: 800; line-height: 1; }
+.duch__nazwisko { font-size: 0.65rem; font-weight: 700; white-space: nowrap; }
+
+/* ---------- stopka ---------- */
+
+.sklad__stopka {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--line);
+}
+
+.sklad__uwaga {
+    font-size: 0.72rem;
+    color: var(--muted);
+}
+
+@media (max-width: 900px) {
+    .sklad__plansza {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .boisko {
+        max-height: none;
+        max-width: 32rem;
+    }
+
+    .lawka__lista { max-height: none; }
+
+    .rezerwowy__kto strong { font-size: 0.78rem; }
 }

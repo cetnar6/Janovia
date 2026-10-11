@@ -17,6 +17,15 @@ admin/inc/config.php
 # powstaje na runnerze i na serwerze, nigdy w repozytorium
 admin/inc/fb-token.php
 
+# skład zatwierdzony w panelu trenera. W całości generowany przez panel
+# i wykluczony z wysyłki, więc commit nic by nie dawał — za to łatwo byłoby
+# wrzucić do repozytorium przypadkowe ustawienie z próbnego kliknięcia.
+data/sklad.json
+
+# przebieg meczu dopisywany na żywo w panelu trenera — ten sam powód
+# co wyżej: plik w całości generuje panel
+data/przebieg.json
+
 # baza SQLite — plik binarny z danymi lokalnymi
 dane/
 
