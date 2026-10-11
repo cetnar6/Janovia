@@ -352,7 +352,7 @@ function termin_meczu(array $m): string
     return $dni[(int) date('w', $czas)] . ' ' . date('d.m, H:i', $czas);
 }
 
-naglowek('Skład');
+naglowek('Skład', true, 'tresc--szeroka');
 ?>
 
 <div class="sklad__ekran">
@@ -581,7 +581,7 @@ naglowek('Skład');
         'maksRezerw' => MAKS_REZERWOWYCH,
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>
 </script>
-<script src="js/sklad.js?v=27"></script>
+<script src="js/sklad.js?v=28"></script>
 
 <?php endif; ?>
 

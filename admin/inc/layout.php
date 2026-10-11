@@ -3,7 +3,11 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/auth.php';
 
-function naglowek(string $tytul, bool $zNawigacja = true): void
+/**
+ * @param string $klasa dodatkowa klasa na <main> — ekranom z boiskiem
+ *                      przydaje się szersza kolumna niż reszcie panelu
+ */
+function naglowek(string $tytul, bool $zNawigacja = true, string $klasa = ''): void
 {
     $k = komunikat();
     ?>
@@ -17,7 +21,7 @@ function naglowek(string $tytul, bool $zNawigacja = true): void
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap">
-    <link rel="stylesheet" href="style.css?v=35">
+    <link rel="stylesheet" href="style.css?v=36">
 </head>
 <body>
 
@@ -72,7 +76,7 @@ function naglowek(string $tytul, bool $zNawigacja = true): void
 </header>
 <?php endif; ?>
 
-<main class="tresc">
+<main class="tresc<?= $klasa !== '' ? ' ' . e($klasa) : '' ?>">
 <?php if ($k): ?>
     <p class="komunikat komunikat--<?= e($k['rodzaj']) ?>"><?= e($k['tresc']) ?></p>
 <?php endif; ?>

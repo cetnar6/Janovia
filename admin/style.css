@@ -105,6 +105,12 @@ img { max-width: 100%; display: block; }
     padding: clamp(1.5rem, 4vw, 3rem) clamp(1rem, 4vw, 2.5rem) 4rem;
 }
 
+/* Ekrany z boiskiem dostają szerszą kolumnę: 1100 px dzielone na listę
+   meczów, murawę i ławkę zostawiało krążkom z twarzami po 399 px, czyli
+   mniej, niż ma telefon. Reszta panelu to formularze i tabele — tam
+   szersza kolumna tylko wydłużałaby linijki tekstu. */
+.tresc--szeroka { max-width: 1500px; }
+
 h1 {
     font-size: clamp(1.6rem, 4vw, 2.4rem);
     font-weight: 800;
@@ -511,22 +517,28 @@ td.akcje { white-space: nowrap; font-size: 0; }
 /* Mecze po lewej, reszta ekranu po prawej. Na telefonie lista ląduje nad
    boiskiem — jest krótka, a bez niej nie wiadomo, czyj skład się układa. */
 /* Przebieg ma ten sam układ co skład: lista meczów po lewej, ekran po
-   prawej. Jedna reguła, bo to ta sama decyzja — który mecz oglądamy. */
+   prawej. Jedna reguła, bo to ta sama decyzja — który mecz oglądamy.
+
+   Lista jest wąska i to ona ustępuje: najważniejsze na tym ekranie jest
+   boisko z kafelkami zawodników, a wybór meczu to jedno kliknięcie na
+   początku pracy. Stąd 12–14 rem zamiast 13–17 i węższa przerwa. */
 .sklad__ekran,
 .przebieg__ekran {
     display: grid;
-    grid-template-columns: minmax(13rem, 17rem) minmax(0, 1fr);
-    gap: clamp(1rem, 2vw, 2rem);
+    grid-template-columns: minmax(12rem, 14rem) minmax(0, 1fr);
+    gap: clamp(0.8rem, 1.2vw, 1.3rem);
     align-items: start;
 }
 
 .kolejki {
     position: sticky;
     top: 1rem;
+    /* Długa lista nie może rozpychać strony w pionie — przewija się sama. */
+    max-height: calc(100vh - 2rem);
+    overflow-y: auto;
     background-color: var(--surface);
     border: 1px solid var(--line);
     border-radius: 10px;
-    overflow: hidden;
 }
 
 .kolejki__tytul {
@@ -590,10 +602,38 @@ td.akcje { white-space: nowrap; font-size: 0; }
     color: var(--muted);
 }
 
-@media (max-width: 900px) {
+/* Poniżej 1200 px kolumna obok boiska zabiera mu już tyle, że kafelki
+   zawodników robią się nieczytelne. Lista przenosi się wtedy nad ekran
+   i jedzie poziomo — zajmuje jeden rząd zamiast całej szerokości. */
+@media (max-width: 1200px) {
     .sklad__ekran,
     .przebieg__ekran { grid-template-columns: minmax(0, 1fr); }
-    .kolejki { position: static; }
+
+    .kolejki {
+        position: static;
+        max-height: none;
+    }
+
+    .kolejki__lista {
+        display: flex;
+        gap: 0.5rem;
+        padding: 0.5rem;
+        overflow-x: auto;
+        /* pasek przewijania pod palcem, nie pod kolejnym rzędem kafelków */
+        scroll-snap-type: x proximity;
+    }
+
+    .kolejki__lista li {
+        flex: 0 0 13rem;
+        scroll-snap-align: start;
+    }
+
+    .kolejki__lista li .kolejka {
+        height: 100%;
+        border: 1px solid var(--line);
+        border-left-width: 3px;
+        border-radius: 8px;
+    }
 }
 
 /* ---------- plansza: boisko + ławka ---------- */

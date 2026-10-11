@@ -291,6 +291,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sklad) {
         przekieruj($powrot);
     }
 
+    /* Zamiana miejscami dwóch grających. Panel przysyła same nazwy pól,
+       a nie całe ustawienie — bo boisko w trakcie meczu pokazuje skład PO
+       zmianach, a zapisany jest ten wyjściowy. Odesłanie tego, co widać,
+       zamazałoby wyjściową jedenastkę: zmiennik wpisałby się w miejsce
+       zawodnika, który zaczynał mecz. Zamiana dwóch pól w zapisanym
+       ustawieniu daje ten sam efekt na murawie, a historia zostaje. */
+    if ($akcja === 'ustawienie') {
+        $z_pola = (string) ($_POST['z_pola'] ?? '');
+        $do_pola = (string) ($_POST['do_pola'] ?? '');
+        $dozwolone = pola_formacji((string) $sklad['formacja']);
+
+        $ustawienie = [];
+        $odczytane = json_decode((string) $sklad['ustawienie'], true);
+
+        if (is_array($odczytane)) {
+            foreach ($odczytane as $pole => $id) {
+                $ustawienie[(string) $pole] = (int) $id;
+            }
+        }
+
+        if ($z_pola === $do_pola
+            || !in_array($z_pola, $dozwolone, true)
+            || !in_array($do_pola, $dozwolone, true)
+            || !isset($ustawienie[$z_pola])) {
+            komunikat('Nie da się przestawić tych pozycji.', 'blad');
+            przekieruj($powrot);
+        }
+
+        $kto = $ustawienie[$z_pola];
+
+        if (isset($ustawienie[$do_pola])) {
+            $ustawienie[$z_pola] = $ustawienie[$do_pola];
+        } else {
+            unset($ustawienie[$z_pola]);
+        }
+
+        $ustawienie[$do_pola] = $kto;
+
+        $db->prepare('UPDATE sklady SET ustawienie = ?, zaktualizowano = ? WHERE id = ?')
+           ->execute([json_encode($ustawienie, JSON_UNESCAPED_UNICODE),
+                      date('Y-m-d H:i:s'), $sklad['id']]);
+
+        /* Ustawienie widzi też kibic, więc idzie od razu na stronę. */
+        odswiez_pliki_strony($db);
+        komunikat('Pozycje zamienione.');
+        przekieruj($powrot);
+    }
+
+
     if ($minuta === null) {
         komunikat('Podaj minutę meczu — liczbę od 0 do ' . MAKS_MINUTA
                 . ' albo doliczony czas, np. 45+3.', 'blad');
@@ -602,7 +651,7 @@ function opcje_strzelcow(array $na_boisku, array $reszta, array $wg_id, string $
 
 $poza_boiskiem = array_values(array_diff($kadra, $na_boisku));
 
-naglowek('Przebieg meczu');
+naglowek('Przebieg meczu', true, 'tresc--szeroka');
 ?>
 
 <div class="przebieg__ekran">
@@ -847,6 +896,8 @@ naglowek('Przebieg meczu');
                 Przeciągnij rezerwowego na zawodnika z boiska — to zapisze zmianę.
                 Na telefonie dotknij rezerwowego, a potem tego, kto schodzi.
                 Minutę panel podpowie sam, możesz ją poprawić.
+                Dwóch grających przeciągniętych na siebie zamienia się
+                miejscami — to samo ustawienie, inne pozycje.
             <?php else: ?>
                 Zmiany ruszą po rozpoczęciu meczu. Do tego czasu to podgląd
                 zatwierdzonego składu — zmienisz go w zakładce „Skład".
@@ -856,6 +907,18 @@ naglowek('Przebieg meczu');
         <div class="lawka__lista" id="lawka"></div>
     </section>
 </div>
+
+<?php if ($aktywny): ?>
+    <!-- Przestawienie zawodników na boisku. Formularz jest ukryty, bo gest
+         robi wszystko: przeciągnięcie jednego grającego na drugiego zamienia
+         ich miejscami, a skrypt tylko wysyła wynik. -->
+    <form method="post" id="form-ustawienia" hidden>
+        <?= pole_csrf() ?>
+        <input type="hidden" name="akcja" value="ustawienie">
+        <input type="hidden" name="z_pola" id="pole-z" value="">
+        <input type="hidden" name="do_pola" id="pole-do" value="">
+    </form>
+<?php endif; ?>
 
 <!-- Pas pod planszą: zmiany zrobione w tym meczu, w kolejności minut. -->
 <section class="rezerwa rezerwa--mecz" id="rezerwa" aria-label="Zmiany w tym meczu">
@@ -1206,7 +1269,7 @@ naglowek('Przebieg meczu');
         'zmiany'     => $zmiany,
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>
 </script>
-<script src="js/sklad.js?v=27"></script>
+<script src="js/sklad.js?v=28"></script>
 
 <?php endif; ?>
 

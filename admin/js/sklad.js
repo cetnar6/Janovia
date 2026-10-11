@@ -1045,18 +1045,29 @@
             var naLiscie = pod && pod.closest ? pod.closest('.lawka') : null;
             var wRezerwie = pod && pod.closest ? pod.closest('.rezerwa') : null;
 
-            /* Mecz: jedyny gest, który coś zmienia, to rezerwowy upuszczony
-               na grającego. Wszystko inne kończy się odłożeniem kafelka. */
+            /* Mecz zna dwa gesty: rezerwowy na grającego to zmiana,
+               grający na pole to zamiana miejscami. Reszta kończy się
+               odłożeniem kafelka. */
             if (MECZ) {
                 var zmieniany = pole ? pole.getAttribute('data-zawodnik') : null;
+                var zPola = stan.od.classList.contains('pole')
+                    ? stan.od.getAttribute('data-pole')
+                    : null;
+                var doPola = pole ? pole.getAttribute('data-pole') : null;
 
                 if (stan.duch) { stan.duch.remove(); }
                 ciagniety = null;
                 rezerwa.classList.remove('is-cel');
                 podswietlPola(null);
+
+                if (zPola && doPola && zPola !== doPola) {
+                    przestaw(zPola, doPola);
+                    return;
+                }
+
                 rysuj();
 
-                if (zmieniany && czekaNaWejscie(stan.id)) {
+                if (!zPola && zmieniany && czekaNaWejscie(stan.id)) {
                     otworzOknoZmiany(stan.id, parseInt(zmieniany, 10));
                 }
 
@@ -1094,6 +1105,47 @@
         } else {
             zaznacz(stan.id);
         }
+    }
+
+    /**
+     * Zamiana miejscami dwóch grających — bez ruchu w składzie.
+     *
+     * Na boisku zmienia się nie tylko kto gra, ale i gdzie: obrońca
+     * przechodzi na skrzydło, napastnik cofa się do pomocy. To nie jest
+     * zmiana zawodnika, więc nie zapisujemy zdarzenia, tylko nowe
+     * ustawienie — kibic widzi je na murawie razem z resztą przebiegu.
+     *
+     * Zapis idzie zwykłym formularzem, bo panel i tak przeładowuje stronę
+     * po każdym ruchu; dzięki temu nie ma drugiej drogi do serwera, która
+     * mogłaby pokazywać co innego niż ta pierwsza.
+     */
+    function przestaw(zPola, doPola) {
+        var kto = ustawienie[zPola];
+        var tamten = ustawienie[doPola];
+
+        if (!kto) { return; }
+
+        if (tamten) {
+            ustawienie[zPola] = tamten;
+        } else {
+            delete ustawienie[zPola];
+        }
+
+        ustawienie[doPola] = kto;
+        rysuj();
+
+        var form = document.getElementById('form-ustawienia');
+        var zPolaWejscie = document.getElementById('pole-z');
+        var doPolaWejscie = document.getElementById('pole-do');
+
+        if (!form || !zPolaWejscie || !doPolaWejscie) { return; }
+
+        /* Wysyłamy same nazwy pól, nie całe ustawienie: boisko w trakcie
+           meczu pokazuje skład po zmianach, a zapisany jest wyjściowy —
+           odesłanie tego, co widać, zamazałoby pierwszą jedenastkę. */
+        zPolaWejscie.value = zPola;
+        doPolaWejscie.value = doPola;
+        form.submit();
     }
 
     function obsluzStukniecieWPole(el) {
@@ -1136,11 +1188,11 @@
         var cel = e.target.closest ? e.target.closest('.zawodnik, .pole, .rezerwowy') : null;
         if (!cel) { return; }
 
-        /* W meczu ciągnie się wyłącznie rezerwowych — grający nie ma dokąd
-           pojechać, a gest bez skutku czyta się jak awaria. Ale stuknięcie
-           w grającego musi działać, bo to druga połowa zmiany robionej
-           palcem: najpierw rezerwowy, potem ten, który schodzi. */
-        if (MECZ && !cel.classList.contains('zawodnik')) {
+        /* W meczu ciągnie się rezerwowych (to zmiana) i grających (to
+           zamiana miejscami). Puste pole dalej nie ma czego oddać, więc
+           kończy się na stuknięciu — tak samo jak dotąd. */
+        if (MECZ && !cel.classList.contains('zawodnik')
+            && !(cel.classList.contains('pole') && cel.getAttribute('data-zawodnik'))) {
             if (cel.classList.contains('pole')) {
                 e.preventDefault();
                 obsluzStukniecieWPole(cel);
