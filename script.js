@@ -1072,12 +1072,11 @@
                    '<span class="druzyna__rywal">' + esc(skrot(rywal)) +
                        '<small>' + (uSiebie ? 'u siebie' : 'wyjazd') + '</small>' +
                    '</span>' +
-                   /* Wynik i znak w jednej komórce, tak jak w terminarzu:
-                      znak należy do tego meczu, więc stoi tuż przy wyniku,
-                      a nie przyklejony do prawej krawędzi wiersza. Miejsce
-                      na niego jest zawsze, żeby wyniki stały w jednej osi. */
+                   /* Znak i wynik w jednej komórce: znak po lewej od wyniku,
+                      żeby kolorowy kafelek wyniku kończył wiersz. Miejsce na
+                      znak jest w każdym wierszu, także bez przebiegu — inaczej
+                      wyniki straciłyby wspólną oś. */
                    '<span class="druzyna__prawa">' +
-                       prawa +
                        '<span class="wynik__znak' + (szczegoly ? '' : ' is-pusty') + '"' +
                            ' aria-hidden="true">' +
                            (szczegoly
@@ -1088,6 +1087,7 @@
                                  '</svg>'
                                : '') +
                        '</span>' +
+                       prawa +
                    '</span>' +
                '</li>';
     }
