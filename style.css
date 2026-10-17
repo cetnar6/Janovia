@@ -1984,13 +1984,6 @@ a.marquee__item {
 }
 
 @media (max-width: 620px) {
-    /* Czwarta kolumna i tak znika, więc znak idzie pod wiersz zamiast
-       ściskać nazwy klubów. */
-    .wynik__akcje {
-        grid-column: 1 / -1;
-        margin-top: 0.3rem;
-    }
-
     .wynik {
         /* czwarta kolumna nie zmieściłaby się obok nazw klubów, więc termin
            przenosimy do osobnego wiersza nad meczem, na całą szerokość */
@@ -3220,6 +3213,22 @@ a.marquee__item {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+/* Na wąskim ekranie wiersz ma trzy kolumny i termin w osobnym rzędzie,
+   więc sztywne „rząd 1, kolumna 5" rozsadzało siatkę: znak rezerwował
+   piątą kolumnę, a drużyny spadały pod niego. Tutaj wraca do zwykłego
+   przepływu — pod mecz, przy prawej krawędzi.
+
+   Reguła stoi PO bazowej, nie w bloku z resztą telefonu wyżej w pliku:
+   przy równej specyficzności decyduje kolejność, a tamta przegrywała. */
+@media (max-width: 620px) {
+    .wynik__akcje {
+        grid-row: auto;
+        grid-column: 1 / -1;
+        justify-content: flex-end;
+        margin-top: 0.2rem;
+    }
 }
 
 /* Pusty znak trzyma miejsce w panelu drużyny, gdzie stoi przy wyniku. */
