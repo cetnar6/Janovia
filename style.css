@@ -2024,6 +2024,10 @@ a.marquee__item {
 
     .wynik__rezultat {
         min-width: 58px;
+        /* Wynik równo z górą herbów, a nie na środku komórki: dół środkowej
+           kolumny zostaje wtedy wolny dla znaku przebiegu. */
+        align-self: start;
+        margin-top: 0.25rem;
     }
 }
 
@@ -3225,15 +3229,19 @@ a.marquee__item {
    Reguła stoi PO bazowej, nie w bloku z resztą telefonu wyżej w pliku:
    przy równej specyficzności decyduje kolejność, a tamta przegrywała. */
 @media (max-width: 620px) {
-    /* Znak siada w prawym górnym rogu wiersza, obok terminu. Osobny rząd
-       pod meczem wydłużał wiersz o całą wysokość kwadracika — i to tylko
-       tam, gdzie jest przebieg, więc lista falowała. Pozycja bezwzględna
-       nie zajmuje miejsca w siatce, a obok wyśrodkowanej daty i tak stoi
-       pusto. */
+    /* Znak siada pod wynikiem, w tej samej, środkowej komórce. Miejsce
+       tam i tak zostaje puste: kolumny drużyn są wyższe, bo trzymają herb
+       i nazwę. Osobny rząd pod meczem wydłużał za to wiersz o całą
+       wysokość kwadracika — i tylko tam, gdzie jest przebieg, więc lista
+       falowała. */
     .wynik__akcje {
+        /* Poza siatką, bo wskazanie komórki wywracało automatyczne
+           rozmieszczenie reszty: zajęte pole spychało wynik na trzecią
+           kolumnę, a drużynę gości do nowego rzędu. */
         position: absolute;
-        top: 0.55rem;
-        right: 0.5rem;
+        left: 50%;
+        bottom: 0.5rem;
+        transform: translateX(-50%);
         margin: 0;
     }
 
