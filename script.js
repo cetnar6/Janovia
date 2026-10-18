@@ -1508,7 +1508,21 @@
         var poMeczu = nasz && PRZEBIEG.stan === 'koniec';
 
         if (!trwa && !poMeczu) {
-            return '<span class="spotkanie__vs">vs</span>';
+            /* Mecz rozegrany wypada z przebiegu przy pierwszym zapisie
+               następnego, a wynik zostaje w wynikach z panelu albo
+               w terminarzu — wtedy bierzemy go stamtąd zamiast pisać „vs"
+               nad meczem, który już się odbył. */
+            var wpis = szczegolyMeczu(m);
+            var gotowy = (wpis && wpis.wynik) || m.wynik;
+
+            if (!gotowy) {
+                return '<span class="spotkanie__vs">vs</span>';
+            }
+
+            return '<div class="spotkanie__wynik">' +
+                       '<span class="spotkanie__stan">Po meczu</span>' +
+                       '<strong>' + esc(String(gotowy).replace('-', ':')) + '</strong>' +
+                   '</div>';
         }
 
         var uSiebie = m.gospodarz === NASZ_KLUB;
@@ -1874,7 +1888,7 @@
         var box = document.getElementById('mecz-szczegoly');
         if (!box) { return; }
 
-        var mecz = (DANE_LIGI && DANE_LIGI.nadchodzace && DANE_LIGI.nadchodzace[0]) || null;
+        var mecz = meczStronyMeczu();
         var rywal = mecz
             ? (mecz.gospodarz === NASZ_KLUB ? mecz.gosc : mecz.gospodarz)
             : 'Rywal';
@@ -1890,9 +1904,14 @@
             znacznik.classList.toggle('is-pauza', pauza);
         }
 
-        var zdarzenia = (nasz && PRZEBIEG.zdarzenia) || [];
+        /* Przebieg opisuje tylko jedno spotkanie — to, które panel prowadzi.
+           Mecz sprzed godziny wypada z niego przy pierwszym zapisie następnego
+           (albo po nocnym cronie), więc oś czasu dociągamy wtedy z wyników,
+           gdzie zostaje na stałe. */
+        var rozegrany = !nasz ? szczegolyMeczu(mecz) : null;
+        var zdarzenia = nasz ? (PRZEBIEG.zdarzenia || []) : ((rozegrany && rozegrany.zdarzenia) || []);
 
-        if (!nasz || (PRZEBIEG.stan === 'przed' && !zdarzenia.length)) {
+        if ((!nasz && !zdarzenia.length) || (nasz && PRZEBIEG.stan === 'przed' && !zdarzenia.length)) {
             box.innerHTML = '<p class="sklad__brak">' +
                 'Mecz jeszcze się nie zaczął. Bramki, ich strzelcy i zmiany ' +
                 'pojawią się tutaj na żywo, gdy tylko sędzia odgwiżdże początek.</p>';
@@ -1960,7 +1979,7 @@
 
         if (!karta || !MAMY.liga || !MAMY.sklad || !MAMY.przebieg) { return; }
 
-        var mecz = (DANE_LIGI && DANE_LIGI.nadchodzace && DANE_LIGI.nadchodzace[0]) || null;
+        var mecz = meczStronyMeczu();
         var opis = document.getElementById('mecz-opis');
         var box = document.getElementById('mecz-sklad');
 
@@ -1984,6 +2003,7 @@
         /* Skład tylko wtedy, gdy jest z tego meczu — inaczej kibic czytałby
            ustawienie sprzed tygodnia jako zapowiedź najbliższego spotkania. */
         var naszSklad = skladTegoMeczu(mecz);
+        var wpis = !naszSklad ? szczegolyMeczu(mecz) : null;
 
         box.innerHTML = naszSklad
             ? '<p class="sklad__meta">' +
@@ -1993,6 +2013,28 @@
               '<div class="skladsiatka">' + rysujMurawe() + pasRezerwowych() + '</div>'
             : '<p class="sklad__brak">Skład na ten mecz nie został jeszcze ogłoszony. ' +
               'Pojawi się tutaj, gdy trener go zatwierdzi.</p>';
+
+        /* Po meczu skład najbliższego spotkania jest już inny, a ten rozegrany
+           leży w osobnym pliku ze składami meczów — dociągamy go dopiero tutaj,
+           bo waży dziesięć razy tyle co sam wynik. */
+        if (!naszSklad && wpis) {
+            wczytajSklady().then(function (sklady) {
+                var sklad = sklady.mecze ? sklady.mecze[kluczMeczu(mecz)] : null;
+
+                if (!sklad || meczStronyMeczu() !== mecz) { return; }
+
+                box.innerHTML =
+                    '<p class="sklad__meta">ustawienie ' + esc(sklad.formacja) + '</p>' +
+                    '<div class="skladsiatka">' +
+                        rysujMurawe(sklad, zdarzeniaMeczu(mecz)) +
+                        pasRezerwowych(sklad, zdarzeniaMeczu(mecz)) +
+                    '</div>';
+
+                obserwuj(box.querySelectorAll('[data-reveal]'));
+                Array.prototype.forEach.call(box.querySelectorAll('[data-reveal]'),
+                    function (el) { el.classList.add('is-in'); });
+            });
+        }
 
         rysujSzczegoly();
         pilnujZegara();
@@ -2013,10 +2055,65 @@
      * Plik bez klucza jest sprzed tej zmiany — wtedy nie zgadujemy i nie
      * pokazujemy nic, bo właśnie takie pliki bywają nieaktualne.
      */
+    /* Zdarzenia tego meczu — z przebiegu, gdy panel wciąż go prowadzi,
+       inaczej z wyników. Potrzebne tam, gdzie rysujemy piłki i kartki przy
+       zawodnikach. */
+    function zdarzeniaMeczu(mecz) {
+        if (przebiegTegoMeczu(mecz)) { return PRZEBIEG.zdarzenia || []; }
+
+        var wpis = szczegolyMeczu(mecz);
+
+        return (wpis && wpis.zdarzenia) || [];
+    }
+
     function skladTegoMeczu(mecz) {
         if (!SKLAD || !mecz) { return false; }
 
         return !!SKLAD.mecz && SKLAD.mecz === kluczMeczu(mecz);
+    }
+
+    /**
+     * Które spotkanie pokazuje strona meczu.
+     *
+     * Rozegrany mecz zostaje tu aż do następnego — po gwizdku kibic szuka
+     * składu i przebiegu tego, co właśnie obejrzał, a nie zapowiedzi meczu
+     * za tydzień. Terminarz przeskakuje na kolejną kolejkę już dwie godziny
+     * po pierwszym gwizdku i to on wcześniej decydował, co tu widać.
+     *
+     * Nowy mecz przejmuje stronę, gdy jest o czym mówić: trener ogłosił
+     * skład albo sędzia już gwizdnął. Sam przeskok terminarza nie wystarczy.
+     *
+     * Rozegrany pokazujemy tylko wtedy, gdy mamy jego przebieg albo wynik
+     * z panelu — inaczej strona nie miałaby czym wypełnić obu zakładek.
+     */
+    function meczStronyMeczu() {
+        var nadchodzacy = (DANE_LIGI && DANE_LIGI.nadchodzace && DANE_LIGI.nadchodzace[0]) || null;
+
+        if (nadchodzacy
+            && (skladTegoMeczu(nadchodzacy)
+                || (przebiegTegoMeczu(nadchodzacy) && PRZEBIEG.stan !== 'przed'))) {
+            return nadchodzacy;
+        }
+
+        var wszystkie = (DANE_LIGI && DANE_LIGI.wszystkie_mecze) || [];
+        var teraz = Date.now();
+        var ostatni = null;
+
+        wszystkie.forEach(function (m) {
+            if (!m.data_iso || m.data_przyblizona) { return; }
+            if (m.gospodarz !== NASZ_KLUB && m.gosc !== NASZ_KLUB) { return; }
+
+            var start = new Date(m.data_iso).getTime();
+
+            if (isNaN(start) || start > teraz) { return; }
+            if (!szczegolyMeczu(m) && !przebiegTegoMeczu(m)) { return; }
+
+            if (!ostatni || start > new Date(ostatni.data_iso).getTime()) {
+                ostatni = m;
+            }
+        });
+
+        return ostatni || nadchodzacy;
     }
 
     /* Przycisk pod odliczaniem leży w index.html z atrybutem hidden i odsłania
