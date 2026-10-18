@@ -757,11 +757,24 @@ function opublikuj_przebieg(PDO $db): void
  */
 function brakujace_pliki_strony(): array
 {
+    require_once __DIR__ . '/sklad.php';
+
     $braki = [];
 
     foreach ([plik_przebiegu(), plik_wynikow(), plik_skladow()] as $plik) {
         if (!is_file($plik)) {
             $braki[] = basename($plik);
+        }
+    }
+
+    /* Skład sprzed dopisania klucza meczu liczy się jak brakujący: strona
+       nie wie wtedy, którego spotkania dotyczy, więc go nie pokaże. Jedno
+       wejście do panelu przepisuje plik razem z kluczem. */
+    if (is_file(plik_skladu())) {
+        $sklad = json_decode((string) file_get_contents(plik_skladu()), true);
+
+        if (!is_array($sklad) || !array_key_exists('mecz', $sklad)) {
+            $braki[] = basename(plik_skladu());
         }
     }
 

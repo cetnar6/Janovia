@@ -1981,7 +1981,11 @@
 
         if (!box) { return; }
 
-        box.innerHTML = SKLAD && SKLAD.pola && SKLAD.pola.length
+        /* Skład tylko wtedy, gdy jest z tego meczu — inaczej kibic czytałby
+           ustawienie sprzed tygodnia jako zapowiedź najbliższego spotkania. */
+        var naszSklad = skladTegoMeczu(mecz);
+
+        box.innerHTML = naszSklad
             ? '<p class="sklad__meta">' +
                   (SKLAD.opis ? esc(SKLAD.opis) + ' · ' : '') +
                   'ustawienie ' + esc(SKLAD.formacja) +
@@ -1997,6 +2001,24 @@
         obserwuj(box.querySelectorAll('[data-reveal]'));
     }
 
+    /**
+     * Czy zatwierdzony skład dotyczy tego spotkania.
+     *
+     * Plik ze składem przeżywał swój mecz: gdy terminarz przeskakiwał na
+     * kolejną kolejkę, kibic dalej dostawał ustawienie z poprzedniego
+     * spotkania — bo panel publikuje skład najbliższego meczu, ale nikt nie
+     * sprzątał pliku po gwizdku. Teraz skład niesie klucz meczu i pokazujemy
+     * go tylko przy tym meczu.
+     *
+     * Plik bez klucza jest sprzed tej zmiany — wtedy nie zgadujemy i nie
+     * pokazujemy nic, bo właśnie takie pliki bywają nieaktualne.
+     */
+    function skladTegoMeczu(mecz) {
+        if (!SKLAD || !mecz) { return false; }
+
+        return !!SKLAD.mecz && SKLAD.mecz === kluczMeczu(mecz);
+    }
+
     /* Przycisk pod odliczaniem leży w index.html z atrybutem hidden i odsłania
        się dopiero tutaj. Brak pliku (trener nic nie zatwierdził) to normalny
        stan — pobierzJSON zwraca wtedy null. */
@@ -2004,10 +2026,7 @@
         SKLAD = dane && dane.pola && dane.pola.length ? dane : null;
         MAMY.sklad = true;
 
-        var btn = document.getElementById('pokaz-sklad');
-
-        if (btn && SKLAD) { btn.hidden = false; }
-
+        pilnujPrzyciskuSkladu();
         sprobujStroneMeczu();
     }
 
@@ -2073,7 +2092,21 @@
     }
 
     /* Herby i podpis pod zegarem — wspólne dla meczu nadchodzącego i trwającego. */
+    /* Mecz, który pokazuje odliczanie na stronie głównej. Trzymamy go, bo
+       przycisk „Pokaż skład" zależy od tego, czy zatwierdzony skład jest
+       z TEGO spotkania — a plik ze składem i terminarz przychodzą osobno. */
+    var meczOdliczania = null;
+
+    function pilnujPrzyciskuSkladu() {
+        var btn = document.getElementById('pokaz-sklad');
+
+        if (btn) { btn.hidden = !skladTegoMeczu(meczOdliczania); }
+    }
+
     function wypiszMecz(m) {
+        meczOdliczania = m;
+        pilnujPrzyciskuSkladu();
+
         var teams = document.querySelector('.countdown__teams');
         if (teams) {
             teams.innerHTML =

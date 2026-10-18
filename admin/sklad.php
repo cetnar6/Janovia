@@ -227,7 +227,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $gotowa) {
            wcześniej czeka w panelu i pojedzie sam, gdy jego mecz stanie się
            tym najbliższym — pilnuje tego cron. */
         if ($to_biezacy) {
-            opublikuj_sklad($zawodnicy, $formacja, $ustawienie, $rezerwowi, $nazwa);
+            opublikuj_sklad($zawodnicy, $formacja, $ustawienie, $rezerwowi, $nazwa,
+                            $wybrany['klucz'] ?? null);
             komunikat('Skład zatwierdzony — przycisk „Pokaż skład” jest już widoczny na stronie.'
                       . $na_lawce);
         } else {

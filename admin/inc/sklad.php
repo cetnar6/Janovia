@@ -129,7 +129,8 @@ function opublikuj_sklad(
     string $formacja,
     array $ustawienie,
     array $rezerwowi,
-    string $opis
+    string $opis,
+    ?string $klucz = null
 ): void {
     $sklad = sklad_do_publikacji($zawodnicy, $formacja, $ustawienie, $rezerwowi);
 
@@ -138,6 +139,10 @@ function opublikuj_sklad(
 
     $json = json_encode([
         'zaktualizowano' => date('c'),
+        /* Czyj to skład. Bez tego plik przeżywał swój mecz: po przeskoku
+           terminarza na kolejną kolejkę strona dalej pokazywała ustawienie
+           z poprzedniego spotkania, bo nie miała jak poznać, że jest stare. */
+        'mecz'           => $klucz,
         'opis'           => $opis,
         'formacja'       => $formacja,
         'pola'           => $pola,
@@ -171,6 +176,7 @@ function ukryj_sklad(): void
 
     file_put_contents(plik_skladu(), json_encode([
         'zaktualizowano' => date('c'),
+        'mecz'           => null,
         'opis'           => '',
         'formacja'       => '',
         'pola'           => [],
@@ -231,7 +237,8 @@ function opublikuj_sklad_biezacy(PDO $db): bool
         ? (string) $sklad['formacja']
         : formacja_domyslna();
 
-    opublikuj_sklad($zawodnicy, $formacja, $ustawienie, $rezerwowi, (string) $sklad['nazwa']);
+    opublikuj_sklad($zawodnicy, $formacja, $ustawienie, $rezerwowi,
+                    (string) $sklad['nazwa'], $sklad['mecz_klucz'] ?? null);
 
     return true;
 }
