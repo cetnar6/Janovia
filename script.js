@@ -621,8 +621,13 @@
         var stopka = document.getElementById('tabela-zrodlo');
         if (stopka) {
             var d = new Date(dane.zaktualizowano);
+            var zPanelu = dane.tabela.some(function (w) { return w.z_panelu; });
+
             stopka.textContent = dane.liga + ' · dane z 90minut.pl, aktualizacja ' +
-                pad(d.getDate()) + '.' + pad(d.getMonth() + 1) + '.' + d.getFullYear();
+                pad(d.getDate()) + '.' + pad(d.getMonth() + 1) + '.' + d.getFullYear() +
+                (zPanelu
+                    ? ' · uwzględniono wynik ostatniego meczu Janovii, zanim trafi na 90minut'
+                    : '');
         }
     }
 
@@ -2160,6 +2165,10 @@
     function uzupelnijWynikiZPanelu(dane, wyniki) {
         if (!wyniki || !wyniki.mecze) { return; }
 
+        /* Mecze, które dopisaliśmy z panelu — tabela musi je policzyć tak
+           samo, inaczej wynik widnieje w terminarzu, a punktów nie ma. */
+        var dopisane = [];
+
         var listy = [
             dane.wszystkie_mecze,
             dane.nadchodzace,
@@ -2178,9 +2187,94 @@
                 if (nasz && nasz.wynik) {
                     m.wynik = nasz.wynik;
                     m.wynik_z_panelu = true;
+
+                    if (lista === dane.wszystkie_mecze) {
+                        dopisane.push(m);
+                    }
                 }
             });
         });
+
+        uzupelnijTabeleZPanelu(dane, dopisane);
+    }
+
+    /**
+     * Dopisuje do tabeli mecze, o których 90minut jeszcze nie wie.
+     *
+     * Rezultat wpisuje tam sędzia albo gospodarz, czasem w poniedziałek —
+     * a my znamy swój w chwili końcowego gwizdka. Bez tego kibic widział
+     * w terminarzu wygraną, a w tabeli te same punkty co przed meczem.
+     *
+     * Liczymy tylko to, co wiemy na pewno: nasze spotkanie zmienia wiersz
+     * Janovii i wiersz rywala. Reszta tabeli zostaje nietknięta.
+     */
+    function uzupelnijTabeleZPanelu(dane, dopisane) {
+        if (!dopisane.length || !dane.tabela || !dane.tabela.length) { return; }
+
+        var wiersz = function (klub) {
+            for (var i = 0; i < dane.tabela.length; i++) {
+                if (dane.tabela[i].klub === klub) { return dane.tabela[i]; }
+            }
+
+            return null;
+        };
+
+        var zmienione = false;
+
+        dopisane.forEach(function (m) {
+            var gol = String(m.wynik).split('-');
+            var gospodarze = parseInt(gol[0], 10);
+            var goscie = parseInt(gol[1], 10);
+
+            if (isNaN(gospodarze) || isNaN(goscie)) { return; }
+
+            [[m.gospodarz, gospodarze, goscie], [m.gosc, goscie, gospodarze]]
+                .forEach(function (para) {
+                    var w = wiersz(para[0]);
+
+                    if (!w) { return; }
+
+                    var bramki = String(w.bramki || '0-0').split('-');
+                    var strzelone = (parseInt(bramki[0], 10) || 0) + para[1];
+                    var stracone = (parseInt(bramki[1], 10) || 0) + para[2];
+
+                    w.m = (w.m || 0) + 1;
+                    w.z = (w.z || 0) + (para[1] > para[2] ? 1 : 0);
+                    w.r = (w.r || 0) + (para[1] === para[2] ? 1 : 0);
+                    w.p = (w.p || 0) + (para[1] < para[2] ? 1 : 0);
+                    w.pkt = (w.pkt || 0) + (para[1] > para[2] ? 3 : (para[1] === para[2] ? 1 : 0));
+                    w.bramki = strzelone + '-' + stracone;
+                    w.z_panelu = true;
+
+                    zmienione = true;
+                });
+        });
+
+        if (!zmienione) { return; }
+
+        /* Kolejność jak w tabeli ligowej: punkty, różnica bramek, bramki
+           strzelone. Przy równych wszystkich trzech zostaje ta z 90minut —
+           bezpośrednich meczów nie rozstrzygamy, bo to już nie nasza decyzja. */
+        var roznica = function (w) {
+            var b = String(w.bramki || '0-0').split('-');
+
+            return (parseInt(b[0], 10) || 0) - (parseInt(b[1], 10) || 0);
+        };
+
+        var strzelone = function (w) {
+            return parseInt(String(w.bramki || '0-0').split('-')[0], 10) || 0;
+        };
+
+        var przed = dane.tabela.slice();
+
+        dane.tabela.sort(function (a, b) {
+            return (b.pkt - a.pkt)
+                || (roznica(b) - roznica(a))
+                || (strzelone(b) - strzelone(a))
+                || (przed.indexOf(a) - przed.indexOf(b));
+        });
+
+        dane.tabela.forEach(function (w, i) { w.poz = i + 1; });
     }
 
     function rysujOdliczanie(dane) {
