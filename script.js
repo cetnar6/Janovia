@@ -1529,7 +1529,7 @@
             }
 
             return '<div class="spotkanie__wynik">' +
-                       '<span class="spotkanie__stan">Po meczu</span>' +
+                       '<span class="spotkanie__stan">Zakończony</span>' +
                        '<strong>' + esc(String(gotowy).replace('-', ':')) + '</strong>' +
                    '</div>';
         }
@@ -1542,7 +1542,7 @@
 
         return '<div class="spotkanie__wynik' + (trwa && !pauza ? ' spotkanie__wynik--zywo' : '') + '">' +
                    '<span class="spotkanie__stan">' +
-                       (trwa ? (pauza ? 'Przerwa' : 'Na żywo') : 'Po meczu') +
+                       (trwa ? (pauza ? 'Przerwa' : 'Na żywo') : 'Zakończony') +
                        (trwa && czas !== null
                            ? ' · <b class="tablica__zegar" id="zegar">' + czas + '</b>'
                            : '') +
@@ -2419,7 +2419,7 @@
 
         if (stanOdliczania) {
             stanOdliczania.textContent = poMeczu
-                ? 'Po meczu'
+                ? 'Zakończony'
                 : (pauza ? 'Przerwa' : 'Na żywo') + (czas !== null ? ' · ' + czas : '');
         }
 

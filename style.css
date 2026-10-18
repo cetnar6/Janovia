@@ -3027,6 +3027,10 @@ a.marquee__item {
     min-height: 78px;
 }
 
+@media (min-width: 900px) {
+    .spotkanie__stan { font-size: 0.72rem; }
+}
+
 .spotkanie__stan {
     font-size: 0.6rem;
     font-weight: 800;
@@ -3039,7 +3043,10 @@ a.marquee__item {
 .spotkanie__wynik--zywo .spotkanie__stan { color: #FF8B89; }
 
 .spotkanie__wynik strong {
-    font-size: clamp(2rem, 6vw, 2.8rem);
+    /* Na dużym ekranie wynik rośnie wyraźnie: to po niego kibic wchodzi
+       na stronę meczu, a karta ma tam tyle miejsca, że 2.8 rem między
+       herbami wyglądało jak przypis. Telefon zostaje przy dolnej granicy. */
+    font-size: clamp(2.2rem, 6vw, 4.6rem);
     font-weight: 800;
     font-variant-numeric: tabular-nums;
     line-height: 1;
