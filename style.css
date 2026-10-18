@@ -3110,13 +3110,20 @@ a.marquee__item {
     padding-top: calc(96px + clamp(2.5rem, 8vh, 5rem));
 }
 
-/* Oddech między kartą spotkania a składem — mniejszy niż pełny odstęp
-   sekcji, bo to dalej ten sam mecz, tylko inne spojrzenie. */
-.head--sklad {
-    margin-top: clamp(2.5rem, 6vh, 4.5rem);
+/* Oddech między kartą spotkania a tym, co pod nią: zakładkami przed
+   meczem, przebiegiem po meczu. Mniejszy niż pełny odstęp sekcji, bo to
+   dalej ten sam mecz, tylko inne spojrzenie. */
+.zakladki,
+#panel-szczegoly:first-of-type {
+    margin-top: clamp(1.5rem, 4vh, 2.5rem);
 }
 
 /* ---------- zakładki: skład / szczegóły ---------- */
+
+/* Reguła display wygrywa z domyślnym [hidden], więc po meczu, gdy obie
+   sekcje stoją pod sobą i nie ma czego przełączać, trzeba je schować
+   wprost — inaczej zostawał pasek przycisków bez zadania. */
+.zakladki[hidden] { display: none; }
 
 .zakladki {
     display: flex;

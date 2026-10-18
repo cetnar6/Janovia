@@ -19,12 +19,16 @@
 
     if (window.Lenis && !reduced) {
         lenis = new window.Lenis({
-            // szybki start, długie wytracanie — kółko myszy „niesie" stronę
-            duration: 1.05,
-            easing: function (t) { return 1 - Math.pow(1 - t, 4); },
+            /* Krótki dojazd zamiast długiego „niesienia" strony: przy 1.05 s
+               kółko myszy zostawiało wrażenie, że strona jedzie jeszcze długo
+               po tym, jak się je puściło — zwłaszcza przy szybkim szukaniu
+               czegoś w terminarzu. Pół sekundy wygładza skok, a nie opóźnia
+               reakcji. */
+            duration: 0.5,
+            easing: function (t) { return 1 - Math.pow(1 - t, 3); },
             // skoki do #kotwic przejmuje Lenis; natywne smooth jest wyłączone
             // w CSS regułą html:not(.lenis), żeby ruchy się nie nakładały
-            anchors: { offset: -70, duration: 1.3 },
+            anchors: { offset: -70, duration: 0.8 },
             autoRaf: true
         });
     }
@@ -1547,6 +1551,15 @@
                '</div>';
     }
 
+    /** Czy to spotkanie mamy już za sobą — razem z wynikiem w ręku. */
+    function meczRozegrany(m) {
+        if (!m) { return false; }
+
+        if (przebiegTegoMeczu(m)) { return PRZEBIEG.stan === 'koniec'; }
+
+        return !!szczegolyMeczu(m) || !!m.wynik;
+    }
+
     /** Karta z danymi spotkania: herby, termin, miejsce, forma obu drużyn. */
     function kartaSpotkania(m, dane) {
         var kiedy = terminSlownie(m);
@@ -1568,6 +1581,11 @@
                        '</div>' +
                    '</div>' +
 
+                   /* Po meczu termin, kolejka i droga na stadion są już
+                      nikomu niepotrzebne — w ich miejsce idzie przebieg
+                      spotkania. Przed meczem zostają, bo to po nie się tu
+                      wtedy przychodzi. */
+                   (meczRozegrany(m) ? '' :
                    '<dl class="spotkanie__dane">' +
                        '<div><dt>Termin</dt><dd>' + esc(kiedy) + '</dd></div>' +
                        '<div><dt>Rozgrywki</dt><dd>' +
@@ -1579,10 +1597,49 @@
                            ' <a class="spotkanie__mapa" href="' + linkMapy(m.gospodarz) + '"' +
                                ' target="_blank" rel="noopener">pokaż na mapie</a>' +
                        '</dd></div>' +
-                   '</dl>' +
+                   '</dl>') +
 
                    uwagaMeczu(m, 'spotkanie__uwaga') +
                '</article>';
+    }
+
+    /**
+     * Zakładki przed meczem, dwie sekcje pod sobą po meczu.
+     *
+     * Przed gwizdkiem przełącznik ma sens: zapowiedź to głównie skład,
+     * a szczegóły są jeszcze puste. Po meczu kibic chce obu — i najpierw
+     * tego, co się działo, więc przebieg idzie nad skład, w miejsce po
+     * terminie i drodze na stadion, których karta już nie pokazuje.
+     */
+    function ulozPanele(poMeczu) {
+        var zakladki = document.querySelector('.zakladki');
+        var sklad = document.getElementById('panel-sklad');
+        var szczegoly = document.getElementById('panel-szczegoly');
+
+        if (!zakladki || !sklad || !szczegoly) { return; }
+
+        zakladki.hidden = poMeczu;
+
+        var pierwszy = poMeczu ? szczegoly : sklad;
+        var drugi = poMeczu ? sklad : szczegoly;
+
+        if (pierwszy.nextElementSibling !== drugi) {
+            drugi.parentNode.insertBefore(pierwszy, drugi);
+        }
+
+        if (poMeczu) {
+            sklad.hidden = false;
+            szczegoly.hidden = false;
+        }
+
+        /* Po meczu znikają zakładki, ale ich stan zostaje w atrybutach —
+           gdyby strona wróciła do zapowiedzi (nowy mecz), pokazujemy znów
+           ten panel, który wybrano ostatnio. */
+        if (!poMeczu) {
+            var aktywna = document.querySelector('.zakladka.is-aktywna');
+
+            pokazZakladke(aktywna ? aktywna.getAttribute('data-panel') : 'sklad');
+        }
     }
 
     /* ---------- zakładki: skład / szczegóły ---------- */
@@ -2040,6 +2097,8 @@
                     function (el) { el.classList.add('is-in'); });
             });
         }
+
+        ulozPanele(meczRozegrany(mecz));
 
         rysujSzczegoly();
         pilnujZegara();
